@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace dominio
 {
-    public class Class1
+    public class HogarUsuario
     {
+        int IdMiembro;
+        Hogar Hogar;
+        Usuario Usuario;
+        // Rol
+        bool Estado;
     }
 }
