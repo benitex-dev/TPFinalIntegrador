@@ -11,7 +11,7 @@ namespace dominio
         int IdMiembro;
         Hogar Hogar;
         Usuario Usuario;
-        // Rol
+        string Rol;
         bool Estado;
     }
 }
