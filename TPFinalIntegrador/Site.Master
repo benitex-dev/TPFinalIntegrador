@@ -74,7 +74,7 @@
                         <li class="nav-item"><a class="nav-link px-3" href="#">Precios</a></li>
                     </ul>
                     <div class="d-flex align-items-center gap-2">
-                        <a class="btn btn-link text-decoration-none fw-semibold" href="#">Iniciar Sesión</a>
+                        <a class="btn btn-link text-decoration-none fw-semibold" href="Login.aspx">Iniciar Sesión</a>
                         <a class="btn btn-primary fw-semibold px-4" href="#">Comenzar Gratis</a>
                     </div>
                 </div>
