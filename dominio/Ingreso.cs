@@ -8,13 +8,13 @@ namespace dominio
 {
     public class Ingreso
     {
-        int IdIngreso { get; set; }
-        string Descripcion { get; set; }
-        DateTime Fecha { get; set; }
-        Double Monto { get; set; }
-        Categoria Categoria { get; set; }
-        Usuario Usuario { get; set; }
-        Hogar Hogar { get; set; }
+        public int IdIngreso { get; set; }
+        public string Descripcion { get; set; }
+        public DateTime Fecha { get; set; }
+        public decimal Monto { get; set; }
+        public Categoria Categoria { get; set; }
+        public Usuario Usuario { get; set; }
+        public Hogar Hogar { get; set; }
         bool Estado { get; set; }
 
     }

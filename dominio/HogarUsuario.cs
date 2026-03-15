@@ -8,10 +8,10 @@ namespace dominio
 {
     public class HogarUsuario
     {
-        int IdMiembro;
-        Hogar Hogar;
-        Usuario Usuario;
-        string Rol;
-        bool Estado;
+        public int IdMiembro;
+        public Hogar Hogar;
+        public Usuario Usuario;
+        public string Rol;
+        public bool Estado;
     }
 }

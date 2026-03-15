@@ -1,15 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace dominio
 {
-    internal class Usuario
+    public class Usuario
     {
-        int IdUsuario;
-        string Email;
-        string Password;
-        string Nombre;
-        string Apellido;
-        DateTime FechaNac;
-        string ImagenURL;
-        bool Estado;
+        public int IdUsuario { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
+        public DateTime FechaNac { get; set; }
+        public string ImagenURL { get; set; }
+        public bool Estado { get; set; }
     }
 }
