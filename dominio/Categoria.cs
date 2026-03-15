@@ -16,9 +16,10 @@ namespace dominio
     {
         
             public int IdCategoria { get; set; }
-            public Hogar Hogar { get; set; }
-            public Usuario Usuario { get; set; }
-            public TipoCategoria tipo { get; set; }
+            public string Nombre { get; set; }
+            //public Hogar Hogar { get; set; } //categoria compartida
+            public Usuario Usuario { get; set; } //categoria personal
+            public TipoCategoria Tipo { get; set; }
             public bool Estado { get; set; }
     }
 

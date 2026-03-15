@@ -14,8 +14,8 @@ namespace dominio
         public decimal Monto { get; set; }
         public Categoria Categoria { get; set; }
         public Usuario Usuario { get; set; }
-        public Hogar Hogar { get; set; }
-        bool Estado { get; set; }
+       // public Hogar Hogar { get; set; }
+        public bool Estado { get; set; }
 
     }
 }
