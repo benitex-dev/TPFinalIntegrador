@@ -122,6 +122,29 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+
+        public bool ExisteEmail(string email)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta("SELECT IdUsuario FROM USUARIO WHERE Email = @email");
+                datos.setParametro("@email", email);
+                datos.ejecutarLectura();
+
+                return datos.Lector.Read();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
     }
 }
 

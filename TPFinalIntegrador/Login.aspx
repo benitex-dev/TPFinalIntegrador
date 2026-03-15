@@ -81,7 +81,7 @@
 
             <div class="text-center mt-4">
                 <span class="login-muted">¿Todavía no tenés cuenta?</span>
-                <a href="#" class="text-decoration-none fw-semibold ms-1">Registrate</a>
+                <a href="NuevoUsuario.aspx" class="text-decoration-none fw-semibold ms-1">Registrate</a>
             </div>
         </div>
     </div>
