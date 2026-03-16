@@ -6,17 +6,25 @@ using System.Threading.Tasks;
 
 namespace dominio
 {
+
+    public enum Moneda
+    {
+        ARS = 1,
+        USD = 2,
+        EUR = 3,
+        BRL = 4
+    }
     public class Gasto
     {
         public int IdGasto { get; set; }
         public DateTime Fecha { get; set; }
         public decimal MontoPesos { get; set; }
-        public string Moneda { get; set; }
-        public Categoria idCategoria { get; set; }
+        public Moneda Moneda { get; set; }
+        public Categoria Categoria { get; set; }
         public string Descripcion { get; set; }
-        public MedioPago IdMedioDePago { get; set; }
+        public MedioPago MedioDePago { get; set; }
         public Usuario Usuario { get; set; }
-        public Hogar Hogar { get; set; }
+        //public Hogar Hogar { get; set; }
         public decimal MontoUSD { get; set; }
         public decimal Cotizacion { get; set; }
         public bool Estado { get; set; }
