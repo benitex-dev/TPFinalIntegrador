@@ -26,6 +26,9 @@ namespace TPFinalIntegrador
                 lblBienvenida.Text = "Bienvenido/a, " + usuarioLogueado.Nombre;
                 CargarCategoriasIngreso(); //Carga desplegable 
                 CargarResumenIngresos();
+                CargarCategoriasGasto();
+                CargarMediosPago();
+                CargarMovimientosDelMes();
             }
         }
 
@@ -188,6 +191,8 @@ namespace TPFinalIntegrador
                     true);
 
                 CargarResumenIngresos(); //refresca los ingresos luego de agregar uno nuevo 
+               
+                CargarMovimientosDelMes();
             }
             catch (Exception ex)
             {
@@ -298,6 +303,205 @@ namespace TPFinalIntegrador
                     true);
             }
         }
+
+        protected void CargarCategoriasGasto()
+        {
+            try
+            {
+                Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                CategoriaNegocio negocio = new CategoriaNegocio();
+
+                ddlCategoriaGasto.DataSource = negocio.ListarPorUsuarioYTipo(usuarioLogueado.IdUsuario, TipoCategoria.Gasto);
+                ddlCategoriaGasto.DataTextField = "Nombre";
+                ddlCategoriaGasto.DataValueField = "IdCategoria";
+                ddlCategoriaGasto.DataBind();
+
+                ddlCategoriaGasto.Items.Insert(0, new ListItem("Seleccionar", "0"));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        protected void CargarMediosPago()
+        {
+            try
+            {
+                Usuario usuarioLogueado = (Usuario)Session["usuario"];
+
+                MedioPagoNegocio negocio = new MedioPagoNegocio();
+
+                ddlMedioPagoGasto.DataSource = negocio.ListarPorUsuario(usuarioLogueado.IdUsuario);
+                ddlMedioPagoGasto.DataTextField = "Descripcion";
+                ddlMedioPagoGasto.DataValueField = "IdMedioPago";
+                ddlMedioPagoGasto.DataBind();
+
+                ddlMedioPagoGasto.Items.Insert(0, new ListItem("Seleccionar", "0"));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        protected void btnGuardarGasto_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(txtDescripcionGasto.Text) ||
+                    string.IsNullOrWhiteSpace(txtFechaGasto.Text) ||
+                    string.IsNullOrWhiteSpace(txtMontoPesosGasto.Text))
+                {
+                    lblMensajeGasto.Text = "Completá los campos obligatorios.";
+                    lblMensajeGasto.CssClass = "text-danger d-block text-center mt-3";
+
+                    ScriptManager.RegisterStartupScript(
+                        this, this.GetType(),
+                        "mostrarModalGasto",
+                        "var modal = new bootstrap.Modal(document.getElementById('modalGasto')); modal.show();",
+                        true);
+                    return;
+                }
+
+                if (ddlCategoriaGasto.SelectedValue == "0")
+                {
+                    lblMensajeGasto.Text = "Seleccioná una categoría.";
+                    lblMensajeGasto.CssClass = "text-danger d-block text-center mt-3";
+
+                    ScriptManager.RegisterStartupScript(
+                        this, this.GetType(),
+                        "mostrarModalGasto",
+                        "var modal = new bootstrap.Modal(document.getElementById('modalGasto')); modal.show();",
+                        true);
+                    return;
+                }
+
+                if (ddlMedioPagoGasto.SelectedValue == "0")
+                {
+                    lblMensajeGasto.Text = "Seleccioná un medio de pago.";
+                    lblMensajeGasto.CssClass = "text-danger d-block text-center mt-3";
+
+                    ScriptManager.RegisterStartupScript(
+                        this, this.GetType(),
+                        "mostrarModalGasto",
+                        "var modal = new bootstrap.Modal(document.getElementById('modalGasto')); modal.show();",
+                        true);
+                    return;
+                }
+
+                Usuario usuarioLogueado = (Usuario)Session["usuario"];
+
+                Gasto gasto = new Gasto();
+
+                gasto.Descripcion = txtDescripcionGasto.Text.Trim();
+                gasto.Fecha = DateTime.Parse(txtFechaGasto.Text);
+                gasto.MontoPesos = decimal.Parse(txtMontoPesosGasto.Text);
+
+                gasto.Moneda = (Moneda)int.Parse(ddlMonedaGasto.SelectedValue);
+
+                gasto.Categoria = new Categoria();
+                gasto.Categoria.IdCategoria = int.Parse(ddlCategoriaGasto.SelectedValue);
+
+                gasto.MedioDePago = new MedioPago();
+                gasto.MedioDePago.IdMedioPago = int.Parse(ddlMedioPagoGasto.SelectedValue);
+
+                gasto.Usuario = usuarioLogueado;
+
+                gasto.Estado = true;
+
+                if (gasto.Moneda != Moneda.ARS)
+                {
+                    gasto.MontoUSD = decimal.Parse(txtMontoUSDGasto.Text);
+                    gasto.Cotizacion = decimal.Parse(txtCotizacionGasto.Text);
+                }
+
+                GastoNegocio negocio = new GastoNegocio();
+                negocio.AgregarGasto(gasto);
+
+                lblMensajeGasto.Text = "Gasto guardado correctamente.";
+                lblMensajeGasto.CssClass = "text-success d-block text-center mt-3";
+
+                txtDescripcionGasto.Text = "";
+                txtFechaGasto.Text = "";
+                txtMontoPesosGasto.Text = "";
+                txtMontoUSDGasto.Text = "";
+                txtCotizacionGasto.Text = "";
+                ddlCategoriaGasto.SelectedIndex = 0;
+                ddlMedioPagoGasto.SelectedIndex = 0;
+                ddlMonedaGasto.SelectedIndex = 0;
+
+                CargarMovimientosDelMes();
+
+                ScriptManager.RegisterStartupScript(
+                    this, this.GetType(),
+                    "mostrarModalGasto",
+                    "var modal = new bootstrap.Modal(document.getElementById('modalGasto')); modal.show();",
+                    true);
+            }
+            catch (Exception ex)
+            {
+                lblMensajeGasto.Text = ex.Message;
+                lblMensajeGasto.CssClass = "text-danger d-block text-center mt-3";
+
+                ScriptManager.RegisterStartupScript(
+                    this, this.GetType(),
+                    "mostrarModalGasto",
+                    "var modal = new bootstrap.Modal(document.getElementById('modalGasto')); modal.show();",
+                    true);
+            }
+        }
+
+        private List<Movimiento> ObtenerMovimientosDelMes()
+        {
+            List<Movimiento> movimientos = new List<Movimiento>();
+
+            Usuario usuarioLogueado = (Usuario)Session["usuario"];
+
+            IngresoNegocio ingresoNegocio = new IngresoNegocio();
+            GastoNegocio gastoNegocio = new GastoNegocio();
+
+            List<Ingreso> ingresos = ingresoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario);
+            List<Gasto> gastos = gastoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario);
+
+            foreach (Ingreso ingreso in ingresos)
+            {
+                Movimiento mov = new Movimiento();
+                mov.Fecha = ingreso.Fecha;
+                mov.Descripcion = ingreso.Descripcion;
+                mov.Categoria = ingreso.Categoria.Nombre;
+                mov.Tipo = "Ingreso";
+                mov.Monto = ingreso.Monto;
+                mov.Estado = ingreso.Estado ? "Activo" : "Eliminado";
+
+                movimientos.Add(mov);
+            }
+
+            foreach (Gasto gasto in gastos)
+            {
+                Movimiento mov = new Movimiento();
+                mov.Fecha = gasto.Fecha;
+                mov.Descripcion = gasto.Descripcion;
+                mov.Categoria = gasto.Categoria.Nombre;
+                mov.Tipo = "Gasto";
+                mov.Monto = gasto.MontoPesos;
+                mov.Estado = gasto.Estado ? "Activo" : "Eliminado";
+
+                movimientos.Add(mov);
+            }
+
+            return movimientos.OrderByDescending(x => x.Fecha).ToList();
+        }
+
+        private void CargarMovimientosDelMes()
+        {
+            List<Movimiento> lista = ObtenerMovimientosDelMes();
+
+            rptMovimientos.DataSource = lista;
+            rptMovimientos.DataBind();
+        }
+
+
     }
 }
     
