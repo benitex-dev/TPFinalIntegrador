@@ -95,6 +95,16 @@ namespace TPFinalIntegrador
             lblMensajeIngreso.CssClass = "";
         }
 
+        protected void LimpiarModalMedioPago()
+        {
+            ddlTipoMedioPago.SelectedIndex = 0;
+            txtDescripcionMedioPago.Text = "";
+            txtDiaCierre.Text = "";
+            txtDiaVencimiento.Text = "";
+            lblMensajeMedioPago.Text = "";
+            lblMensajeMedioPago.CssClass = "";
+        }
+
         protected void CargarCategoriasIngreso()
         {
             try
@@ -205,6 +215,87 @@ namespace TPFinalIntegrador
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        protected void btnGuardarMedioPago_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ddlTipoMedioPago.SelectedValue == "0" ||
+                    string.IsNullOrWhiteSpace(txtDescripcionMedioPago.Text))
+                {
+                    lblMensajeMedioPago.Text = "Completá los campos obligatorios.";
+                    lblMensajeMedioPago.CssClass = "text-danger d-block text-center mt-3";
+
+                    ScriptManager.RegisterStartupScript(
+                        this, this.GetType(),
+                        "mostrarModalMedioPago",
+                        "var modal = new bootstrap.Modal(document.getElementById('modalMedioPago')); modal.show(); toggleCamposCredito();",
+                        true);
+                    return;
+                }
+
+                TipoPago tipoSeleccionado = (TipoPago)int.Parse(ddlTipoMedioPago.SelectedValue);
+
+                if (tipoSeleccionado == TipoPago.Credito)
+                {
+                    if (string.IsNullOrWhiteSpace(txtDiaCierre.Text) ||
+                        string.IsNullOrWhiteSpace(txtDiaVencimiento.Text))
+                    {
+                        lblMensajeMedioPago.Text = "Para tarjeta de crédito debés completar día de cierre y vencimiento.";
+                        lblMensajeMedioPago.CssClass = "text-danger d-block text-center mt-3";
+
+                        ScriptManager.RegisterStartupScript(
+                            this, this.GetType(),
+                            "mostrarModalMedioPago",
+                            "var modal = new bootstrap.Modal(document.getElementById('modalMedioPago')); modal.show(); toggleCamposCredito();",
+                            true);
+                        return;
+                    }
+                }
+
+                Usuario usuarioLogueado = (Usuario)Session["usuario"];
+
+                MedioPago medioPago = new MedioPago();
+                medioPago.Tipo = tipoSeleccionado;
+                medioPago.Descripcion = txtDescripcionMedioPago.Text.Trim();
+                medioPago.Usuario = usuarioLogueado;
+                medioPago.Estado = true;
+
+                if (tipoSeleccionado == TipoPago.Credito)
+                {
+                    medioPago.DiaCierre = int.Parse(txtDiaCierre.Text);
+                    medioPago.DiaVencimiento = int.Parse(txtDiaVencimiento.Text);
+                }
+
+                MedioPagoNegocio negocio = new MedioPagoNegocio();
+                negocio.AgregarMedioPago(medioPago);
+
+                lblMensajeMedioPago.Text = "Medio de pago guardado correctamente.";
+                lblMensajeMedioPago.CssClass = "text-success d-block text-center mt-3";
+
+                txtDescripcionMedioPago.Text = "";
+                txtDiaCierre.Text = "";
+                txtDiaVencimiento.Text = "";
+                ddlTipoMedioPago.SelectedIndex = 0;
+
+                ScriptManager.RegisterStartupScript(
+                    this, this.GetType(),
+                    "mostrarModalMedioPago",
+                    "var modal = new bootstrap.Modal(document.getElementById('modalMedioPago')); modal.show(); document.getElementById('camposCredito').style.display='none';",
+                    true);
+            }
+            catch (Exception ex)
+            {
+                lblMensajeMedioPago.Text = ex.Message;
+                lblMensajeMedioPago.CssClass = "text-danger d-block text-center mt-3";
+
+                ScriptManager.RegisterStartupScript(
+                    this, this.GetType(),
+                    "mostrarModalMedioPago",
+                    "var modal = new bootstrap.Modal(document.getElementById('modalMedioPago')); modal.show(); toggleCamposCredito();",
+                    true);
             }
         }
     }

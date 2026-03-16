@@ -256,6 +256,9 @@
                             <button type="button" class="btn btn-outline-dark px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalCategoria">
                              Cargar categoría
                             </button>
+                            <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalMedioPago" onclick="limpiarModalMedioPago()">
+                             Agregar medio de pago
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -512,5 +515,75 @@
         </div>
     </div>
 </div>
+
+
+    <div class="modal fade" id="modalMedioPago" tabindex="-1" aria-labelledby="modalMedioPagoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="modalMedioPagoLabel">Nuevo medio de pago</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body pt-3">
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Tipo</label>
+                    <asp:DropDownList ID="ddlTipoMedioPago"
+                                      runat="server"
+                                      CssClass="form-select"
+                                      onchange="toggleCamposCredito()">
+                        <asp:ListItem Text="Seleccionar" Value="0"></asp:ListItem>
+                        <asp:ListItem Text="Efectivo" Value="1"></asp:ListItem>
+                        <asp:ListItem Text="Débito" Value="2"></asp:ListItem>
+                        <asp:ListItem Text="Crédito" Value="3"></asp:ListItem>
+                        <asp:ListItem Text="Transferencia" Value="4"></asp:ListItem>
+                        <asp:ListItem Text="Billetera Virtual" Value="5"></asp:ListItem>
+                    </asp:DropDownList>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Descripción</label>
+                    <asp:TextBox ID="txtDescripcionMedioPago" runat="server" CssClass="form-control"></asp:TextBox>
+                </div>
+
+                <div id="camposCredito" style="display:none;">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Día de cierre</label>
+                        <asp:TextBox ID="txtDiaCierre" runat="server" CssClass="form-control" TextMode="Number"></asp:TextBox>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Día de vencimiento</label>
+                        <asp:TextBox ID="txtDiaVencimiento" runat="server" CssClass="form-control" TextMode="Number"></asp:TextBox>
+                    </div>
+                </div>
+
+                <asp:Label ID="lblMensajeMedioPago" runat="server" CssClass="d-block text-center mt-3"></asp:Label>
+
+            </div>
+
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light border rounded-3" data-bs-dismiss="modal">Cancelar</button>
+                <asp:Button ID="btnGuardarMedioPago"
+                            runat="server"
+                            Text="Guardar"
+                            CssClass="btn btn-primary rounded-3 px-4"
+                            OnClick="btnGuardarMedioPago_Click" />
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+    <script> function toggleCamposCredito() {
+            const ddl = document.getElementById('<%= ddlTipoMedioPago.ClientID %>');
+            const contenedor = document.getElementById('camposCredito'); if (ddl.value === "3") { contenedor.style.display = "block"; } else { contenedor.style.display = "none"; }
+        }
+        function limpiarModalMedioPago() { document.getElementById('<%= ddlTipoMedioPago.ClientID %>').selectedIndex = 0; document.getElementById('<%= txtDescripcionMedioPago.ClientID %>').value = ''; document.getElementById('<%= txtDiaCierre.ClientID %>').value = ''; document.getElementById('<%= txtDiaVencimiento.ClientID %>').value = ''; let lbl = document.getElementById('<%= lblMensajeMedioPago.ClientID %>'); lbl.innerText = ''; lbl.className = ''; document.getElementById('camposCredito').style.display = 'none'; } 
+
+    </script>
 
 </asp:Content>
