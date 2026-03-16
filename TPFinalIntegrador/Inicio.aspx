@@ -249,7 +249,9 @@
 
                     <div class="d-flex flex-wrap gap-2">
                         <div class="d-flex flex-wrap gap-2">
-                            <a href="#" class="btn btn-primary px-4 fw-semibold">Cargar gasto</a>
+                            <button type="button" class="btn btn-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalGasto" onclick="limpiarModalGasto()">
+                            Cargar gasto
+                            </button>
                             <button type="button" class="btn btn-outline-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalIngreso" onclick="limpiarModalIngreso()">
                             Cargar ingreso
                             </button>
@@ -349,12 +351,23 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td colspan="6" class="px-4 py-5 text-center empty-text">
-                                        Todavía no hay movimientos registrados.
-                                    </td>
-                                </tr>
-                            </tbody>
+    <asp:Repeater ID="rptMovimientos" runat="server">
+        <ItemTemplate>
+            <tr>
+                <td class="px-4 py-3"><%# Eval("Fecha", "{0:dd/MM/yyyy}") %></td>
+                <td class="px-4 py-3"><%# Eval("Descripcion") %></td>
+                <td class="px-4 py-3"><%# Eval("Categoria") %></td>
+                <td class="px-4 py-3"><%# Eval("Tipo") %></td>
+                <td class="px-4 py-3 text-end">
+                 <span class='<%# Eval("Tipo").ToString() == "Gasto" ? "text-danger fw-bold" : "text-success fw-bold" %>'>
+                  <%# Eval("MontoMostrado") %>
+                 </span>
+                    </td>
+                <td class="px-4 py-3"><%# Eval("Estado") %></td>
+            </tr>
+        </ItemTemplate>
+    </asp:Repeater>
+</tbody>
                         </table>
                     </div>
 
@@ -436,7 +449,7 @@
 
     </div>
 
-
+    <%-- VENTANAS MODALES PARA CARGAR GASTOS, CATEGORÍAS, MEDIOS DE PAGO E INGRESOS --%>
     <div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalCategoriaLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 rounded-4 shadow">
@@ -577,7 +590,91 @@
     </div>
 </div>
 
+    <div class="modal fade" id="modalGasto" tabindex="-1" aria-labelledby="modalGastoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 rounded-4 shadow">
 
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="modalGastoLabel">Nuevo gasto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body pt-3">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Descripción</label>
+                        <asp:TextBox ID="txtDescripcionGasto" runat="server" CssClass="form-control"></asp:TextBox>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Fecha</label>
+                        <asp:TextBox ID="txtFechaGasto" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Categoría</label>
+                        <asp:DropDownList ID="ddlCategoriaGasto" runat="server" CssClass="form-select"></asp:DropDownList>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Medio de pago</label>
+                        <asp:DropDownList ID="ddlMedioPagoGasto" runat="server" CssClass="form-select"></asp:DropDownList>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-semibold">Moneda</label>
+                        <asp:DropDownList ID="ddlMonedaGasto"
+                                          runat="server"
+                                          CssClass="form-select"
+                                          onchange="toggleCamposMonedaGasto()">
+                            <asp:ListItem Text="ARS" Value="1"></asp:ListItem>
+                            <asp:ListItem Text="USD" Value="2"></asp:ListItem>
+                            <asp:ListItem Text="EUR" Value="3"></asp:ListItem>
+                            <asp:ListItem Text="BRL" Value="4"></asp:ListItem>
+                        </asp:DropDownList>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-semibold">Monto en pesos</label>
+                        <asp:TextBox ID="txtMontoPesosGasto" runat="server" CssClass="form-control"></asp:TextBox>
+                    </div>
+
+                    <div class="col-md-4 mb-3" id="campoMontoUSDGasto" style="display:none;">
+                        <label class="form-label fw-semibold">Monto en moneda original</label>
+                        <asp:TextBox ID="txtMontoUSDGasto" runat="server" CssClass="form-control"></asp:TextBox>
+                    </div>
+                </div>
+
+                <div class="row" id="campoCotizacionGasto" style="display:none;">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Cotización</label>
+                        <asp:TextBox ID="txtCotizacionGasto" runat="server" CssClass="form-control"></asp:TextBox>
+                    </div>
+                </div>
+
+                <asp:Label ID="lblMensajeGasto" runat="server" CssClass="d-block text-center mt-3"></asp:Label>
+
+            </div>
+
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light border rounded-3" data-bs-dismiss="modal">Cancelar</button>
+                <asp:Button ID="btnGuardarGasto"
+                            runat="server"
+                            Text="Guardar"
+                            CssClass="btn btn-primary rounded-3 px-4"
+                            OnClick="btnGuardarGasto_Click" />
+            </div>
+
+        </div>
+    </div>
+</div>
+
+     <%-- Se ocultan campos FECHA cuando no es crèdito el tipo de medio de pago  --%>
     <script> function toggleCamposCredito() {
             const ddl = document.getElementById('<%= ddlTipoMedioPago.ClientID %>');
             const contenedor = document.getElementById('camposCredito'); if (ddl.value === "3") { contenedor.style.display = "block"; } else { contenedor.style.display = "none"; }
@@ -585,5 +682,40 @@
         function limpiarModalMedioPago() { document.getElementById('<%= ddlTipoMedioPago.ClientID %>').selectedIndex = 0; document.getElementById('<%= txtDescripcionMedioPago.ClientID %>').value = ''; document.getElementById('<%= txtDiaCierre.ClientID %>').value = ''; document.getElementById('<%= txtDiaVencimiento.ClientID %>').value = ''; let lbl = document.getElementById('<%= lblMensajeMedioPago.ClientID %>'); lbl.innerText = ''; lbl.className = ''; document.getElementById('camposCredito').style.display = 'none'; } 
 
     </script>
+
+    <%-- Se oculta Cotizaciòn cuando no es moneda extranjera  --%>
+    <script>
+        function toggleCamposMonedaGasto() {
+            const ddl = document.getElementById('<%= ddlMonedaGasto.ClientID %>');
+            const campoMontoUSD = document.getElementById('campoMontoUSDGasto');
+            const campoCotizacion = document.getElementById('campoCotizacionGasto');
+
+            if (ddl.value === "1") {
+                campoMontoUSD.style.display = "none";
+                campoCotizacion.style.display = "none";
+            } else {
+                campoMontoUSD.style.display = "block";
+                campoCotizacion.style.display = "flex";
+            }
+        }
+
+        function limpiarModalGasto() {
+            document.getElementById('<%= txtDescripcionGasto.ClientID %>').value = '';
+        document.getElementById('<%= txtFechaGasto.ClientID %>').value = '';
+        document.getElementById('<%= ddlCategoriaGasto.ClientID %>').selectedIndex = 0;
+        document.getElementById('<%= ddlMedioPagoGasto.ClientID %>').selectedIndex = 0;
+        document.getElementById('<%= ddlMonedaGasto.ClientID %>').selectedIndex = 0;
+        document.getElementById('<%= txtMontoPesosGasto.ClientID %>').value = '';
+        document.getElementById('<%= txtMontoUSDGasto.ClientID %>').value = '';
+        document.getElementById('<%= txtCotizacionGasto.ClientID %>').value = '';
+
+        let lbl = document.getElementById('<%= lblMensajeGasto.ClientID %>');
+            lbl.innerText = '';
+            lbl.className = '';
+
+            document.getElementById('campoMontoUSDGasto').style.display = 'none';
+            document.getElementById('campoCotizacionGasto').style.display = 'none';
+        }
+</script>
 
 </asp:Content>
