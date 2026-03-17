@@ -8,5 +8,12 @@ namespace negocio
 {
     class HogarNegocio
     {
+        //ALTA
+
+        //BAJA
+
+        //MODIFICAR
+
+        //LISTAR
     }
 }
