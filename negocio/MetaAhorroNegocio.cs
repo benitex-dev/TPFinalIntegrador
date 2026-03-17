@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace negocio
 {
-    public class Class1
+    class MetaAhorroNegocio
     {
     }
 }
