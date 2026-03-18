@@ -66,6 +66,8 @@ namespace TPFinalIntegrador
                 lblMensajeCategoria.CssClass = "text-success d-block text-center mt-3";
 
                 LimpiarModalCategoria();
+                CargarCategoriasIngreso();
+                CargarCategoriasGasto();
             }
             catch (Exception ex)
             {
@@ -284,6 +286,8 @@ namespace TPFinalIntegrador
                 txtDiaCierre.Text = "";
                 txtDiaVencimiento.Text = "";
                 ddlTipoMedioPago.SelectedIndex = 0;
+
+                CargarMediosPago();
 
                 ScriptManager.RegisterStartupScript(
                     this, this.GetType(),
