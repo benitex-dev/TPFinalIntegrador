@@ -77,9 +77,58 @@ namespace negocio
             }
         }
         //BAJA
+        public void EliminarLogico(int idMeta)
+        {
+            AccesoDatos datos = new AccesoDatos();
 
+            try
+            {
+                if (idMeta <= 0)
+                    throw new Exception("Id de meta inválido.");
+
+                if (!ExisteMetaAhorro(idMeta))
+                    throw new Exception("La meta no existe o ya fue eliminada.");
+
+                datos.setConsulta("UPDATE META_AHORRO SET Estado = 0 WHERE IdMeta = @idMeta");
+                datos.setParametro("@idMeta", idMeta);
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
         //MODIFICACION
 
         //LISTA
+
+        //EXISTE
+        public bool ExisteMetaAhorro(int idMeta)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta("SELECT IdMeta FROM META_AHORRO WHERE IdMeta = @idMeta AND Estado = 1");
+                datos.setParametro("@idMeta", idMeta);
+
+                datos.ejecutarLectura();
+
+                return datos.Lector.Read();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }
