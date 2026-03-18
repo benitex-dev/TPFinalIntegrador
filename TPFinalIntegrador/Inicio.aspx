@@ -313,7 +313,9 @@
                         <span class="material-symbols-outlined">savings</span>
                     </div>
                     <div class="summary-label">Saldo disponible</div>
-                    <div class="summary-value">--</div>
+                    <div class="summary-value">
+                        <asp:Label ID="lblsaldoMes" runat="server" Text="--"></asp:Label>
+                    </div>
                     <p class="summary-foot">Se calculará según tus registros</p>
                 </div>
             </div>
