@@ -47,9 +47,57 @@ namespace negocio
             }
         }
         //BAJA
+        public void EliminarLogico(int idMiembro)
+        {
+            AccesoDatos datos = new AccesoDatos();
 
+            try
+            {
+                if (idMiembro <= 0)
+                    throw new Exception("Id de miembro inválido.");
+
+                if (!ExisteHogarUsuario(idMiembro))
+                    throw new Exception("El miembro no existe o ya fue eliminado.");
+
+                datos.setConsulta("UPDATE HOGAR_USUARIO SET Estado = 0 WHERE IdMiembro = @idMiembro");
+                datos.setParametro("@idMiembro", idMiembro);
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
         //MODIFICAR
 
         //LISTAR
+
+        //EXISTE
+        public bool ExisteHogarUsuario(int idMiembro)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta("SELECT IdMiembro FROM HOGAR_USUARIO WHERE IdMiembro = @idMiembro AND Estado = 1");
+                datos.setParametro("@idMiembro", idMiembro);
+                datos.ejecutarLectura();
+
+                return datos.Lector.Read();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }
