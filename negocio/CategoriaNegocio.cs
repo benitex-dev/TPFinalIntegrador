@@ -150,7 +150,54 @@ namespace negocio
             }
         }
 
+        public bool ExisteCategoria(int idCategoria)
+        {
+            AccesoDatos datos = new AccesoDatos();
 
+            try
+            {
+                datos.setConsulta("SELECT IdCategoria FROM CATEGORIA WHERE IdCategoria = @idCategoria AND Estado = 1");
+                datos.setParametro("@idCategoria", idCategoria);
 
+                datos.ejecutarLectura();
+
+                return datos.Lector.Read();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        public void EliminarLogico(int idCategoria)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                if (idCategoria <= 0)
+                    throw new Exception("Id de categoría inválido.");
+
+                if (!ExisteCategoria(idCategoria))
+                    throw new Exception("La categoría no existe o ya fue eliminada.");
+
+                datos.setConsulta("UPDATE CATEGORIA SET Estado = 0 WHERE IdCategoria = @idCategoria");
+                datos.setParametro("@idCategoria", idCategoria);
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }
