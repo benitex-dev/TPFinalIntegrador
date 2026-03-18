@@ -300,7 +300,9 @@
                         <span class="material-symbols-outlined">trending_down</span>
                     </div>
                     <div class="summary-label">Gastos del mes</div>
-                    <div class="summary-value">--</div>
+                    <div class="summary-value text-danger">
+                        <asp:Label ID="lblGastosMes" runat="server" Text="--"></asp:Label>
+                    </div>
                     <p class="summary-foot">Todavía no hay datos para mostrar</p>
                 </div>
             </div>
