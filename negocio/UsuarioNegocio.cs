@@ -145,6 +145,34 @@ namespace negocio
             }
         }
 
+        public void EliminarLogico(string email)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(email))
+                    throw new Exception("El email es obligatorio.");
+
+                email = email.Trim();
+
+                if (!ExisteEmail(email))
+                    throw new Exception("El usuario no existe.");
+
+                datos.setConsulta("UPDATE USUARIO SET Estado = 0 WHERE Email = @email");
+                datos.setParametro("@email", email);
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }
 
