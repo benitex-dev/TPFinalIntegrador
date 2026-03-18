@@ -287,6 +287,8 @@ namespace TPFinalIntegrador
                 txtDiaVencimiento.Text = "";
                 ddlTipoMedioPago.SelectedIndex = 0;
 
+                CargarMediosPago();
+
                 ScriptManager.RegisterStartupScript(
                     this, this.GetType(),
                     "mostrarModalMedioPago",
