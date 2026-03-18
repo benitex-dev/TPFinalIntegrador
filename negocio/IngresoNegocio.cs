@@ -117,7 +117,6 @@ namespace negocio
             }
         }
 
-
         public List<Ingreso> ListarPorUsuarioMesActual(int idUsuario)
         {
             List<Ingreso> lista = new List<Ingreso>();

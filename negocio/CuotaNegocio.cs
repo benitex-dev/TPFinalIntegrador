@@ -52,7 +52,29 @@ namespace negocio
             }
         }
         //BAJA
+        public void EliminarLogico(int idCuota)
+        {
+            AccesoDatos datos = new AccesoDatos();
 
+            try
+            {
+                if (idCuota <= 0)
+                    throw new Exception("Id de cuota inválido.");
+
+                datos.setConsulta("UPDATE CUOTA SET Estado = 0 WHERE IdCuota = @idCuota");
+                datos.setParametro("@idCuota", idCuota);
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
         //LISTAR
         public List<Cuota> ListarPorGasto(int idGasto)
         {
