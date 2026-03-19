@@ -419,7 +419,7 @@ namespace TPFinalIntegrador
                     gasto.MontoUSD = decimal.Parse(txtMontoUSDGasto.Text);
                     gasto.Cotizacion = decimal.Parse(txtCotizacionGasto.Text);
                 }
-
+                
                 GastoNegocio negocio = new GastoNegocio();
                 negocio.AgregarGasto(gasto);
 

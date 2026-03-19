@@ -484,7 +484,7 @@
         </div>
     </div>
 </div>
-
+    <%--MODAL INGRESO--%>
     <div class="modal fade" id="modalIngreso" tabindex="-1" aria-labelledby="modalIngresoLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 rounded-4 shadow">
@@ -589,7 +589,7 @@
         </div>
     </div>
 </div>
-
+    <%--CARGAR GASTO--%>
     <div class="modal fade" id="modalGasto" tabindex="-1" aria-labelledby="modalGastoLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 rounded-4 shadow">
@@ -641,19 +641,30 @@
 
                     <div class="col-md-4 mb-3">
                         <label class="form-label fw-semibold">Monto en pesos</label>
+                       
                         <asp:TextBox ID="txtMontoPesosGasto" runat="server" CssClass="form-control"></asp:TextBox>
                     </div>
 
                     <div class="col-md-4 mb-3" id="campoMontoUSDGasto" style="display:none;">
                         <label class="form-label fw-semibold">Monto en moneda original</label>
-                        <asp:TextBox ID="txtMontoUSDGasto" runat="server" CssClass="form-control"></asp:TextBox>
+                        <asp:TextBox 
+                            ID="txtMontoUSDGasto"
+                            runat="server" 
+                            CssClass="form-control"
+                            oninput="calcularMontoPesosGasto()"
+                            ></asp:TextBox>
                     </div>
                 </div>
 
                 <div class="row" id="campoCotizacionGasto" style="display:none;">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">Cotización</label>
-                        <asp:TextBox ID="txtCotizacionGasto" runat="server" CssClass="form-control"></asp:TextBox>
+                        <asp:TextBox 
+                            ID="txtCotizacionGasto" 
+                            runat="server" 
+                            CssClass="form-control"
+                            oninput="calcularMontoPesosGasto()"
+                            ></asp:TextBox>
                     </div>
                 </div>
 
@@ -671,43 +682,67 @@
             </div>
 
         </div>
+      </div>
     </div>
-</div>
 
      <%-- Se ocultan campos FECHA cuando no es crèdito el tipo de medio de pago  --%>
-    <script> function toggleCamposCredito() {
+    <script> 
+        function toggleCamposCredito() {
             const ddl = document.getElementById('<%= ddlTipoMedioPago.ClientID %>');
             const contenedor = document.getElementById('camposCredito'); if (ddl.value === "3") { contenedor.style.display = "block"; } else { contenedor.style.display = "none"; }
         }
-        function limpiarModalMedioPago() { document.getElementById('<%= ddlTipoMedioPago.ClientID %>').selectedIndex = 0; document.getElementById('<%= txtDescripcionMedioPago.ClientID %>').value = ''; document.getElementById('<%= txtDiaCierre.ClientID %>').value = ''; document.getElementById('<%= txtDiaVencimiento.ClientID %>').value = ''; let lbl = document.getElementById('<%= lblMensajeMedioPago.ClientID %>'); lbl.innerText = ''; lbl.className = ''; document.getElementById('camposCredito').style.display = 'none'; } 
+        function limpiarModalMedioPago() {
+            document.getElementById('<%= ddlTipoMedioPago.ClientID %>').selectedIndex = 0;
+            document.getElementById('<%= txtDescripcionMedioPago.ClientID %>').value = '';
+            document.getElementById('<%= txtDiaCierre.ClientID %>').value = '';
+            document.getElementById('<%= txtDiaVencimiento.ClientID %>').value = '';
+            let lbl = document.getElementById('<%= lblMensajeMedioPago.ClientID %>');
+            lbl.innerText = '';
+            lbl.className = '';
+            document.getElementById('camposCredito').style.display = 'none';
+        } 
 
     </script>
 
     <%-- Se oculta Cotizaciòn cuando no es moneda extranjera  --%>
+    
     <script>
         function toggleCamposMonedaGasto() {
+            //capturamos los elementos del DOM que vamos a mostrar u ocultar
             const ddl = document.getElementById('<%= ddlMonedaGasto.ClientID %>');
             const campoMontoUSD = document.getElementById('campoMontoUSDGasto');
             const campoCotizacion = document.getElementById('campoCotizacionGasto');
+            const txtMontoPesos = document.getElementById('<%= txtMontoPesosGasto.ClientID %>');
+            const txtMontoUSD = document.getElementById('<%= txtMontoUSDGasto.ClientID %>');
+            const txtCotizacion = document.getElementById('<%= txtCotizacionGasto.ClientID %>');
 
-            if (ddl.value === "1") {
+            if (ddl.value === "1") {//pesos argentinos
                 campoMontoUSD.style.display = "none";
                 campoCotizacion.style.display = "none";
-            } else {
+                txtMontoPesos.disabled = false;
+                txtMontoUSD.value = '';
+                txtCotizacion.value = '';
+            } else {// Moneda extranjera
                 campoMontoUSD.style.display = "block";
                 campoCotizacion.style.display = "flex";
+
+                txtMontoPesos.value = '';
+                txtMontoPesos.disabled = true;
             }
         }
 
         function limpiarModalGasto() {
             document.getElementById('<%= txtDescripcionGasto.ClientID %>').value = '';
-        document.getElementById('<%= txtFechaGasto.ClientID %>').value = '';
-        document.getElementById('<%= ddlCategoriaGasto.ClientID %>').selectedIndex = 0;
-        document.getElementById('<%= ddlMedioPagoGasto.ClientID %>').selectedIndex = 0;
-        document.getElementById('<%= ddlMonedaGasto.ClientID %>').selectedIndex = 0;
-        document.getElementById('<%= txtMontoPesosGasto.ClientID %>').value = '';
-        document.getElementById('<%= txtMontoUSDGasto.ClientID %>').value = '';
-        document.getElementById('<%= txtCotizacionGasto.ClientID %>').value = '';
+            document.getElementById('<%= txtFechaGasto.ClientID %>').value = '';
+            document.getElementById('<%= ddlCategoriaGasto.ClientID %>').selectedIndex = 0;
+            document.getElementById('<%= ddlMedioPagoGasto.ClientID %>').selectedIndex = 0;
+            document.getElementById('<%= ddlMonedaGasto.ClientID %>').selectedIndex = 0;
+
+            document.getElementById('<%= txtMontoPesosGasto.ClientID %>').value = '';
+            document.getElementById('<%= txtMontoPesosGasto.ClientID %>').disabled = false;
+
+            document.getElementById('<%= txtMontoUSDGasto.ClientID %>').value = '';
+            document.getElementById('<%= txtCotizacionGasto.ClientID %>').value = '';
 
         let lbl = document.getElementById('<%= lblMensajeGasto.ClientID %>');
             lbl.innerText = '';
@@ -716,6 +751,41 @@
             document.getElementById('campoMontoUSDGasto').style.display = 'none';
             document.getElementById('campoCotizacionGasto').style.display = 'none';
         }
-</script>
+        function calcularMontoPesosGasto() {
+            const txtMontoUSD = document.getElementById('<%= txtMontoUSDGasto.ClientID %>');
+            const txtCotizacion = document.getElementById('<%= txtCotizacionGasto.ClientID %>');
+            const txtMontoPesos = document.getElementById('<%= txtMontoPesosGasto.ClientID %>');
+            const ddl = document.getElementById('<%= ddlMonedaGasto.ClientID %>');
 
+            if (ddl.value === "1") {
+                return;
+            }
+
+            const montoOriginal = parseFloat(txtMontoUSD.value.replace(',', '.'));
+            const cotizacion = parseFloat(txtCotizacion.value.replace(',', '.'));
+
+            if (!isNaN(montoOriginal) && !isNaN(cotizacion)) {
+                txtMontoPesos.value = (montoOriginal * cotizacion).toFixed(2);
+            } else {
+                txtMontoPesos.value = '';
+            }
+        }
+    </script>
+   
+    <script>
+        
+        function limpiarModalIngreso() {
+        document.getElementById('<%= txtDescripcionIngreso.ClientID %>').value = '';
+        document.getElementById('<%= txtFechaIngreso.ClientID %>').value = '';
+        document.getElementById('<%= ddlCategoriaIngreso.ClientID %>').selectedIndex = 0;
+      <%-- // document.getElementById('<%= ddlMonedaIngreso.ClientID %>').selectedIndex = 0;--%>
+        document.getElementById('<%= txtMontoIngreso.ClientID %>').value = '';
+        let lbl = document.getElementById('<%= lblMensajeIngreso.ClientID %>');
+            lbl.innerText = '';
+            lbl.className = '';
+            if (document.getElementById('campoMontoUSDIngreso')) {
+                document.getElementById('campoMontoUSDIngreso').style.display = 'none';
+            }
+        }
+    </script>
 </asp:Content>
