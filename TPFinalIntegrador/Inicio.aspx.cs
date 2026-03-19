@@ -26,9 +26,11 @@ namespace TPFinalIntegrador
                 lblBienvenida.Text = "Bienvenido/a, " + usuarioLogueado.Nombre;
                 CargarCategoriasIngreso(); //Carga desplegable 
                 CargarResumenIngresos();
+                CargarResumenGastos();
                 CargarCategoriasGasto();
                 CargarMediosPago();
                 CargarMovimientosDelMes();
+                CargarSaldoMes();
             }
         }
 
@@ -192,8 +194,10 @@ namespace TPFinalIntegrador
                     "var modal = new bootstrap.Modal(document.getElementById('modalIngreso')); modal.show();",
                     true);
 
-                CargarResumenIngresos(); //refresca los ingresos luego de agregar uno nuevo 
-               
+                CargarResumenIngresos(); //refresca los ingresos luego de agregar uno nuevo
+                CargarSaldoMes(); //refresca el saldo al agregar un ingreso nuevo
+
+
                 CargarMovimientosDelMes();
             }
             catch (Exception ex)
@@ -224,6 +228,8 @@ namespace TPFinalIntegrador
                 throw ex;
             }
         }
+
+
 
         protected void btnGuardarMedioPago_Click(object sender, EventArgs e)
         {
@@ -435,6 +441,8 @@ namespace TPFinalIntegrador
                 ddlMedioPagoGasto.SelectedIndex = 0;
                 ddlMonedaGasto.SelectedIndex = 0;
 
+                CargarResumenGastos(); //Refresca los gastos al agregar uno nuevo
+                CargarSaldoMes(); //Refresca el saldo al agregar un gasto
                 CargarMovimientosDelMes();
 
                 ScriptManager.RegisterStartupScript(
@@ -453,6 +461,22 @@ namespace TPFinalIntegrador
                     "mostrarModalGasto",
                     "var modal = new bootstrap.Modal(document.getElementById('modalGasto')); modal.show();",
                     true);
+            }
+        }
+
+        protected void CargarResumenGastos()
+        {
+            try
+            {
+                Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                GastoNegocio negocio = new GastoNegocio();
+
+                decimal total = negocio.TotalGastosMesActual(usuarioLogueado.IdUsuario);
+                lblGastosMes.Text = "$ " + total.ToString("N2");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
 
@@ -503,6 +527,34 @@ namespace TPFinalIntegrador
 
             rptMovimientos.DataSource = lista;
             rptMovimientos.DataBind();
+        }
+
+        private void CargarSaldoMes()
+        {
+            try
+            {
+                Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                GastoNegocio negocioGasto = new GastoNegocio();
+                IngresoNegocio negocioIngreso = new IngresoNegocio();
+                decimal ingresos = negocioIngreso.TotalIngresosMesActual(usuarioLogueado.IdUsuario);
+                decimal gastos = negocioGasto.TotalGastosMesActual(usuarioLogueado.IdUsuario);
+                //decimal ingresoTotal = 0;
+                //decimal gastoTotal = 0;
+
+                //foreach (decimal numero in listaIngresos)
+                //{
+                //    ingresoTotal += numero;
+                //}
+
+
+
+                decimal total = ingresos - gastos;
+                lblsaldoMes.Text = "$ " + total.ToString("N2");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
 

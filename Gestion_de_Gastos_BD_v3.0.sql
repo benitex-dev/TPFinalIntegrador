@@ -147,3 +147,27 @@ CREATE TABLE DEUDA
     FOREIGN KEY (IdUsuario) REFERENCES USUARIO(IdUsuario)
 );
 GO
+
+
+/* ---------------- INSERTS ----------------- */
+
+/* CATEGORÍAS (Tipos: 1 = Ingreso, 2 = Gasto) */
+INSERT INTO CATEGORIA (Nombre, Tipo, IdUsuario, IdHogar, Estado)
+VALUES 
+('Sueldo', 1, 1, NULL, 1),
+('Negocios/Ventas', 1, 1, NULL, 1),
+('Supermercado', 2, 1, NULL, 1),
+('Vehículo', 2, 1, NULL, 1),
+('Entretenimiento', 2, 1, NULL, 1),
+('Música e Instrumentos', 2, 1, NULL, 1),
+('Inversiones', 2, 1, NULL, 1),
+('Tecnología', 2, 1, NULL, 1);
+GO
+
+/* MEDIOS DE PAGO (Tipos: 1=Efectivo, 2=Débito, 3=Crédito) */
+INSERT INTO MEDIOPAGO (Tipo, Descripcion, DiaCierre, DiaVencimiento, IdUsuario, IdHogar, Estado)
+VALUES 
+(1, 'Efectivo', NULL, NULL, 1, NULL, 1),
+(2, 'Mercado Pago', NULL, NULL, 1, NULL, 1),
+(3, 'Tarjeta Visa Banco Patagonia', 25, 5, 1, NULL, 1);
+GO
