@@ -69,7 +69,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav mx-auto">
-                        <li class="nav-item"><a class="nav-link px-3" href="#features">Características</a></li>
+                        <li class="nav-item"><a class="nav-link px-3" href="CrearHogar.aspx">Crear Hogar</a></li>
                         <li class="nav-item"><a class="nav-link px-3" href="#trust">Seguridad</a></li>
                         <li class="nav-item"><a class="nav-link px-3" href="#">Precios</a></li>
                     </ul>
