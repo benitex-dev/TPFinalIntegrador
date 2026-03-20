@@ -255,12 +255,6 @@
                             <button type="button" class="btn btn-outline-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalIngreso" onclick="limpiarModalIngreso()">
                             Cargar ingreso
                             </button>
-                            <button type="button" class="btn btn-outline-dark px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalCategoria">
-                             Cargar categoría
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalMedioPago" onclick="limpiarModalMedioPago()">
-                             Agregar medio de pago
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -791,5 +785,19 @@
                 document.getElementById('campoMontoUSDIngreso').style.display = 'none';
             }
         }
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const params = new URLSearchParams(window.location.search);
+            const modal = params.get("modal");
+            if (modal === "categoria") {
+                var modalCategoria = new bootstrap.Modal(document.getElementById('modalCategoria'));
+                modalCategoria.show();
+            }
+            if (modal === "mediopago") {
+                var modalMedioPago = new bootstrap.Modal(document.getElementById('modalMedioPago'));
+                modalMedioPago.show();
+            }
+        });
     </script>
 </asp:Content>
