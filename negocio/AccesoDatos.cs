@@ -27,10 +27,13 @@ namespace negocio
             //"server=(localdb)\\MSSQLLocalDB; database=ADMIN_GASTOS_DB; integrated security=true"
 
             //CONEXION AILIN
-            "server=.\\SQLEXPRESS; database=ADMIN_GASTOS_DB; integrated security=true"
+            //"server=.\\sqlexpress; database=admin_gastos_db; integrated security=true"
 
             //CONEXION JOAKO
             //"server=localhost; database=ADMIN_GASTOS_DB; Persist Security Info=True; User ID= sa; Password=Contra993!"
+
+            //CONEXION JOHAN
+            "server=localhost; database=ADMIN_GASTOS_DB; Persist Security Info=True; User ID= sa; Password=Johann123"
             );
             comando = new SqlCommand();
         }
