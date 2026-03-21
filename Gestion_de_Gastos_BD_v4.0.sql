@@ -154,8 +154,8 @@ GO
 /* USUARIOS  */
 INSERT INTO USUARIO (Email, Password, Nombre, Apellido, FechaNac, ImagenURL, Estado)
 VALUES 
-('pe@email.com', '123', 'Pepin', 'O,', '2004-05-15', NULL, 1),
-('mi@email.com', '123', 'Mirin', 'Da', '1995-05-10', NULL, 1);
+('sa', '123', 'Pepin', 'O,', '2004-05-15', NULL, 1),
+('ma', '123', 'Mirin', 'Da', '1995-05-10', NULL, 1);
 GO
 
 /* HOGARES (Un hogar principal) */
