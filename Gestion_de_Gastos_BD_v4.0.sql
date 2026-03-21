@@ -151,6 +151,26 @@ GO
 
 /* ---------------- INSERTS ----------------- */
 
+/* USUARIOS  */
+INSERT INTO USUARIO (Email, Password, Nombre, Apellido, FechaNac, ImagenURL, Estado)
+VALUES 
+('pe@email.com', '123', 'Pepin', 'O,', '2004-05-15', NULL, 1),
+('mi@email.com', '123', 'Mirin', 'Da', '1995-05-10', NULL, 1);
+GO
+
+/* HOGARES (Un hogar principal) */
+INSERT INTO HOGAR (Nombre, IdUsuario, Estado)
+VALUES ('Casa Sur', 1, 1);
+GO
+
+/*  HOGAR_USUARIO*/
+/* Roles: 'Admin', 'Editor', 'Viewer' */
+INSERT INTO HOGAR_USUARIO (IdHogar, IdUsuario, Rol, Estado)
+VALUES 
+(1, 1, 'Admin', 1),
+(1, 2, 'Editor', 1);
+GO
+
 /* CATEGORÍAS (Tipos: 1 = Ingreso, 2 = Gasto) */
 INSERT INTO CATEGORIA (Nombre, Tipo, IdUsuario, IdHogar, Estado)
 VALUES 
