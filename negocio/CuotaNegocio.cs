@@ -179,5 +179,89 @@ namespace negocio
         }
 
         //MODIFICAR
+        public void ModificarCuota(Cuota cuota)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                if (cuota == null)
+                    throw new Exception("La cuota no existe o fue saldada.");
+
+                if (cuota.IdCuota <= 0)
+                    throw new Exception("La cuota debe tener un Id válido.");
+
+                if (cuota.Gasto == null || cuota.Gasto.IdGasto <= 0)
+                    throw new Exception("La cuota debe estar asociada a un gasto válido.");
+
+                if (cuota.NumeroCuota <= 0)
+                    throw new Exception("El número de cuota debe ser mayor a cero.");
+
+                if (cuota.Monto <= 0)
+                    throw new Exception("El monto debe ser mayor a cero.");
+
+                if (cuota.Vencimiento == DateTime.MinValue)
+                    throw new Exception("Debe ingresar un vencimiento válido.");
+
+                datos.setConsulta("UPDATE CUOTA SET IdGasto = @idGasto, NumeroCuota = @numeroCuota, Monto = @monto, Vencimiento = @vencimiento, Estado = @estado WHERE IdCuota = @idCuota");
+
+                datos.setParametro("@idCuota", cuota.IdCuota);
+                datos.setParametro("@idGasto", cuota.Gasto.IdGasto);
+                datos.setParametro("@numeroCuota", cuota.NumeroCuota);
+                datos.setParametro("@monto", cuota.Monto);
+                datos.setParametro("@vencimiento", cuota.Vencimiento);
+                datos.setParametro("@estado", cuota.Estado);
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        //EXISTE
+        public Cuota ExisteCuota(int idCuota)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta("SELECT IdCuota, IdGasto, NumeroCuota, Monto, Vencimiento, Estado FROM CUOTA WHERE IdCuota = @idCuota AND Estado = 1");
+                datos.setParametro("@idCuota", idCuota);
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    Cuota aux = new Cuota();
+
+                    aux.IdCuota = (int)datos.Lector["IdCuota"];
+
+                    aux.Gasto = new Gasto();
+                    aux.Gasto.IdGasto = (int)datos.Lector["IdGasto"];
+
+                    aux.NumeroCuota = (int)datos.Lector["NumeroCuota"];
+                    aux.Monto = (decimal)datos.Lector["Monto"];
+                    aux.Vencimiento = (DateTime)datos.Lector["Vencimiento"];
+                    aux.Estado = (bool)datos.Lector["Estado"];
+
+                    return aux;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }
