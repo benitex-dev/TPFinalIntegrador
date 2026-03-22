@@ -626,6 +626,7 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label fw-semibold">Moneda</label>
+                       
                         <asp:DropDownList ID="ddlMonedaGasto"
                                           runat="server"
                                           CssClass="form-select"
@@ -635,6 +636,7 @@
                             <asp:ListItem Text="EUR" Value="3"></asp:ListItem>
                             <asp:ListItem Text="BRL" Value="4"></asp:ListItem>
                         </asp:DropDownList>
+                    
                     </div>
 
                     <div class="col-md-4 mb-3">
@@ -706,29 +708,31 @@
     
     <script>
         function toggleCamposMonedaGasto() {
-            //capturamos los elementos del DOM que vamos a mostrar u ocultar
             const ddl = document.getElementById('<%= ddlMonedaGasto.ClientID %>');
             const campoMontoUSD = document.getElementById('campoMontoUSDGasto');
             const campoCotizacion = document.getElementById('campoCotizacionGasto');
             const txtMontoPesos = document.getElementById('<%= txtMontoPesosGasto.ClientID %>');
-            const txtMontoUSD = document.getElementById('<%= txtMontoUSDGasto.ClientID %>');
+        const txtMontoUSD = document.getElementById('<%= txtMontoUSDGasto.ClientID %>');
             const txtCotizacion = document.getElementById('<%= txtCotizacionGasto.ClientID %>');
 
-            if (ddl.value === "1") {//pesos argentinos
+            if (ddl.value === "1") {
+                // Pesos argentinos — ocultamos todo
                 campoMontoUSD.style.display = "none";
                 campoCotizacion.style.display = "none";
                 txtMontoPesos.disabled = false;
                 txtMontoUSD.value = '';
                 txtCotizacion.value = '';
-            } else {// Moneda extranjera
+            } else {
+                // Moneda extranjera — mostramos campos y traemos cotización
                 campoMontoUSD.style.display = "block";
                 campoCotizacion.style.display = "flex";
-
                 txtMontoPesos.value = '';
                 txtMontoPesos.disabled = true;
+
+                // Llamamos a la API automáticamente
+                buscarCotizacion(ddl.options[ddl.selectedIndex].text);
             }
         }
-
         function limpiarModalGasto() {
             document.getElementById('<%= txtDescripcionGasto.ClientID %>').value = '';
             document.getElementById('<%= txtFechaGasto.ClientID %>').value = '';
@@ -755,9 +759,7 @@
             const txtMontoPesos = document.getElementById('<%= txtMontoPesosGasto.ClientID %>');
             const ddl = document.getElementById('<%= ddlMonedaGasto.ClientID %>');
 
-            if (ddl.value === "1") {
-                return;
-            }
+            if (ddl.value === "1") return;
 
             const montoOriginal = parseFloat(txtMontoUSD.value.replace(',', '.'));
             const cotizacion = parseFloat(txtCotizacion.value.replace(',', '.'));
@@ -768,17 +770,41 @@
                 txtMontoPesos.value = '';
             }
         }
-    </script>
-   
-    <script>
-        
+
+
+        async function buscarCotizacion(moneda) {            
+            
+            const txtCotizacion = document.getElementById('<%= txtCotizacionGasto.ClientID %>');
+                
+            // Mostramos que está cargando
+            txtCotizacion.value = 'Cargando...';
+            txtCotizacion.disabled = true;
+
+            try {
+                //buscamos la cotización según la moneda seleccionada
+                const cotizacion = await obtenerCotizacion(moneda);
+                // Usamos el valor de VENTA
+                // .toFixed(2) devuelve un string redondeado a 2 decimales.
+                txtCotizacion.value = cotizacion.toFixed(2);
+            }
+            catch (error) {
+                txtCotizacion.value = '';
+                alert('No se pudo obtener la cotización. Ingresala manualmente.');
+            }
+            finally {
+                txtCotizacion.disabled = false;
+                // Recalculamos por si ya había monto cargado
+                calcularMontoPesosGasto();
+            }
+        }
+
         function limpiarModalIngreso() {
-        document.getElementById('<%= txtDescripcionIngreso.ClientID %>').value = '';
-        document.getElementById('<%= txtFechaIngreso.ClientID %>').value = '';
-        document.getElementById('<%= ddlCategoriaIngreso.ClientID %>').selectedIndex = 0;
-      <%-- // document.getElementById('<%= ddlMonedaIngreso.ClientID %>').selectedIndex = 0;--%>
-        document.getElementById('<%= txtMontoIngreso.ClientID %>').value = '';
-        let lbl = document.getElementById('<%= lblMensajeIngreso.ClientID %>');
+            document.getElementById('<%= txtDescripcionIngreso.ClientID %>').value = '';
+            document.getElementById('<%= txtFechaIngreso.ClientID %>').value = '';
+            document.getElementById('<%= ddlCategoriaIngreso.ClientID %>').selectedIndex = 0;
+  <%-- // document.getElementById('<%= ddlMonedaIngreso.ClientID %>').selectedIndex = 0;--%>
+            document.getElementById('<%= txtMontoIngreso.ClientID %>').value = '';
+            let lbl = document.getElementById('<%= lblMensajeIngreso.ClientID %>');
             lbl.innerText = '';
             lbl.className = '';
             if (document.getElementById('campoMontoUSDIngreso')) {
@@ -800,4 +826,6 @@
             }
         });
     </script>
+   
+   
 </asp:Content>
