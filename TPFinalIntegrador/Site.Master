@@ -37,6 +37,7 @@
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
 </head>
+<script src="/Scripts/cotizacion.js"></script>
 <body>
     <form runat="server">
         <asp:ScriptManager runat="server">
