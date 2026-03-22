@@ -86,9 +86,6 @@ namespace negocio
                 if (idMeta <= 0)
                     throw new Exception("Id de meta inválido.");
 
-                if (!ExisteMetaAhorro(idMeta))
-                    throw new Exception("La meta no existe o ya fue eliminada.");
-
                 datos.setConsulta("UPDATE META_AHORRO SET Estado = 0 WHERE IdMeta = @idMeta");
                 datos.setParametro("@idMeta", idMeta);
 
@@ -104,22 +101,179 @@ namespace negocio
             }
         }
         //MODIFICACION
-
-        //LISTA
-
-        //EXISTE
-        public bool ExisteMetaAhorro(int idMeta)
+        public void ModificarMeta(MetaAhorro meta)
         {
             AccesoDatos datos = new AccesoDatos();
 
             try
             {
-                datos.setConsulta("SELECT IdMeta FROM META_AHORRO WHERE IdMeta = @idMeta AND Estado = 1");
-                datos.setParametro("@idMeta", idMeta);
+                if (meta == null)
+                    throw new Exception("La meta no existe o ya fue eliminada.");
+
+                if (meta.IdMeta <= 0)
+                    throw new Exception("La meta debe tener un Id válido.");
+
+                if (string.IsNullOrWhiteSpace(meta.Nombre))
+                    throw new Exception("El nombre es obligatorio.");
+
+                if (meta.MontoObjetivo <= 0)
+                    throw new Exception("El monto debe ser mayor a cero.");
+
+                if (meta.FechaObjetivo == DateTime.MinValue)
+                    throw new Exception("Debe ingresar una fecha válida.");
+
+                if ((meta.Usuario == null || meta.Usuario.IdUsuario <= 0) &&
+                    (meta.Hogar == null || meta.Hogar.IdHogar <= 0))
+                    throw new Exception("Debe pertenecer a usuario o hogar.");
+
+                if ((meta.Usuario != null && meta.Usuario.IdUsuario > 0) &&
+                    (meta.Hogar != null && meta.Hogar.IdHogar > 0))
+                    throw new Exception("No puede pertenecer a ambos.");
+
+
+                datos.setConsulta("UPDATE META_AHORRO SET Nombre = @nombre, MontoObjetivo = @monto, FechaObjetivo = @fecha, IdUsuario = @idUsuario, IdHogar = @idHogar, Estado = @estado WHERE IdMeta = @idMeta");
+
+                datos.setParametro("@idMeta", meta.IdMeta);
+                datos.setParametro("@nombre", meta.Nombre.Trim());
+                datos.setParametro("@monto", meta.MontoObjetivo);
+                datos.setParametro("@fecha", meta.FechaObjetivo);
+
+                if (meta.Usuario != null && meta.Usuario.IdUsuario > 0)
+                    datos.setParametro("@idUsuario", meta.Usuario.IdUsuario);
+                else
+                    datos.setParametro("@idUsuario", DBNull.Value);
+
+                if (meta.Hogar != null && meta.Hogar.IdHogar > 0)
+                    datos.setParametro("@idHogar", meta.Hogar.IdHogar);
+                else
+                    datos.setParametro("@idHogar", DBNull.Value);
+
+                datos.setParametro("@estado", meta.Estado);
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+        //LISTA
+        public List<MetaAhorro> Listar(int idUsuario = 0, int idHogar = 0, string nombre = "", bool? estado = null)
+        {
+            List<MetaAhorro> lista = new List<MetaAhorro>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                string consulta = "SELECT IdMeta, Nombre, MontoObjetivo, FechaObjetivo, IdUsuario, IdHogar, Estado FROM META_AHORRO WHERE 1=1";
+
+                if (idUsuario > 0)
+                    consulta += " AND IdUsuario = @idUsuario";
+
+                if (idHogar > 0)
+                    consulta += " AND IdHogar = @idHogar";
+
+                if (!string.IsNullOrWhiteSpace(nombre))
+                    consulta += " AND Nombre LIKE @nombre";
+
+                if (estado != null)
+                    consulta += " AND Estado = @estado";
+
+                datos.setConsulta(consulta);
+
+                if (idUsuario > 0)
+                    datos.setParametro("@idUsuario", idUsuario);
+
+                if (idHogar > 0)
+                    datos.setParametro("@idHogar", idHogar);
+
+                if (!string.IsNullOrWhiteSpace(nombre))
+                    datos.setParametro("@nombre", "%" + nombre.Trim() + "%");
+
+                if (estado != null)
+                    datos.setParametro("@estado", estado.Value);
 
                 datos.ejecutarLectura();
 
-                return datos.Lector.Read();
+                while (datos.Lector.Read())
+                {
+                    MetaAhorro aux = new MetaAhorro();
+
+                    aux.IdMeta = (int)datos.Lector["IdMeta"];
+                    aux.Nombre = (string)datos.Lector["Nombre"];
+                    aux.MontoObjetivo = (decimal)datos.Lector["MontoObjetivo"];
+                    aux.FechaObjetivo = (DateTime)datos.Lector["FechaObjetivo"];
+                    aux.Estado = (bool)datos.Lector["Estado"];
+
+                    if (!(datos.Lector["IdUsuario"] is DBNull))
+                    {
+                        aux.Usuario = new Usuario();
+                        aux.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+                    }
+
+                    if (!(datos.Lector["IdHogar"] is DBNull))
+                    {
+                        aux.Hogar = new Hogar();
+                        aux.Hogar.IdHogar = (int)datos.Lector["IdHogar"];
+                    }
+
+                    lista.Add(aux);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+        //EXISTE
+        public MetaAhorro ExisteMetaAhorro(int idUsuario, string nombre)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta("SELECT IdMeta, Nombre, MontoObjetivo, FechaObjetivo, IdUsuario, IdHogar, Estado FROM META_AHORRO WHERE IdUsuario = @idUsuario AND Nombre = @nombre AND Estado = 1");
+                datos.setParametro("@idUsuario", idUsuario);
+                datos.setParametro("@nombre", nombre.Trim());
+
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    MetaAhorro aux = new MetaAhorro();
+
+                    aux.IdMeta = (int)datos.Lector["IdMeta"];
+                    aux.Nombre = (string)datos.Lector["Nombre"];
+                    aux.MontoObjetivo = (decimal)datos.Lector["MontoObjetivo"];
+                    aux.FechaObjetivo = (DateTime)datos.Lector["FechaObjetivo"];
+                    aux.Estado = (bool)datos.Lector["Estado"];
+
+                    if (!(datos.Lector["IdUsuario"] is DBNull))
+                    {
+                        aux.Usuario = new Usuario();
+                        aux.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+                    }
+
+                    if (!(datos.Lector["IdHogar"] is DBNull))
+                    {
+                        aux.Hogar = new Hogar();
+                        aux.Hogar.IdHogar = (int)datos.Lector["IdHogar"];
+                    }
+
+                    return aux;
+                }
+
+                return null;
             }
             catch (Exception ex)
             {

@@ -199,5 +199,56 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+
+        public void ModificarCategoria(Categoria categoria)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                if (categoria == null)
+                    throw new Exception("La categoría no puede ser nula.");
+
+                if (string.IsNullOrWhiteSpace(categoria.Nombre))
+                    throw new Exception("El nombre de la categoría es obligatorio.");
+
+                if (categoria.Usuario == null || categoria.Usuario.IdUsuario <= 0)
+                    throw new Exception("La categoría debe estar asociada a un usuario válido.");
+
+                // Validar que no exista otra categoría con el mismo nombre y tipo para el usuario (excepto la actual)
+                AccesoDatos datosCheck = new AccesoDatos();
+                try
+                {
+                    datosCheck.setConsulta("SELECT IdCategoria FROM CATEGORIA WHERE Nombre = @nombre AND IdUsuario = @idUsuario AND Tipo = @tipo AND Estado = 1 AND IdCategoria <> @idCategoria");
+                    datosCheck.setParametro("@nombre", categoria.Nombre.Trim());
+                    datosCheck.setParametro("@idUsuario", categoria.Usuario.IdUsuario);
+                    datosCheck.setParametro("@tipo", (int)categoria.Tipo);
+                    datosCheck.setParametro("@idCategoria", categoria.IdCategoria);
+                    datosCheck.ejecutarLectura();
+                    if (datosCheck.Lector.Read())
+                        throw new Exception("Ya existe una categoría con ese nombre para ese tipo.");
+                }
+                finally
+                {
+                    datosCheck.cerrarConexion();
+                }
+
+                datos.setConsulta("UPDATE CATEGORIA SET Nombre = @nombre, Tipo = @tipo, Estado = @estado WHERE IdCategoria = @idCategoria");
+                datos.setParametro("@nombre", categoria.Nombre.Trim());
+                datos.setParametro("@tipo", (int)categoria.Tipo);
+                datos.setParametro("@estado", categoria.Estado);
+                datos.setParametro("@idCategoria", categoria.IdCategoria);
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }
