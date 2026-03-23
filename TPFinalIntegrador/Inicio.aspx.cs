@@ -40,14 +40,11 @@ namespace TPFinalIntegrador
             {
                 if (string.IsNullOrWhiteSpace(txtNombreCategoria.Text))
                 {
-                    lblMensajeCategoria.Text = "Ingresá un nombre para la categoría.";
-                    lblMensajeCategoria.CssClass = "text-danger d-block text-center mt-3";
-
                     ScriptManager.RegisterStartupScript(
-                        this, this.GetType(),
-                        "mostrarModal",
-                        "var modal = new bootstrap.Modal(document.getElementById('modalCategoria')); modal.show();",
-                        true);
+                   this, this.GetType(),
+                   "ingresaNombre",
+                   "Swal.fire({icon: 'error', title: 'Error', text: 'Ingresá un nombre para la categoría.'});",
+                   true);
 
                     return;
                 }
@@ -64,8 +61,11 @@ namespace TPFinalIntegrador
                 CategoriaNegocio negocio = new CategoriaNegocio();
                 negocio.AgregarCategoria(categoria);
 
-                lblMensajeCategoria.Text = "Categoría guardada correctamente.";
-                lblMensajeCategoria.CssClass = "text-success d-block text-center mt-3";
+                ScriptManager.RegisterStartupScript(
+                   this, this.GetType(),
+                   "categoriaCreada",
+                   "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Categoría creada correctamente.'});",
+                   true);
 
                 LimpiarModalCategoria();
                 CargarCategoriasIngreso();
@@ -73,13 +73,10 @@ namespace TPFinalIntegrador
             }
             catch (Exception ex)
             {
-                lblMensajeCategoria.Text = ex.Message;
-                lblMensajeCategoria.CssClass = "text-danger d-block text-center mt-3";
-
                 ScriptManager.RegisterStartupScript(
                     this, this.GetType(),
-                    "mostrarModal",
-                    "var modal = new bootstrap.Modal(document.getElementById('modalCategoria')); modal.show();",
+                    "errorAlert",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});",
                     true);
             }
         }
@@ -140,27 +137,22 @@ namespace TPFinalIntegrador
                     string.IsNullOrWhiteSpace(txtFechaIngreso.Text) ||
                     string.IsNullOrWhiteSpace(txtMontoIngreso.Text))
                 {
-                    lblMensajeIngreso.Text = "Completá todos los campos obligatorios.";
-                    lblMensajeIngreso.CssClass = "text-danger d-block text-center mt-3";
-
                     ScriptManager.RegisterStartupScript(
-                        this, this.GetType(),
-                        "mostrarModalIngreso",
-                        "var modal = new bootstrap.Modal(document.getElementById('modalIngreso')); modal.show();",
-                        true);
+                       this, this.GetType(),
+                       "completaCampos",
+                       "Swal.fire({icon: 'error', title: 'Error', text: 'Completá todos los campos obligatorios.'});",
+                       true);
                     return;
                 }
 
                 if (ddlCategoriaIngreso.SelectedValue == "0")
                 {
-                    lblMensajeIngreso.Text = "Debés seleccionar una categoría.";
-                    lblMensajeIngreso.CssClass = "text-danger d-block text-center mt-3";
-
                     ScriptManager.RegisterStartupScript(
                         this, this.GetType(),
                         "mostrarModalIngreso",
-                        "var modal = new bootstrap.Modal(document.getElementById('modalIngreso')); modal.show();",
+                        "Swal.fire({icon: 'error', title: 'Error', text: 'Debés seleccionar una categoría.'});",
                         true);
+
                     return;
                 }
 
@@ -180,9 +172,6 @@ namespace TPFinalIntegrador
                 IngresoNegocio negocio = new IngresoNegocio();
                 negocio.AgregarIngreso(ingreso);
 
-                lblMensajeIngreso.Text = "Ingreso guardado correctamente.";
-                lblMensajeIngreso.CssClass = "text-success d-block text-center mt-3";
-
                 txtDescripcionIngreso.Text = "";
                 txtFechaIngreso.Text = "";
                 txtMontoIngreso.Text = "";
@@ -190,8 +179,8 @@ namespace TPFinalIntegrador
 
                 ScriptManager.RegisterStartupScript(
                     this, this.GetType(),
-                    "mostrarModalIngreso",
-                    "var modal = new bootstrap.Modal(document.getElementById('modalIngreso')); modal.show();",
+                    "ingresoCreado",
+                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Ingreso guardado correctamente.'});",
                     true);
 
                 CargarResumenIngresos(); //refresca los ingresos luego de agregar uno nuevo
@@ -202,13 +191,10 @@ namespace TPFinalIntegrador
             }
             catch (Exception ex)
             {
-                lblMensajeIngreso.Text = ex.Message;
-                lblMensajeIngreso.CssClass = "text-danger d-block text-center mt-3";
-
                 ScriptManager.RegisterStartupScript(
                     this, this.GetType(),
-                    "mostrarModalIngreso",
-                    "var modal = new bootstrap.Modal(document.getElementById('modalIngreso')); modal.show();",
+                    "error",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});",
                     true);
             }
         }
@@ -238,14 +224,12 @@ namespace TPFinalIntegrador
                 if (ddlTipoMedioPago.SelectedValue == "0" ||
                     string.IsNullOrWhiteSpace(txtDescripcionMedioPago.Text))
                 {
-                    lblMensajeMedioPago.Text = "Completá los campos obligatorios.";
-                    lblMensajeMedioPago.CssClass = "text-danger d-block text-center mt-3";
-
                     ScriptManager.RegisterStartupScript(
-                        this, this.GetType(),
-                        "mostrarModalMedioPago",
-                        "var modal = new bootstrap.Modal(document.getElementById('modalMedioPago')); modal.show(); toggleCamposCredito();",
-                        true);
+                       this, this.GetType(),
+                       "completarCampos",
+                       "Swal.fire({icon: 'error', title: 'Error', text: 'Completá los campos obligatorios.'});",
+                       true);
+
                     return;
                 }
 
@@ -256,14 +240,12 @@ namespace TPFinalIntegrador
                     if (string.IsNullOrWhiteSpace(txtDiaCierre.Text) ||
                         string.IsNullOrWhiteSpace(txtDiaVencimiento.Text))
                     {
-                        lblMensajeMedioPago.Text = "Para tarjeta de crédito debés completar día de cierre y vencimiento.";
-                        lblMensajeMedioPago.CssClass = "text-danger d-block text-center mt-3";
-
                         ScriptManager.RegisterStartupScript(
-                            this, this.GetType(),
-                            "mostrarModalMedioPago",
-                            "var modal = new bootstrap.Modal(document.getElementById('modalMedioPago')); modal.show(); toggleCamposCredito();",
-                            true);
+                           this, this.GetType(),
+                           "tarjetaError",
+                           "Swal.fire({icon: 'error', title: 'Error', text: 'Para tarjeta de crédito debés completar día de cierre y vencimiento.'});",
+                           true);
+
                         return;
                     }
                 }
@@ -285,9 +267,6 @@ namespace TPFinalIntegrador
                 MedioPagoNegocio negocio = new MedioPagoNegocio();
                 negocio.AgregarMedioPago(medioPago);
 
-                lblMensajeMedioPago.Text = "Medio de pago guardado correctamente.";
-                lblMensajeMedioPago.CssClass = "text-success d-block text-center mt-3";
-
                 txtDescripcionMedioPago.Text = "";
                 txtDiaCierre.Text = "";
                 txtDiaVencimiento.Text = "";
@@ -296,20 +275,17 @@ namespace TPFinalIntegrador
                 CargarMediosPago();
 
                 ScriptManager.RegisterStartupScript(
-                    this, this.GetType(),
-                    "mostrarModalMedioPago",
-                    "var modal = new bootstrap.Modal(document.getElementById('modalMedioPago')); modal.show(); document.getElementById('camposCredito').style.display='none';",
-                    true);
+                      this, this.GetType(),
+                      "medioDePagoIngresado",
+                      "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Medio de pago guardado correctamente.'});",
+                      true);
             }
             catch (Exception ex)
             {
-                lblMensajeMedioPago.Text = ex.Message;
-                lblMensajeMedioPago.CssClass = "text-danger d-block text-center mt-3";
-
                 ScriptManager.RegisterStartupScript(
                     this, this.GetType(),
-                    "mostrarModalMedioPago",
-                    "var modal = new bootstrap.Modal(document.getElementById('modalMedioPago')); modal.show(); toggleCamposCredito();",
+                    "error",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});",
                     true);
             }
         }
@@ -363,39 +339,30 @@ namespace TPFinalIntegrador
                     string.IsNullOrWhiteSpace(txtFechaGasto.Text) ||
                     string.IsNullOrWhiteSpace(txtMontoPesosGasto.Text))
                 {
-                    lblMensajeGasto.Text = "Completá los campos obligatorios.";
-                    lblMensajeGasto.CssClass = "text-danger d-block text-center mt-3";
-
                     ScriptManager.RegisterStartupScript(
                         this, this.GetType(),
-                        "mostrarModalGasto",
-                        "var modal = new bootstrap.Modal(document.getElementById('modalGasto')); modal.show();",
+                        "errorGastoCampos",
+                        "Swal.fire({icon: 'error', title: 'Error', text: 'Completá los campos obligatorios.'});",
                         true);
                     return;
                 }
 
                 if (ddlCategoriaGasto.SelectedValue == "0")
                 {
-                    lblMensajeGasto.Text = "Seleccioná una categoría.";
-                    lblMensajeGasto.CssClass = "text-danger d-block text-center mt-3";
-
                     ScriptManager.RegisterStartupScript(
                         this, this.GetType(),
-                        "mostrarModalGasto",
-                        "var modal = new bootstrap.Modal(document.getElementById('modalGasto')); modal.show();",
+                        "errorGastoCategoria",
+                        "Swal.fire({icon: 'error', title: 'Error', text: 'Seleccioná una categoría.'});",
                         true);
                     return;
                 }
 
                 if (ddlMedioPagoGasto.SelectedValue == "0")
                 {
-                    lblMensajeGasto.Text = "Seleccioná un medio de pago.";
-                    lblMensajeGasto.CssClass = "text-danger d-block text-center mt-3";
-
                     ScriptManager.RegisterStartupScript(
                         this, this.GetType(),
-                        "mostrarModalGasto",
-                        "var modal = new bootstrap.Modal(document.getElementById('modalGasto')); modal.show();",
+                        "errorGastoMedioPago",
+                        "Swal.fire({icon: 'error', title: 'Error', text: 'Seleccioná un medio de pago.'});",
                         true);
                     return;
                 }
@@ -425,13 +392,11 @@ namespace TPFinalIntegrador
                     gasto.MontoUSD = decimal.Parse(txtMontoUSDGasto.Text);
                     gasto.Cotizacion = decimal.Parse(txtCotizacionGasto.Text);
                 }
-                
+
                 GastoNegocio negocio = new GastoNegocio();
                 negocio.AgregarGasto(gasto);
 
-                lblMensajeGasto.Text = "Gasto guardado correctamente.";
-                lblMensajeGasto.CssClass = "text-success d-block text-center mt-3";
-
+                // Limpiar campos
                 txtDescripcionGasto.Text = "";
                 txtFechaGasto.Text = "";
                 txtMontoPesosGasto.Text = "";
@@ -447,19 +412,16 @@ namespace TPFinalIntegrador
 
                 ScriptManager.RegisterStartupScript(
                     this, this.GetType(),
-                    "mostrarModalGasto",
-                    "var modal = new bootstrap.Modal(document.getElementById('modalGasto')); modal.show();",
+                    "okGasto",
+                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Gasto guardado correctamente.'});",
                     true);
             }
             catch (Exception ex)
             {
-                lblMensajeGasto.Text = ex.Message;
-                lblMensajeGasto.CssClass = "text-danger d-block text-center mt-3";
-
                 ScriptManager.RegisterStartupScript(
                     this, this.GetType(),
-                    "mostrarModalGasto",
-                    "var modal = new bootstrap.Modal(document.getElementById('modalGasto')); modal.show();",
+                    "error",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});",
                     true);
             }
         }

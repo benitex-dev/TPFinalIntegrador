@@ -69,11 +69,13 @@ namespace TPFinalIntegrador
                     negocio.ModificarCategoria(categoria);
                     gvCategorias.EditIndex = -1;
                     CargarCategorias();
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "okCategoria", "alert('Categoría modificada correctamente.');", true);
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "okCategoria",
+                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Categoría modificada correctamente.'});", true);
                 }
                 catch (Exception ex)
                 {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "errorCategoria", $"alert('{ex.Message.Replace("'", "\\'")}');", true);
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "errorCategoria",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
                 }
             }
         }
