@@ -61,7 +61,7 @@ namespace TPFinalIntegrador
 
                 Response.Redirect("Login.aspx", false);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 lblMensaje.CssClass = "text-danger d-block text-center mt-4 fw-semibold";
                 lblMensaje.Text = "No se pudo crear el usuario.";
