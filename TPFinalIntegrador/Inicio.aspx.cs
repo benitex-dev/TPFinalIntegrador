@@ -11,6 +11,7 @@ namespace TPFinalIntegrador
 {
     public partial class Inicio : System.Web.UI.Page
     {
+
         protected void Page_Load(object sender, EventArgs e)
         {
         
@@ -333,6 +334,7 @@ namespace TPFinalIntegrador
 
         protected void btnGuardarGasto_Click(object sender, EventArgs e)
         {
+          
             try
             {
                 if (string.IsNullOrWhiteSpace(txtDescripcionGasto.Text) ||
@@ -373,7 +375,7 @@ namespace TPFinalIntegrador
 
                 gasto.Descripcion = txtDescripcionGasto.Text.Trim();
                 gasto.Fecha = DateTime.Parse(txtFechaGasto.Text);
-                gasto.MontoPesos = decimal.Parse(txtMontoPesosGasto.Text);
+                gasto.MontoPesos = decimal.Parse(txtMontoPesosGasto.Text.Trim(),System.Globalization.CultureInfo.InvariantCulture);
 
                 gasto.Moneda = (Moneda)int.Parse(ddlMonedaGasto.SelectedValue);
 
@@ -389,8 +391,8 @@ namespace TPFinalIntegrador
 
                 if (gasto.Moneda != Moneda.ARS)
                 {
-                    gasto.MontoUSD = decimal.Parse(txtMontoUSDGasto.Text);
-                    gasto.Cotizacion = decimal.Parse(txtCotizacionGasto.Text);
+                    gasto.MontoUSD = decimal.Parse(txtMontoUSDGasto.Text.Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                    gasto.Cotizacion = decimal.Parse(txtCotizacionGasto.Text.Trim(), System.Globalization.CultureInfo.InvariantCulture);
                 }
 
                 GastoNegocio negocio = new GastoNegocio();
