@@ -27,6 +27,30 @@ namespace TPFinalIntegrador
             if (usuarioLogueado != null)
             {
                 Session["usuario"] = usuarioLogueado;
+
+                /*--------------ENVIO DE MAIL----------------------*/
+                string rutaPlantillas = Server.MapPath("~/Template");
+
+                var reemplazos = new Dictionary<string, string>()
+                {
+                    { "NOMBRE_USUARIO", usuarioLogueado.Nombre },
+                    { "EMAIL", usuarioLogueado.Email },
+                    { "FECHA_HORA", DateTime.Now.ToString("dd/MM/yyyy HH:mm") }
+                };
+
+                EmailService servicio = new EmailService();
+
+                servicio.armarCorreo(
+                    usuarioLogueado.Email,
+                    "Nuevo inicio de sesión detectado",
+                    reemplazos,
+                    TipoCorreo.IniciodeSesion,
+                    Server.MapPath("~/Template")
+                );
+
+                servicio.enviarCorreo();
+                /*---------------------------------------------------------------*/
+
                 Response.Redirect("Inicio.aspx", false);
             }
             else
