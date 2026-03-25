@@ -28,7 +28,7 @@ namespace negocio
         public void armarCorreo(string destino, string asunto, Dictionary<string, string> reemplazos, TipoCorreo tipo, string rutaBasePlantillas)
         {
             email = new MailMessage();
-            email.From = new MailAddress("gestiondegastos@grupo5.com", "Gestion de turnos");
+            email.From = new MailAddress("gestiondegastos@grupo5.com", "Gestion de gastos");
             email.To.Add(destino);
             email.Subject = asunto;
             email.IsBodyHtml = true;
