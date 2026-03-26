@@ -804,8 +804,9 @@
                 // Moneda extranjera — mostramos campos y traemos cotización
                 campoMontoUSD.style.display = "block";
                 campoCotizacion.style.display = "flex";
+                txtMontoPesos.readOnly = true;
                 txtMontoPesos.value = '';
-                txtMontoPesos.disabled = true;
+                
 
                 // Llamamos a la API automáticamente
                 buscarCotizacion(ddl.options[ddl.selectedIndex].text);

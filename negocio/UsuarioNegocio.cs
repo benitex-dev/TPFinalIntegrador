@@ -102,7 +102,8 @@ namespace negocio
 
             try
             {
-                datos.setConsulta("INSERT INTO USUARIO (Email, Password, Nombre, Apellido, FechaNac, ImagenURL, Estado) VALUES (@email, @password, @nombre, @apellido, @fechaNac, @imagenURL, @estado)");
+                datos.iniciarTransaccion();
+                datos.setConsulta(@"INSERT INTO USUARIO (Email, Password, Nombre, Apellido, FechaNac, ImagenURL, Estado) VALUES (@email, @password, @nombre, @apellido, @fechaNac, @imagenURL, @estado); SELECT SCOPE_IDENTITY();");
                 datos.setParametro("@email", nuevo.Email);
                 datos.setParametro("@password", nuevo.Password);
                 datos.setParametro("@nombre", nuevo.Nombre);
@@ -111,10 +112,24 @@ namespace negocio
                 datos.setParametro("@imagenURL", string.IsNullOrEmpty(nuevo.ImagenURL) ? (object)DBNull.Value : nuevo.ImagenURL);
                 datos.setParametro("@estado", nuevo.Estado);
 
+                //Se ejecuta el insert y se guarda al ID en la variable
+                int idNuevoUsuario = datos.ejecutarEscalar();
+                datos.limpiarParametros();
+
+                datos.setConsulta("INSERT INTO CATEGORIA(Nombre, Tipo, IdUsuario, IdHogar, Estado) VALUES ('Sueldo', 1, @idUsuarioNuevo, NULL, 1), ('Negocios/Ventas', 1, @idUsuarioNuevo, NULL, 1), ('Supermercado', 2, @idUsuarioNuevo, NULL, 1), ('Vehículo', 2, @idUsuarioNuevo, NULL, 1), ('Entretenimiento', 2, @idUsuarioNuevo, NULL, 1), ('Música e Instrumentos', 2, @idUsuarioNuevo, NULL, 1), ('Inversiones', 2, @idUsuarioNuevo, NULL, 1), ('Tecnología', 2, @idUsuarioNuevo, NULL, 1);");
+                datos.setParametro("@idUsuarioNuevo", idNuevoUsuario);
                 datos.ejecutarAccion();
+                datos.limpiarParametros();
+
+                datos.setConsulta("INSERT INTO MEDIOPAGO (Tipo, Descripcion, DiaCierre, DiaVencimiento, IdUsuario, IdHogar, Estado)\r\nVALUES \r\n(1, 'Efectivo', NULL, NULL, @idUsuarioNuevo, NULL, 1),\r\n(2, 'Mercado Pago', NULL, NULL, @idUsuarioNuevo, NULL, 1),\r\n(3, 'Tarjeta Visa Banco Patagonia', 25, 5, @idUsuarioNuevo, NULL, 1);");
+                datos.setParametro("@idUsuarioNuevo", idNuevoUsuario);
+                datos.ejecutarAccion();
+
+                datos.confirmarTransaccion();
             }
             catch (Exception ex)
             {
+                datos.cancelarTransaccion();
                 throw ex;
             }
             finally
@@ -173,6 +188,53 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+        public void ResetPass(Usuario usuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.setConsulta("UPDATE Usuario set password = @pass  where IdUsuario = @id");
+                datos.setParametro("@pass", usuario.Password);
+                datos.setParametro("@id", usuario.IdUsuario);
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+        public Usuario buscarMail(string email)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            Usuario usuario = new Usuario();
+            try
+            {
+                if (email != "")
+                {
+                    datos.setConsulta("select IdUsuario from usuario where email = @email");
+                    datos.setParametro("@email", email);
+                    datos.ejecutarLectura();
+                    datos.Lector.Read();
+                    usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+                    usuario.Email = email;
+
+                    return usuario;
+                }
+
+                return usuario;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally { datos.cerrarConexion(); }
+        }
+
     }
 }
 

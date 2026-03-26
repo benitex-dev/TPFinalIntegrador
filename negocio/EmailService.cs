@@ -4,12 +4,12 @@ using System.IO;
 using System.Net;
 using System.Net.Mail;
 
-namespace Negocio
+namespace negocio
 {
     public enum TipoCorreo
     {
-        //ACA VAN LOS NOMBRES DE LAS PLANTILLAS HTML 
-        //PARA LUEGO USARLO EN EL ENVIO AUTOMATICO
+        IniciodeSesion=0,
+        ResetPassword = 1
     }
 
     public class EmailService
@@ -20,27 +20,16 @@ namespace Negocio
         public EmailService() // GMAIL
         {
             server = new SmtpClient();
-            server.Credentials = new NetworkCredential("clinicamedicameraki@gmail.com", "yfsyxonjlbamovxg");
+            server.Credentials = new NetworkCredential("gestiondegastos.g5@gmail.com", "uvgjjqwtkjankdgm");
             server.EnableSsl = true;
             server.Port = 587;
             server.Host = "smtp.gmail.com";
         }
 
-        /*
-        public EmailService() // MAILTRAP
-        {
-            server = new SmtpClient("sandbox.smtp.mailtrap.io", 2525);
-            server.Credentials = new NetworkCredential("f8e02177848b48", "acbac658d54cae");
-            server.EnableSsl = true;
-            server.Port = 587;
-            server.Host = "sandbox.smtp.mailtrap.io";
-        }
-        */
-
         public void armarCorreo(string destino, string asunto, Dictionary<string, string> reemplazos, TipoCorreo tipo, string rutaBasePlantillas)
         {
             email = new MailMessage();
-            email.From = new MailAddress("gestiondeturnos@clinica.com", "Clínica Médica Meraki");
+            email.From = new MailAddress("gestiondegastos@grupo5.com", "Gestion de gastos");
             email.To.Add(destino);
             email.Subject = asunto;
             email.IsBodyHtml = true;

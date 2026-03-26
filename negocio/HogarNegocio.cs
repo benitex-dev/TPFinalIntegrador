@@ -26,11 +26,19 @@ namespace negocio
                     throw new Exception("El hogar debe estar asociado a un usuario.");
 
                 datos.setConsulta("INSERT INTO HOGAR (Nombre, IdUsuario, Estado) " +
-                                  "VALUES (@nombre, @idUsuario, @estado)");
+                                  "VALUES (@nombre, @idUsuario, @estado) SELECT SCOPE_IDENTITY();");
 
                 datos.setParametro("@nombre", nuevo.Nombre.Trim());
                 datos.setParametro("@idUsuario", nuevo.Usuario.IdUsuario);
                 datos.setParametro("@estado", nuevo.Estado);
+
+                int idNuevoHogar = datos.ejecutarEscalar();
+
+                datos.limpiarParametros();
+
+                datos.setConsulta("INSERT INTO HOGAR_USUARIO (IdHogar, IdUsuario, Rol, Estado) VALUES (@idNuevoHogar, @idUsuario, 'ADMIN', 1)");
+                datos.setParametro("@idNuevoHogar", idNuevoHogar);
+                datos.setParametro("@idUsuario", nuevo.Usuario.IdUsuario);
 
                 datos.ejecutarAccion();
             }
