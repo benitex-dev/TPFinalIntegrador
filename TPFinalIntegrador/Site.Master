@@ -75,7 +75,39 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav mx-auto">
-                        <li class="nav-item"><a class="nav-link px-3" href="CrearHogar.aspx">Crear Hogar</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle px-3" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Hogar
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarCategorias">
+                                <li class="nav-item">
+                                    <a class="dropdown-item" href="CrearHogar.aspx">Crear Hogar</a>
+                                </li>
+
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <h6 class="dropdown-header px-3 text-muted">Cambiar de vista:</h6>
+                                </li>
+                                <li>
+                                    <asp:LinkButton ID="btnVistaPersonal" runat="server" CssClass="dropdown-item fw-semibold" OnClick="btnVistaPersonal_Click">
+                <i class="bi bi-wallet2 me-2"></i>Billetera Personal
+                                    </asp:LinkButton>
+                                </li>
+                                <asp:Repeater ID="rptHogares" runat="server" OnItemCommand="rptHogares_ItemCommand" OnItemDataBound="rptHogares_ItemDataBound">
+                                    <ItemTemplate>
+                                        <li>
+                                            <asp:LinkButton ID="btnHogar" runat="server" CssClass="dropdown-item"
+                                                CommandName="SeleccionarHogar"
+                                                CommandArgument='<%# Eval("IdHogar") %>'>
+                        <i class="bi bi-house me-2"></i><%# Eval("Nombre") %>
+                                            </asp:LinkButton>
+                                        </li>
+                                    </ItemTemplate>
+                                </asp:Repeater>
+                            </ul>
+                        </li>
+                        
                         <li class="nav-item"><a class="nav-link px-3" href="#trust">Seguridad</a></li>
                         <li class="nav-item"><a class="nav-link px-3" href="#">Precios</a></li>
                         <li class="nav-item dropdown">
