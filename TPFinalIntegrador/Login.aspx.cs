@@ -31,11 +31,20 @@ namespace TPFinalIntegrador
                 /*--------------ENVIO DE MAIL----------------------*/
                 string rutaPlantillas = Server.MapPath("~/Template");
 
+                string ip = Request.UserHostAddress;
+
+                if (!string.IsNullOrEmpty(Request.ServerVariables["HTTP_X_FORWARDED_FOR"]))
+                    ip = Request.ServerVariables["HTTP_X_FORWARDED_FOR"].Split(',')[0].Trim();
+
+                string ubicacion = GeoHelper.ObtenerUbicacion(ip);
+
                 var reemplazos = new Dictionary<string, string>()
                 {
                     { "NOMBRE_USUARIO", usuarioLogueado.Nombre },
                     { "EMAIL", usuarioLogueado.Email },
-                    { "FECHA_HORA", DateTime.Now.ToString("dd/MM/yyyy HH:mm") }
+                    { "FECHA_HORA", DateTime.Now.ToString("dd/MM/yyyy HH:mm") },
+                    { "IP", ip },
+                    { "UBICACION", ubicacion }
                 };
 
                 EmailService servicio = new EmailService();

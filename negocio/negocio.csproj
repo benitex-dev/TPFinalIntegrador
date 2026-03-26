@@ -47,6 +47,7 @@
     <Compile Include="DeudaNegocio.cs" />
     <Compile Include="EmailService.cs" />
     <Compile Include="GastoNegocio.cs" />
+    <Compile Include="GeoHelper.cs" />
     <Compile Include="HogarNegocio.cs" />
     <Compile Include="HogarUsuarioNegocio.cs" />
     <Compile Include="IngresoNegocio.cs" />
