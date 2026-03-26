@@ -326,6 +326,84 @@
             </div>
         </div>
 
+        <asp:UpdatePanel ID="upReportes" runat="server">
+            <ContentTemplate>
+                <asp:Panel ID="pnlReportes" runat="server" Visible="false">
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <div class="panel-card p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h3 class="section-title mb-0">Reporte de ingresos por mes</h3>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <div class="me-2">
+                                            <label class="form-label mb-0 small">Mes</label>
+                                            <asp:DropDownList ID="ddlMesIngresos" runat="server" CssClass="form-select"></asp:DropDownList>
+                                        </div>
+                                        <div class="me-2">
+                                            <label class="form-label mb-0 small">Año</label>
+                                            <asp:DropDownList ID="ddlAnioIngresos" runat="server" CssClass="form-select"></asp:DropDownList>
+                                        </div>
+                                        <div class="align-self-end">
+                                            <asp:Button ID="btnMostrarIngresos" runat="server" Text="Mostrar" CssClass="btn btn-primary" OnClick="btnMostrarIngresos_Click" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive mt-3">
+                                    <asp:GridView ID="gvIngresosMes" runat="server" AutoGenerateColumns="False" CssClass="table table-striped"
+                                        EmptyDataText="No hay ingresos para el mes seleccionado.">
+                                        <Columns>
+                                            <asp:BoundField DataField="Fecha" HeaderText="Fecha" DataFormatString="{0:dd/MM/yyyy}" />
+                                            <asp:BoundField DataField="Descripcion" HeaderText="Descripción" />
+                                            <asp:BoundField DataField="Categoria.Nombre" HeaderText="Categoría" />
+                                            <asp:BoundField DataField="Monto" HeaderText="Monto" DataFormatString="{0:C2}" HtmlEncode="false" />
+                                        </Columns>
+                                    </asp:GridView>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bloque reporte de gastos -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <div class="panel-card p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h3 class="section-title mb-0">Reporte de gastos por mes</h3>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <div class="me-2">
+                                            <label class="form-label mb-0 small">Mes</label>
+                                            <asp:DropDownList ID="ddlMesGastos" runat="server" CssClass="form-select"></asp:DropDownList>
+                                        </div>
+                                        <div class="me-2">
+                                            <label class="form-label mb-0 small">Año</label>
+                                            <asp:DropDownList ID="ddlAnioGastos" runat="server" CssClass="form-select"></asp:DropDownList>
+                                        </div>
+                                        <div class="align-self-end">
+                                            <asp:Button ID="btnMostrarGastos" runat="server" Text="Mostrar" CssClass="btn btn-primary" OnClick="btnMostrarGastos_Click" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive mt-3">
+                                    <asp:GridView ID="gvGastosMes" runat="server" AutoGenerateColumns="False" CssClass="table table-striped"
+                                        EmptyDataText="No hay gastos para el mes seleccionado.">
+                                        <Columns>
+                                            <asp:BoundField DataField="Fecha" HeaderText="Fecha" DataFormatString="{0:dd/MM/yyyy}" />
+                                            <asp:BoundField DataField="Descripcion" HeaderText="Descripción" />
+                                            <asp:BoundField DataField="Categoria" HeaderText="Categoría" />
+                                            <asp:BoundField DataField="MedioPago" HeaderText="Medio de pago" />
+                                            <asp:BoundField DataField="Monto" HeaderText="Monto (ARS)" DataFormatString="{0:C2}" />
+                                        </Columns>
+                                    </asp:GridView>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </asp:Panel>
+            </ContentTemplate>
+        </asp:UpdatePanel>
+
         <div class="row g-4">
             <div class="col-xl-8">
                 <div class="table-card">
@@ -422,7 +500,7 @@
                                 </div>
                             </a>
 
-                            <a href="#" class="quick-link">
+                            <asp:LinkButton ID="lnkVerMetricas" runat="server" CssClass="quick-link text-decoration-none" OnClick="lnkVerMetricas_Click">
                                 <div class="quick-item">
                                     <div class="quick-icon">
                                         <span class="material-symbols-outlined">monitoring</span>
@@ -430,7 +508,7 @@
                                     <div class="fw-bold mb-1">Ver métricas</div>
                                     <div class="text-muted small">Consultá gráficos y reportes</div>
                                 </div>
-                            </a>
+                            </asp:LinkButton>
                         </div>
                     </div>
 

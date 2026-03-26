@@ -32,6 +32,7 @@ namespace TPFinalIntegrador
                 CargarMediosPago();
                 CargarMovimientosDelMes();
                 CargarSaldoMes();
+                pnlReportes.Visible = false;
             }
         }
 
@@ -521,6 +522,125 @@ namespace TPFinalIntegrador
             }
         }
 
+        private void CargarMesesAnios()
+        {
+            // Meses
+            ddlMesIngresos.Items.Clear();
+            ddlMesGastos.Items.Clear();
+            var meses = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames;
+            for (int i = 0; i < 12; i++)
+            {
+                string nombre = meses[i];
+                ddlMesIngresos.Items.Add(new ListItem(nombre, (i + 1).ToString()));
+                ddlMesGastos.Items.Add(new ListItem(nombre, (i + 1).ToString()));
+            }
+
+            // Años: últimos 5 años hasta el año actual
+            ddlAnioIngresos.Items.Clear();
+            ddlAnioGastos.Items.Clear();
+            int anioActual = DateTime.Now.Year;
+            for (int y = anioActual; y >= anioActual - 5; y--)
+            {
+                ddlAnioIngresos.Items.Add(new ListItem(y.ToString(), y.ToString()));
+                ddlAnioGastos.Items.Add(new ListItem(y.ToString(), y.ToString()));
+            }
+        }
+
+        private void CargarIngresosPorMes(int mes, int anio)
+        {
+            try
+            {
+                Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                IngresoNegocio ingresoNegocio = new IngresoNegocio();
+                var lista = ingresoNegocio.ListarPorUsuarioPorMes(usuarioLogueado.IdUsuario, mes, anio);
+
+                gvIngresosMes.DataSource = lista;
+                gvIngresosMes.DataBind();
+            }
+            catch (Exception ex)
+            {
+                // Registrar alerta en caso de error
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "errorIngresos",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+            }
+        }
+
+        protected void btnMostrarIngresos_Click(object sender, EventArgs e)
+        {
+            int mes = 0;
+            int anio = 0;
+
+            if (!int.TryParse(ddlMesIngresos.SelectedValue, out mes))
+                mes = DateTime.Now.Month;
+
+            if (!int.TryParse(ddlAnioIngresos.SelectedValue, out anio))
+                anio = DateTime.Now.Year;
+
+            CargarIngresosPorMes(mes, anio);
+        }
+
+        private void CargarGastosPorMes(int mes, int anio)
+        {
+            try
+            {
+                Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                negocio.GastoNegocio gastoNegocio = new negocio.GastoNegocio();
+                var lista = gastoNegocio.ListarPorUsuarioPorMes(usuarioLogueado.IdUsuario, mes, anio);
+
+                // Proyectar a objeto plano para evitar problemas de binding con propiedades anidadas
+                var datos = lista.Select(g => new
+                {
+                    Fecha = g.Fecha,
+                    Descripcion = g.Descripcion,
+                    Categoria = g.Categoria != null ? g.Categoria.Nombre : "",
+                    MedioPago = g.MedioDePago != null ? g.MedioDePago.Descripcion : "",
+                    Monto = g.MontoPesos
+                }).ToList();
+
+                gvGastosMes.DataSource = datos;
+                gvGastosMes.DataBind();
+            }
+            catch (Exception ex)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "errorGastos",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+            }
+        }
+
+        protected void btnMostrarGastos_Click(object sender, EventArgs e)
+        {
+            int mes = 0;
+            int anio = 0;
+
+            if (!int.TryParse(ddlMesGastos.SelectedValue, out mes))
+                mes = DateTime.Now.Month;
+
+            if (!int.TryParse(ddlAnioGastos.SelectedValue, out anio))
+                anio = DateTime.Now.Year;
+
+            CargarGastosPorMes(mes, anio);
+        }
+
+        protected void lnkVerMetricas_Click(object sender, EventArgs e)
+        {
+            // Mostrar el panel de reportes y cargar datos iniciales (mes corriente)
+            pnlReportes.Visible = true;
+
+            CargarMesesAnios();
+            // Ingresos
+            ddlMesIngresos.SelectedValue = DateTime.Now.Month.ToString();
+            ddlAnioIngresos.SelectedValue = DateTime.Now.Year.ToString();
+            CargarIngresosPorMes(DateTime.Now.Month, DateTime.Now.Year);
+
+            // Gastos
+            ddlMesGastos.SelectedValue = DateTime.Now.Month.ToString();
+            ddlAnioGastos.SelectedValue = DateTime.Now.Year.ToString();
+            CargarGastosPorMes(DateTime.Now.Month, DateTime.Now.Year);
+
+            // Hacer scroll suave hacia el contenedor de reportes
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "scrollReportes",
+                $"document.getElementById('{pnlReportes.ClientID}').scrollIntoView({{behavior:'smooth'}});", true);
+        }
 
     }
 }
