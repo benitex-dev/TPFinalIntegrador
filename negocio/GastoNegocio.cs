@@ -254,6 +254,72 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+        public List<Gasto> ListarPorUsuarioPorMes(int idUsuario, int mes, int anio)
+        {
+            List<Gasto> lista = new List<Gasto>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta(
+                    "SELECT G.IdGasto, G.Descripcion, G.Fecha, G.MontoPesos, G.MontoUSD, G.Cotizacion, G.Moneda, " +
+                    "G.IdCategoria, G.IdMedioPago, G.IdUsuario, G.Estado, C.Nombre AS NombreCategoria, M.Descripcion AS MedioPagoDescripcion " +
+                    "FROM GASTO G " +
+                    "INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria " +
+                    "LEFT JOIN MEDIOPAGO M ON G.IdMedioPago = M.IdMedioPago " +
+                    "WHERE G.IdUsuario = @idUsuario AND G.Estado = 1 AND MONTH(G.Fecha) = @mes AND YEAR(G.Fecha) = @anio");
+
+                datos.setParametro("@idUsuario", idUsuario);
+                datos.setParametro("@mes", mes);
+                datos.setParametro("@anio", anio);
+
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Gasto gasto = new Gasto();
+
+                    gasto.IdGasto = (int)datos.Lector["IdGasto"];
+                    gasto.Descripcion = (string)datos.Lector["Descripcion"];
+                    gasto.Fecha = (DateTime)datos.Lector["Fecha"];
+                    gasto.MontoPesos = datos.Lector["MontoPesos"] != DBNull.Value ? (decimal)datos.Lector["MontoPesos"] : 0m;
+
+                    if (datos.Lector["MontoUSD"] != DBNull.Value)
+                        gasto.MontoUSD = (decimal)datos.Lector["MontoUSD"];
+
+                    if (datos.Lector["Cotizacion"] != DBNull.Value)
+                        gasto.Cotizacion = (decimal)datos.Lector["Cotizacion"];
+
+                    gasto.Moneda = (Moneda)Convert.ToInt32(datos.Lector["Moneda"]);
+                    gasto.Estado = (bool)datos.Lector["Estado"];
+
+                    gasto.Usuario = new Usuario();
+                    gasto.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+
+                    gasto.Categoria = new Categoria();
+                    gasto.Categoria.IdCategoria = (int)datos.Lector["IdCategoria"];
+                    gasto.Categoria.Nombre = (string)datos.Lector["NombreCategoria"];
+
+                    gasto.MedioDePago = new MedioPago();
+                    if (datos.Lector["IdMedioPago"] != DBNull.Value)
+                        gasto.MedioDePago.IdMedioPago = (int)datos.Lector["IdMedioPago"];
+                    gasto.MedioDePago.Descripcion = datos.Lector["MedioPagoDescripcion"] != DBNull.Value
+                        ? (string)datos.Lector["MedioPagoDescripcion"] : null;
+
+                    lista.Add(gasto);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }
 
