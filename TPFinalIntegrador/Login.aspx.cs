@@ -45,7 +45,7 @@ namespace TPFinalIntegrador
                     "Nuevo inicio de sesión detectado",
                     reemplazos,
                     TipoCorreo.IniciodeSesion,
-                    Server.MapPath("~/Template")
+                    rutaPlantillas
                 );
 
                 servicio.enviarCorreo();

@@ -54,6 +54,7 @@
     <Compile Include="MetaAhorroNegocio.cs" />
     <Compile Include="MovimientoNegocio.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security.cs" />
     <Compile Include="UsuarioNegocio.cs" />
   </ItemGroup>
   <ItemGroup>

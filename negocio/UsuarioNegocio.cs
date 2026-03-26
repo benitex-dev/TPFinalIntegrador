@@ -188,6 +188,52 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+        public void ResetPass(Usuario usuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.setConsulta("UPDATE Usuario set password = @pass  where IdUsuario = @id");
+                datos.setParametro("@pass", usuario.Password);
+                datos.setParametro("@id", usuario.IdUsuario);
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+        public Usuario buscarMail(string email)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            Usuario usuario = new Usuario();
+            try
+            {
+                if (email != "")
+                {
+                    datos.setConsulta("select IdUsuario from usuario where email = @email");
+                    datos.setParametro("@email", email);
+                    datos.ejecutarLectura();
+                    datos.Lector.Read();
+                    usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+                    usuario.Email = email;
+
+                    return usuario;
+                }
+
+                return usuario;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally { datos.cerrarConexion(); }
+        }
 
     }
 }

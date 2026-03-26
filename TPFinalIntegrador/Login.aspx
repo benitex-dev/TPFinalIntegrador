@@ -73,7 +73,7 @@
                 <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="Ingresá tu contraseña"></asp:TextBox>
             </div>
             <div class="mt-2">
-                <a href="RecuperarPassword.aspx" class="text-decoration-none small">¿Olvidaste tu contraseña?</a>
+                <a href="RecuperarContrasenia.aspx" class="text-decoration-none small">¿Olvidaste tu contraseña?</a>
             </div>
             <div class="d-grid mt-4">
                 <asp:Button ID="btnIngresar" runat="server" Text="Ingresar" CssClass="btn btn-primary btn-login" OnClick="btnIngresar_Click" />

@@ -8,7 +8,8 @@ namespace negocio
 {
     public enum TipoCorreo
     {
-        IniciodeSesion
+        IniciodeSesion=0,
+        ResetPassword = 1
     }
 
     public class EmailService
