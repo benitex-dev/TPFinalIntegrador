@@ -22,14 +22,14 @@ namespace negocio
                 if (string.IsNullOrWhiteSpace(nuevo.Nombre))
                     throw new Exception("El nombre del hogar es obligatorio.");
 
-                if (nuevo.Usuario == null || nuevo.Usuario.IdUsuario <= 0)
-                    throw new Exception("El hogar debe estar asociado a un usuario.");
+                /*if (nuevo.Usuario == null || nuevo.Usuario.IdUsuario <= 0)
+                    throw new Exception("El hogar debe estar asociado a un usuario.");*/
 
                 datos.setConsulta("INSERT INTO HOGAR (Nombre, IdUsuario, Estado) " +
                                   "VALUES (@nombre, @idUsuario, @estado) SELECT SCOPE_IDENTITY();");
 
                 datos.setParametro("@nombre", nuevo.Nombre.Trim());
-                datos.setParametro("@idUsuario", nuevo.Usuario.IdUsuario);
+                //datos.setParametro("@idUsuario", nuevo.Usuario.IdUsuario);
                 datos.setParametro("@estado", nuevo.Estado);
 
                 int idNuevoHogar = datos.ejecutarEscalar();
@@ -38,7 +38,7 @@ namespace negocio
 
                 datos.setConsulta("INSERT INTO HOGAR_USUARIO (IdHogar, IdUsuario, Rol, Estado) VALUES (@idNuevoHogar, @idUsuario, 'ADMIN', 1)");
                 datos.setParametro("@idNuevoHogar", idNuevoHogar);
-                datos.setParametro("@idUsuario", nuevo.Usuario.IdUsuario);
+                //datos.setParametro("@idUsuario", nuevo.Usuario.IdUsuario);
 
                 datos.ejecutarAccion();
             }
@@ -94,8 +94,8 @@ namespace negocio
                 if (string.IsNullOrWhiteSpace(hogar.Nombre))
                     throw new Exception("El nombre del hogar es obligatorio.");
 
-                if (hogar.Usuario == null || hogar.Usuario.IdUsuario <= 0)
-                    throw new Exception("El hogar debe estar asociado a un usuario válido.");
+                /*if (hogar.Usuario == null || hogar.Usuario.IdUsuario <= 0)
+                    throw new Exception("El hogar debe estar asociado a un usuario válido.");*/
 
                 int idHogar = ExisteHogar(hogar.IdHogar);
 
@@ -106,7 +106,7 @@ namespace negocio
 
                 datos.setParametro("@idHogar", hogar.IdHogar);
                 datos.setParametro("@nombre", hogar.Nombre.Trim());
-                datos.setParametro("@idUsuario", hogar.Usuario.IdUsuario);
+                //datos.setParametro("@idUsuario", hogar.Usuario.IdUsuario);
                 datos.setParametro("@estado", hogar.Estado);
 
                 datos.ejecutarAccion();
@@ -165,8 +165,8 @@ namespace negocio
                     aux.IdHogar = (int)datos.Lector["IdHogar"];
                     aux.Nombre = (string)datos.Lector["Nombre"];
 
-                    aux.Usuario = new Usuario();
-                    aux.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+                    //aux.Usuario = new Usuario();
+                    //aux.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
 
                     aux.Estado = (bool)datos.Lector["Estado"];
 

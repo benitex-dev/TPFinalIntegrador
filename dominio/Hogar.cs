@@ -10,7 +10,7 @@ namespace dominio
     {
         public int IdHogar { get; set; }
         public string Nombre { get; set; }
-        public Usuario Usuario { get; set; }
+        //public Usuario Usuario { get; set; }
         public bool Estado { get; set; }
     }
 }
