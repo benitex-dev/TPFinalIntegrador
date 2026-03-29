@@ -29,11 +29,12 @@ namespace TPFinalIntegrador
 
                         if (!string.IsNullOrEmpty(usuario.ImagenURL))
                         {
-                            imagenNuevoPerfil.ImageUrl = "~/Imagenes/" + usuario.ImagenURL;
-                            imagenMiPerfil.ImageUrl = "~/Imagenes/" + usuario.ImagenURL;
+                            string url = "~/Imagenes/" + usuario.ImagenURL + "?v=" + DateTime.Now.Ticks;
+                            imagenNuevoPerfil.ImageUrl = url;
+                            imagenMiPerfil.ImageUrl = url;
                             Image img = (Image)Master.FindControl("imgNavbar");
-                            img.ImageUrl = "~/Imagenes/" + usuario.ImagenURL;
-                            
+                            if (img != null) img.ImageUrl = url;
+
                         }
                     }
                     
@@ -68,23 +69,37 @@ namespace TPFinalIntegrador
             {   //Escribir IMG
                 UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
                 Usuario usuario = (Usuario)Session["usuario"];
-                if (txtImagen.PostedFile.FileName != "")
+                if (txtImagen.PostedFile != null && txtImagen.PostedFile.FileName != "")
                 {
                     string ruta = Server.MapPath("./Imagenes/");
-                    txtImagen.PostedFile.SaveAs(ruta + "perfil-" + usuario.IdUsuario + ".jpg");
-                    usuario.ImagenURL = "perfil-" + usuario.IdUsuario + ".jpg";
+                    string nombreArchivo = "perfil-" + usuario.IdUsuario + ".jpg";
+                    txtImagen.PostedFile.SaveAs(ruta + nombreArchivo);
+                    usuario.ImagenURL = nombreArchivo;
 
                 }
-
+                //datos personales
                 usuario.Nombre = txtNombre.Text;
                 usuario.Apellido = txtApellido.Text;
                 usuario.Email = txtEmail.Text;
+                usuario.FechaNac = DateTime.Parse(txtFechaNac.Text);
                 //modificar el usuario
                 usuarioNegocio.ModificarUsuario(usuario);
+                // Actualizar sesión
+                Session["usuario"] = usuario;
+                
+                // Actualizar imágenes en la página
+                if (!string.IsNullOrEmpty(usuario.ImagenURL))
+                {
+                    string url = "~/Imagenes/" + usuario.ImagenURL + "?v=" + DateTime.Now.Ticks;
+                    imagenMiPerfil.ImageUrl = url;
+                    imagenNuevoPerfil.ImageUrl = url;
+                    Image img = (Image)Master.FindControl("imgNavbar");
+                    if (img != null) img.ImageUrl = url;
+                }
 
-                //Leer de la IMG
-                Image img = (Image)Master.FindControl("imgNavbar");
-                img.ImageUrl = "~/Imagenes/" + usuario.ImagenURL;
+                lblMensaje.Text = "Perfil actualizado correctamente.";
+                lblMensaje.CssClass = "alert alert-success d-block";
+               
 
 
             }

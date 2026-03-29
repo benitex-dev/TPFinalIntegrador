@@ -15,7 +15,7 @@ namespace TPFinalIntegrador
         private Usuario usuarioLogueado;
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["Usuario"] == null)
+            if (Session["usuario"] == null)
                 Response.Redirect("Login.aspx", false);
 
 
@@ -58,7 +58,7 @@ namespace TPFinalIntegrador
             }
             ActualizarPassword(usuarioLogueado, nueva);
             usuarioLogueado.Password = nueva;
-            Session["Usuario"] = usuarioLogueado;
+            Session["usuario"] = usuarioLogueado;
             Session["Mensaje"] = "Contraseña actualizada correctamente.";
             Response.Redirect("Perfil.aspx", false);
             MostrarMensaje("Contraseña actualizada correctamente.", "success");

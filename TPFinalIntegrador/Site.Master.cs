@@ -40,7 +40,7 @@ namespace TPFinalIntegrador
             if (Session["usuario"] != null)
             {
                 Usuario usuarioIniciado = (Usuario)Session["usuario"];
-                imgNavbar.ImageUrl = "~/Imagenes/" + ((Usuario)Session["usuario"]).ImagenURL;
+                imgNavbar.ImageUrl = "~/Imagenes/" + ((Usuario)Session["usuario"]).ImagenURL + "?v=" + DateTime.Now.Ticks;
                 btnSesionIniciada.InnerText = usuarioIniciado.Nombre + " " + usuarioIniciado.Apellido;
             }
 
