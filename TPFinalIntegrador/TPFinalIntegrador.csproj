@@ -119,6 +119,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="CrearHogar.aspx" />
     <Content Include="Default.aspx" />
+    <Content Include="Deudores.aspx" />
     <Content Include="Error.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -230,6 +231,13 @@
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Deudores.aspx.cs">
+      <DependentUpon>Deudores.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Deudores.aspx.designer.cs">
+      <DependentUpon>Deudores.aspx</DependentUpon>
     </Compile>
     <Compile Include="Error.aspx.cs">
       <DependentUpon>Error.aspx</DependentUpon>
