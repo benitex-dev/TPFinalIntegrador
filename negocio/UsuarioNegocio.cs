@@ -258,6 +258,26 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
-    }
-}
 
+        public void ActualizarPassword(Usuario usuario, string contraseniaNueva)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.setConsulta("UPDATE Usuario set password = @pass  where IdUsuario = @id");
+                datos.setParametro("@pass", contraseniaNueva);
+                datos.setParametro("@id", usuario.IdUsuario);
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+    }
+
+}

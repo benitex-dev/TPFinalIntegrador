@@ -36,6 +36,13 @@ namespace TPFinalIntegrador
                             
                         }
                     }
+                    
+                    if (Session["Mensaje"] != null)
+                    {
+                        lblMensaje.Text = Session["Mensaje"].ToString();
+                        lblMensaje.CssClass = "alert alert-success d-block";
+                        Session.Remove("Mensaje"); // lo limpiás para que no aparezca en el próximo load
+                    }
                 }
             }
             catch (Exception ex)
@@ -88,6 +95,14 @@ namespace TPFinalIntegrador
                 Response.Redirect("Error.aspx");
 
             }
+        }
+
+        
+
+        protected void lnkCambiarContrasenia_Click(object sender, EventArgs e)
+        {
+           
+            Response.Redirect("ModificarContrasenia.aspx", false);
         }
     }
 }

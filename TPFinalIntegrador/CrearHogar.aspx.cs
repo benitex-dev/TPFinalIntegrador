@@ -65,7 +65,7 @@ namespace TPFinalIntegrador
                 Hogar nuevo = new Hogar
                 {
                     Nombre = nombre,
-                    Usuario = usuarioActual,
+                    //Usuario = usuarioActual,
                     Estado = chkEstado.Checked
                 };
 

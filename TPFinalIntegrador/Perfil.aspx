@@ -10,7 +10,10 @@
 
     <%-- Tarjeta principal de perfil --%>
     <div class="card border rounded-3 overflow-hidden shadow-sm">
-
+          <%-- Mensaje de feedback --%>
+  <div class="col-12">
+      <asp:Label ID="lblMensaje" runat="server" CssClass="d-block" />
+  </div>
         <%-- Banner --%>
         <div class="bg-primary bg-opacity-10 border-bottom position-relative" style="height: 128px;">
             <%-- Avatar --%>
@@ -105,13 +108,18 @@
                 <%-- Seguridad --%>
                 <div class="col-md-6">
                     <label class="form-label text-secondary text-uppercase fw-bold" style="font-size: 0.65rem; letter-spacing: 0.05rem;">Seguridad</label>
-                    <button type="button" class="btn form-control bg-light text-start d-flex justify-content-between align-items-center border">
-                        <span class="d-flex align-items-center gap-2 text-secondary">
-                            <span class="material-symbols-outlined fs-6">shield_lock</span>
-                            Cambiar contraseña
-                        </span>
-                        <span class="material-symbols-outlined fs-6 text-secondary">chevron_right</span>
-                    </button>
+                    <asp:LinkButton
+                        ID="lnkCambiarContrasenia"
+                        runat="server"
+                        CssClass="btn form-control bg-light text-start d-flex justify-content-between align-items-center border"
+                        OnClick="lnkCambiarContrasenia_Click">
+                    <span class="d-flex align-items-center gap-2 text-secondary">
+                    <span class="material-symbols-outlined fs-6">shield_lock</span>
+                     Cambiar contraseña
+                    </span>
+                    <span class="material-symbols-outlined fs-6 text-secondary">chevron_right</span>
+                    </asp:LinkButton>
+                   
                 </div>
                 <%-- Imagen --%>
                 <div class="col-md-6">
@@ -126,10 +134,7 @@
                         ImageUrl="https://www.palomacornejo.com/wp-content/uploads/2021/08/no-image.jpg" />
                 </div>
             </div>
-                <%-- Mensaje de feedback --%>
-                <div class="col-12">
-                    <asp:Label ID="lblMensaje" runat="server" CssClass="d-block" />
-                </div>
+              
 
                 <%-- Acciones --%>
                 <div class="col-12 pt-4 border-top">

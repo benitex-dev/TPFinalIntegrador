@@ -123,6 +123,7 @@
     <Content Include="Global.asax" />
     <Content Include="Inicio.aspx" />
     <Content Include="Login.aspx" />
+    <Content Include="ModificarContrasenia.aspx" />
     <Content Include="NuevoUsuario.aspx" />
     <Content Include="Perfil.aspx" />
     <Content Include="Personalizaciones.aspx" />
@@ -245,6 +246,13 @@
     </Compile>
     <Compile Include="Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ModificarContrasenia.aspx.cs">
+      <DependentUpon>ModificarContrasenia.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ModificarContrasenia.aspx.designer.cs">
+      <DependentUpon>ModificarContrasenia.aspx</DependentUpon>
     </Compile>
     <Compile Include="NuevoUsuario.aspx.cs">
       <DependentUpon>NuevoUsuario.aspx</DependentUpon>
