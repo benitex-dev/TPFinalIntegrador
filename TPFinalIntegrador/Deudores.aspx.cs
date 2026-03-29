@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dominio;
+using negocio;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,36 +13,135 @@ namespace TPFinalIntegrador
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (Session["usuario"] == null)
+            {
+                Response.Redirect("Login.aspx", false);
+                return;
+            }
+            if (!IsPostBack)
+                CargarDeudas();
+        }
+        private void CargarDeudas()
+        {
+            Usuario usuario = (Usuario)Session["usuario"];
+            DeudaNegocio negocio = new DeudaNegocio();
+            gvDeudas.DataSource = negocio.Listar(usuario.IdUsuario,usuario.Nombre,usuario.Estado );
+            gvDeudas.DataBind();
         }
 
         protected void btnAgregar_Click(object sender, EventArgs e)
         {
-
+            
         }
 
         protected void gvDeudas_RowEditing(object sender, GridViewEditEventArgs e)
         {
+            gvDeudas.EditIndex = e.NewEditIndex;
+            CargarDeudas();
 
         }
 
         protected void gvDeudas_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
-
+            gvDeudas.EditIndex = -1;
+            CargarDeudas();
         }
 
         protected void gvDeudas_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
         {
+            try
+            {
+                int idDeuda = (int)gvDeudas.DataKeys[e.RowIndex]["IdDeuda"];
+                string email = ((TextBox)gvDeudas.Rows[e.RowIndex].Cells[1].Controls[0]).Text;
+                string descripcion = ((TextBox)gvDeudas.Rows[e.RowIndex].Cells[2].Controls[0]).Text;
+                string monto = ((TextBox)gvDeudas.Rows[e.RowIndex].Cells[3].Controls[0]).Text;
+                string cuotas = ((TextBox)gvDeudas.Rows[e.RowIndex].Cells[4].Controls[0]).Text;
+                string fecha = ((TextBox)gvDeudas.Rows[e.RowIndex].Cells[5].Controls[0]).Text;
 
+                Usuario usuario = (Usuario)Session["usuario"];
+
+                Deuda deuda = new Deuda();
+                deuda.IdDeuda = idDeuda;
+                deuda.Usuario = usuario;
+                deuda.NombreDeudor = (string)gvDeudas.DataKeys[e.RowIndex]["NombreDeudor"];
+                deuda.EmailDeudor = email;
+                deuda.Descripcion = descripcion;
+                deuda.MontoTotal = decimal.Parse(monto);
+                deuda.Cuotas = int.Parse(cuotas);
+                deuda.FechaInicio = DateTime.Parse(fecha);
+                deuda.Estado = true;
+
+                DeudaNegocio negocio = new DeudaNegocio();
+                negocio.ModificarDeuda(deuda);
+
+                gvDeudas.EditIndex = -1;
+                CargarDeudas();
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
+                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Deuda modificada correctamente.'});", true);
+            }
+            catch (Exception ex)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+            }
         }
 
         protected void gvDeudas_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
+            try
+            {
+                Usuario usuario = (Usuario)Session["usuario"];
+                string nombreDeudor = (string)gvDeudas.DataKeys[e.RowIndex]["NombreDeudor"];
 
+                DeudaNegocio negocio = new DeudaNegocio();
+                negocio.EliminarLogico(usuario.IdUsuario, nombreDeudor);
+
+                CargarDeudas();
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
+                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Deuda eliminada correctamente.'});", true);
+            }
+            catch (Exception ex)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+            }
         }
 
         protected void btnAgregar_Click1(object sender, EventArgs e)
         {
+            try
+            {
+                Usuario usuario = (Usuario)Session["usuario"];
+
+                Deuda nueva = new Deuda();
+                nueva.Usuario = usuario;
+                nueva.NombreDeudor = txtNombre.Text;
+                nueva.EmailDeudor = txtEmail.Text;
+                nueva.Descripcion = txtDescripcion.Text;
+                nueva.MontoTotal = decimal.Parse(txtMonto.Text);
+                nueva.Cuotas = int.Parse(txtCuotas.Text);
+                nueva.FechaInicio = DateTime.Parse(txtFecha.Text);
+                nueva.Estado = true;
+
+                DeudaNegocio negocio = new DeudaNegocio();
+                negocio.AgregarDeuda(nueva);
+
+                txtNombre.Text = "";
+                txtEmail.Text = "";
+                txtDescripcion.Text = "";
+                txtMonto.Text = "";
+                txtCuotas.Text = "";
+                txtFecha.Text = "";
+
+                CargarDeudas();
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
+                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Deuda agregada correctamente.'});", true);
+            }
+            catch (Exception ex)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+            }
 
         }
     }
