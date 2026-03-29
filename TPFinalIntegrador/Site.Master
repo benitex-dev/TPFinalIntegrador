@@ -66,7 +66,7 @@
 
         <nav class="navbar navbar-expand-lg border-bottom sticky-top bg-body-tertiary">
             <div class="container">
-                <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="#">
+                <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="Default.aspx">
                     <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
                     UTN TPIntegrador Final
                 </a>
@@ -75,10 +75,14 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav mx-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="Inicio.aspx">Inicio</a>
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle px-3" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Hogar
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarCategorias">
+                                
                                 <li class="nav-item">
                                     <a class="dropdown-item" href="CrearHogar.aspx">Crear Hogar</a>
                                 </li>
@@ -108,8 +112,7 @@
                             </ul>
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link px-3" href="#trust">Seguridad</a></li>
-                        <li class="nav-item"><a class="nav-link px-3" href="#">Precios</a></li>
+                        
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle px-3" href="#" id="navbarCategorias" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Categorías
@@ -150,10 +153,15 @@
                             Mi Cuenta
  
                         </button>
-                       
+
+                        <asp:Image ID="imgNavbar"
+                            runat="server"
+                            CssClass="rounded-circle"
+                            Style="width: 40px; height: 40px; object-fit: cover;" />
+                        
                         <ul class="dropdown-menu">
                             <li>
-                                <asp:LinkButton ID="btnPerfil" runat="server" CssClass="dropdown-item">
+                                <asp:LinkButton ID="btnPerfil" runat="server" CssClass="dropdown-item" OnClick="btnPerfil_Click">
                                     Mi Perfil
                                 </asp:LinkButton>
                             </li>

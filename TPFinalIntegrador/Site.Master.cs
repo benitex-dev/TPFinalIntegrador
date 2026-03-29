@@ -40,6 +40,7 @@ namespace TPFinalIntegrador
             if (Session["usuario"] != null)
             {
                 Usuario usuarioIniciado = (Usuario)Session["usuario"];
+                imgNavbar.ImageUrl = "~/Imagenes/" + ((Usuario)Session["usuario"]).ImagenURL;
                 btnSesionIniciada.InnerText = usuarioIniciado.Nombre + " " + usuarioIniciado.Apellido;
             }
 
@@ -130,6 +131,11 @@ namespace TPFinalIntegrador
                     }
                 }
             }
+        }
+
+        protected void btnPerfil_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Perfil.aspx");
         }
     }
 }

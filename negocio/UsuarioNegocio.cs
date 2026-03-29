@@ -235,6 +235,29 @@ namespace negocio
             finally { datos.cerrarConexion(); }
         }
 
+        public void ModificarUsuario(Usuario usuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.setConsulta("UPDATE Usuario set email=@email, nombre = @nombre, apellido = @apellido, ImagenURL = @img where IdUsuario = @id");
+                datos.setParametro("@email", usuario.Email);
+                datos.setParametro("@nombre", usuario.Nombre);
+                datos.setParametro("@apellido", usuario.Apellido);
+                datos.setParametro("@img", (object)usuario.ImagenURL ?? DBNull.Value);
+                datos.setParametro("@id", usuario.IdUsuario);
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }
 
