@@ -8,8 +8,11 @@ namespace negocio
 {
     public enum TipoCorreo
     {
-        IniciodeSesion=0,
-        ResetPassword = 1
+        IniciodeSesion = 0,
+        ResetPassword = 1,
+        NuevoUsuario = 2,
+        NuevoHogar = 3,
+
     }
 
     public class EmailService
