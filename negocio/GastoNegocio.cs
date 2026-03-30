@@ -18,12 +18,13 @@ namespace negocio
             try
             {
                 datos.setConsulta("SELECT G.IdGasto, G.Fecha, G.MontoPesos, G.Moneda, G.IdCategoria, G.Descripcion, " +
-                                  "G.IdMedioPago, G.IdUsuario, G.MontoUSD, G.Cotizacion, G.Estado, " +
-                                  "C.Nombre AS NombreCategoria, MP.Descripcion AS NombreMedioPago " +
-                                  "FROM GASTO G " +
-                                  "INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria " +
-                                  "INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago " +
-                                  "WHERE G.IdUsuario = @idUsuario AND G.Estado = 1");
+                  "G.IdMedioPago, G.IdUsuario, G.MontoUSD, G.Cotizacion, G.Estado, " +
+                  "G.EsEnCuotas, G.CantidadCuotas, G.MontoCuota, " +
+                  "C.Nombre AS NombreCategoria, MP.Descripcion AS NombreMedioPago " +
+                  "FROM GASTO G " +
+                  "INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria " +
+                  "INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago " +
+                  "WHERE G.IdUsuario = @idUsuario AND G.Estado = 1");
 
                 datos.setParametro("@idUsuario", idUsuario);
                 datos.ejecutarLectura();
@@ -56,6 +57,15 @@ namespace negocio
                     if (datos.Lector["Cotizacion"] != DBNull.Value)
                         gasto.Cotizacion = (decimal)datos.Lector["Cotizacion"];
 
+                    gasto.EsEnCuotas = (bool)datos.Lector["EsEnCuotas"];
+
+                    if (datos.Lector["CantidadCuotas"] != DBNull.Value)
+                        gasto.CantidadCuotas = (int)datos.Lector["CantidadCuotas"];
+
+                    if (datos.Lector["MontoCuota"] != DBNull.Value)
+                        gasto.MontoCuota = (decimal)datos.Lector["MontoCuota"];
+
+
                     lista.Add(gasto);
                 }
 
@@ -71,7 +81,7 @@ namespace negocio
             }
         }
 
-        public void AgregarGasto(Gasto nuevo)
+        public int AgregarGasto(Gasto nuevo)
         {
             AccesoDatos datos = new AccesoDatos();
 
@@ -83,9 +93,6 @@ namespace negocio
                 if (string.IsNullOrWhiteSpace(nuevo.Descripcion))
                     throw new Exception("La descripción del gasto es obligatoria.");
 
-                if (nuevo.MontoPesos <= 0)
-                    throw new Exception("El monto en pesos debe ser mayor a cero.");
-
                 if (nuevo.Categoria == null || nuevo.Categoria.IdCategoria <= 0)
                     throw new Exception("Debe seleccionar una categoría.");
 
@@ -94,6 +101,23 @@ namespace negocio
 
                 if (nuevo.Usuario == null || nuevo.Usuario.IdUsuario <= 0)
                     throw new Exception("El gasto debe estar asociado a un usuario.");
+
+                if (nuevo.EsEnCuotas)
+                {
+                    if (nuevo.CantidadCuotas <= 0)
+                        throw new Exception("Debe ingresar la cantidad de cuotas.");
+
+                    if (nuevo.MontoCuota <= 0)
+                        throw new Exception("Debe ingresar el monto de la cuota.");
+
+                    // 🔥 calculamos el total
+                    nuevo.MontoPesos = nuevo.MontoCuota * nuevo.CantidadCuotas;
+                }
+                else
+                {
+                    if (nuevo.MontoPesos <= 0)
+                        throw new Exception("El monto debe ser mayor a cero.");
+                }
 
                 if (nuevo.Moneda != Moneda.ARS)
                 {
@@ -104,8 +128,11 @@ namespace negocio
                         throw new Exception("Debe ingresar una cotización válida.");
                 }
 
-                datos.setConsulta("INSERT INTO GASTO (Fecha, MontoPesos, Moneda, IdCategoria, Descripcion, IdMedioPago, IdUsuario, MontoUSD, Cotizacion, Estado) " +
-                                  "VALUES (@fecha, @montoPesos, @moneda, @idCategoria, @descripcion, @idMedioPago, @idUsuario, @montoUSD, @cotizacion, @estado)");
+                datos.setConsulta(@"INSERT INTO GASTO 
+            (Fecha, MontoPesos, Moneda, IdCategoria, Descripcion, IdMedioPago, IdUsuario, MontoUSD, Cotizacion, Estado, EsEnCuotas, CantidadCuotas, MontoCuota)
+            OUTPUT INSERTED.IdGasto
+            VALUES 
+            (@fecha, @montoPesos, @moneda, @idCategoria, @descripcion, @idMedioPago, @idUsuario, @montoUSD, @cotizacion, @estado, @esEnCuotas, @cantidadCuotas, @montoCuota)");
 
                 datos.setParametro("@fecha", nuevo.Fecha);
                 datos.setParametro("@montoPesos", nuevo.MontoPesos);
@@ -127,8 +154,13 @@ namespace negocio
                 }
 
                 datos.setParametro("@estado", nuevo.Estado);
+                datos.setParametro("@esEnCuotas", nuevo.EsEnCuotas);
+                datos.setParametro("@cantidadCuotas", nuevo.EsEnCuotas ? nuevo.CantidadCuotas : (object)DBNull.Value);
+                datos.setParametro("@montoCuota", nuevo.EsEnCuotas ? nuevo.MontoCuota : (object)DBNull.Value);
 
-                datos.ejecutarAccion();
+                int idGasto = (int)datos.ejecutarEscalar(); // 🔥 clave
+
+                return idGasto;
             }
             catch (Exception ex)
             {
@@ -146,6 +178,9 @@ namespace negocio
 
             try
             {
+                if (idGasto <= 0)
+                    throw new Exception("Id de gasto inválido.");
+
                 datos.setConsulta("UPDATE GASTO SET Estado = 0 WHERE IdGasto = @idGasto");
                 datos.setParametro("@idGasto", idGasto);
 
@@ -167,18 +202,37 @@ namespace negocio
 
             try
             {
-                datos.setConsulta("SELECT ISNULL(SUM(MontoPesos), 0) AS Total " +
-                                  "FROM GASTO " +
-                                  "WHERE IdUsuario = @idUsuario " +
-                                  "AND Estado = 1 " +
-                                  "AND MONTH(Fecha) = MONTH(GETDATE()) " +
-                                  "AND YEAR(Fecha) = YEAR(GETDATE())");
+                datos.setConsulta(@"
+            SELECT ISNULL(SUM(Total), 0) AS TotalGeneral
+            FROM
+            (
+                -- Gastos normales del mes
+                SELECT G.MontoPesos AS Total
+                FROM GASTO G
+                WHERE G.IdUsuario = @idUsuario
+                  AND G.Estado = 1
+                  AND ISNULL(G.EsEnCuotas, 0) = 0
+                  AND MONTH(G.Fecha) = MONTH(GETDATE())
+                  AND YEAR(G.Fecha) = YEAR(GETDATE())
+
+                UNION ALL
+
+                -- Cuotas del mes
+                SELECT C.Monto AS Total
+                FROM CUOTA C
+                INNER JOIN GASTO G ON G.IdGasto = C.IdGasto
+                WHERE G.IdUsuario = @idUsuario
+                  AND G.Estado = 1
+                  AND ISNULL(G.EsEnCuotas, 0) = 1
+                  AND MONTH(C.Vencimiento) = MONTH(GETDATE())
+                  AND YEAR(C.Vencimiento) = YEAR(GETDATE())
+            ) AS Movimientos");
 
                 datos.setParametro("@idUsuario", idUsuario);
                 datos.ejecutarLectura();
 
                 if (datos.Lector.Read())
-                    return (decimal)datos.Lector["Total"];
+                    return (decimal)datos.Lector["TotalGeneral"];
 
                 return 0;
             }
@@ -231,15 +285,16 @@ namespace negocio
             try
             {
                 datos.setConsulta("SELECT G.IdGasto, G.Fecha, G.MontoPesos, G.Moneda, G.IdCategoria, G.Descripcion, " +
-                                  "G.IdMedioPago, G.IdUsuario, G.MontoUSD, G.Cotizacion, G.Estado, " +
-                                  "C.Nombre AS NombreCategoria, MP.Descripcion AS NombreMedioPago " +
-                                  "FROM GASTO G " +
-                                  "INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria " +
-                                  "INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago " +
-                                  "WHERE G.IdUsuario = @idUsuario " +
-                                  "AND G.Estado = 1 " +
-                                  "AND MONTH(G.Fecha) = MONTH(GETDATE()) " +
-                                  "AND YEAR(G.Fecha) = YEAR(GETDATE())");
+                  "G.IdMedioPago, G.IdUsuario, G.MontoUSD, G.Cotizacion, G.Estado, " +
+                  "G.EsEnCuotas, G.CantidadCuotas, G.MontoCuota, " +
+                  "C.Nombre AS NombreCategoria, MP.Descripcion AS NombreMedioPago " +
+                  "FROM GASTO G " +
+                  "INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria " +
+                  "INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago " +
+                  "WHERE G.IdUsuario = @idUsuario " +
+                  "AND G.Estado = 1 " +
+                  "AND MONTH(G.Fecha) = MONTH(GETDATE()) " +
+                  "AND YEAR(G.Fecha) = YEAR(GETDATE())");
 
                 datos.setParametro("@idUsuario", idUsuario);
                 datos.ejecutarLectura();
@@ -271,6 +326,15 @@ namespace negocio
 
                     if (datos.Lector["Cotizacion"] != DBNull.Value)
                         gasto.Cotizacion = (decimal)datos.Lector["Cotizacion"];
+
+                    gasto.EsEnCuotas = (bool)datos.Lector["EsEnCuotas"];
+
+                    if (datos.Lector["CantidadCuotas"] != DBNull.Value)
+                        gasto.CantidadCuotas = (int)datos.Lector["CantidadCuotas"];
+
+                    if (datos.Lector["MontoCuota"] != DBNull.Value)
+                        gasto.MontoCuota = (decimal)datos.Lector["MontoCuota"];
+
 
                     lista.Add(gasto);
                 }
@@ -358,12 +422,14 @@ namespace negocio
             try
             {
                 datos.setConsulta(
-                    "SELECT G.IdGasto, G.Descripcion, G.Fecha, G.MontoPesos, G.MontoUSD, G.Cotizacion, G.Moneda, " +
-                    "G.IdCategoria, G.IdMedioPago, G.IdUsuario, G.Estado, C.Nombre AS NombreCategoria, M.Descripcion AS MedioPagoDescripcion " +
-                    "FROM GASTO G " +
-                    "INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria " +
-                    "LEFT JOIN MEDIOPAGO M ON G.IdMedioPago = M.IdMedioPago " +
-                    "WHERE G.IdUsuario = @idUsuario AND G.Estado = 1 AND MONTH(G.Fecha) = @mes AND YEAR(G.Fecha) = @anio");
+    "SELECT G.IdGasto, G.Descripcion, G.Fecha, G.MontoPesos, G.MontoUSD, G.Cotizacion, G.Moneda, " +
+    "G.IdCategoria, G.IdMedioPago, G.IdUsuario, G.Estado, " +
+    "G.EsEnCuotas, G.CantidadCuotas, G.MontoCuota, " +
+    "C.Nombre AS NombreCategoria, M.Descripcion AS MedioPagoDescripcion " +
+    "FROM GASTO G " +
+    "INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria " +
+    "LEFT JOIN MEDIOPAGO M ON G.IdMedioPago = M.IdMedioPago " +
+    "WHERE G.IdUsuario = @idUsuario AND G.Estado = 1 AND MONTH(G.Fecha) = @mes AND YEAR(G.Fecha) = @anio");
 
                 datos.setParametro("@idUsuario", idUsuario);
                 datos.setParametro("@mes", mes);
@@ -401,6 +467,15 @@ namespace negocio
                         gasto.MedioDePago.IdMedioPago = (int)datos.Lector["IdMedioPago"];
                     gasto.MedioDePago.Descripcion = datos.Lector["MedioPagoDescripcion"] != DBNull.Value
                         ? (string)datos.Lector["MedioPagoDescripcion"] : null;
+
+                    gasto.EsEnCuotas = (bool)datos.Lector["EsEnCuotas"];
+
+                    if (datos.Lector["CantidadCuotas"] != DBNull.Value)
+                        gasto.CantidadCuotas = (int)datos.Lector["CantidadCuotas"];
+
+                    if (datos.Lector["MontoCuota"] != DBNull.Value)
+                        gasto.MontoCuota = (decimal)datos.Lector["MontoCuota"];
+
 
                     lista.Add(gasto);
                 }

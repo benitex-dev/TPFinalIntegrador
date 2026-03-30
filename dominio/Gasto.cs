@@ -28,6 +28,10 @@ namespace dominio
         public decimal MontoUSD { get; set; }
         public decimal Cotizacion { get; set; }
         public bool Estado { get; set; }
+        //CUOTAS
+        public bool EsEnCuotas { get; set; }
+        public int CantidadCuotas { get; set; }
+        public decimal MontoCuota { get; set; }
         public Hogar Hogar { get; set; }
 
 
