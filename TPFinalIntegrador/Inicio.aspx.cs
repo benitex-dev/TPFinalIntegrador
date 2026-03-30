@@ -341,25 +341,6 @@ namespace TPFinalIntegrador
             }
         }
 
-        protected void CargarMovimientosDelMes()
-        {
-            Usuario usuarioLogueado = (Usuario)Session["usuario"];
-            MovimientoNegocio movimientoNegocio = new MovimientoNegocio();
-
-            List<Movimiento> lista = movimientoNegocio.ListarMovimientosPorMes(
-                usuarioLogueado.IdUsuario,
-                MesSeleccionado,
-                AnioSeleccionado
-            );
-
-            rptMovimientos.DataSource = lista;
-            rptMovimientos.DataBind();
-
-            lblMesActual.Text = new DateTime(AnioSeleccionado, MesSeleccionado, 1)
-                .ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-AR"));
-        }
-
-
 
         protected void btnMesAnterior_Click(object sender, EventArgs e)
         {
@@ -625,6 +606,7 @@ namespace TPFinalIntegrador
             }
         }
 
+
         private List<Movimiento> ObtenerMovimientosDelMes()
         {
             List<Movimiento> movimientos = new List<Movimiento>();
@@ -675,6 +657,16 @@ namespace TPFinalIntegrador
             return movimientos.OrderByDescending(x => x.Fecha).ToList();
         }
 
+        protected void CargarMovimientosDelMes()
+        {
+            List<Movimiento> lista = ObtenerMovimientosDelMes();
+
+            rptMovimientos.DataSource = lista;
+            rptMovimientos.DataBind();
+
+            lblMesActual.Text = new DateTime(AnioSeleccionado, MesSeleccionado, 1)
+                .ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-AR"));
+        }
 
 
         private void CargarSaldoMes()

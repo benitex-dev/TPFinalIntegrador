@@ -191,3 +191,15 @@ VALUES
 (2, 'Mercado Pago', NULL, NULL, 1, NULL, 1),
 (3, 'Tarjeta Visa Banco Patagonia', 25, 5, 1, NULL, 1);
 GO
+
+ALTER TABLE CUOTA
+ADD TotalCuotas INT NOT NULL DEFAULT 1;
+
+ALTER TABLE CUOTA
+ALTER COLUMN Estado INT NOT NULL;
+
+ALTER TABLE GASTO
+ADD EsEnCuotas BIT NOT NULL DEFAULT 0,
+    CantidadCuotas INT NULL,
+    MontoCuota DECIMAL(18,2) NULL;
+GO
