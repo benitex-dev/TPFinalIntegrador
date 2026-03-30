@@ -7,7 +7,9 @@
             padding-top: 2rem;
             padding-bottom: 2rem;
         }
-
+        .form-check span {
+    display: contents;
+}
         .welcome-card,
         .summary-card,
         .panel-card,
@@ -427,6 +429,39 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <div class="d-flex justify-content-between align-items-center mb-3 px-4">
+                                      <!-- FLECHAS -->
+
+    <asp:Button ID="btnMesAnterior"
+        runat="server"
+        Text="←"
+        CssClass="btn btn-light border rounded-3"
+        OnClick="btnMesAnterior_Click" />
+
+    <asp:Label ID="lblMesActual"
+        runat="server"
+        CssClass="fw-bold fs-5 text-capitalize" />
+
+    <asp:Button ID="btnMesSiguiente"
+        runat="server"
+        Text="→"
+        CssClass="btn btn-light border rounded-3"
+        OnClick="btnMesSiguiente_Click" />
+
+</div>
+
+<table class="table align-middle mb-0">
+    <thead class="bg-light">
+        <tr>
+            <th class="px-4 py-3">Fecha</th>
+            <th class="px-4 py-3">Descripción</th>
+            <th class="px-4 py-3">Categoría</th>
+            <th class="px-4 py-3">Tipo</th>
+            <th class="px-4 py-3 text-end">Monto</th>
+            <th class="px-4 py-3">Estado</th>
+        </tr>
+    </thead>
+    <tbody>
     <asp:Repeater ID="rptMovimientos" runat="server">
         <ItemTemplate>
             <tr>
@@ -443,6 +478,8 @@
             </tr>
         </ItemTemplate>
     </asp:Repeater>
+            </tbody>
+</table>
 </tbody>
                         </table>
                     </div>
@@ -666,102 +703,121 @@
     </div>
 </div>
     <%--CARGAR GASTO--%>
-    <div class="modal fade" id="modalGasto" tabindex="-1" aria-labelledby="modalGastoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 rounded-4 shadow">
+<div class="modal fade" id="modalGasto" tabindex="-1" aria-labelledby="modalGastoLabel" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 rounded-4 shadow">
 
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold" id="modalGastoLabel">Nuevo gasto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold" id="modalGastoLabel">Nuevo gasto</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body pt-3">
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Descripción</label>
+                    <asp:TextBox ID="txtDescripcionGasto" runat="server" CssClass="form-control"></asp:TextBox>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Fecha</label>
+                    <asp:TextBox ID="txtFechaGasto" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
+                </div>
             </div>
 
-            <div class="modal-body pt-3">
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Descripción</label>
-                        <asp:TextBox ID="txtDescripcionGasto" runat="server" CssClass="form-control"></asp:TextBox>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Fecha</label>
-                        <asp:TextBox ID="txtFechaGasto" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
-                    </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Categoría</label>
+                    <asp:DropDownList ID="ddlCategoriaGasto" runat="server" CssClass="form-select"></asp:DropDownList>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Categoría</label>
-                        <asp:DropDownList ID="ddlCategoriaGasto" runat="server" CssClass="form-select"></asp:DropDownList>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Medio de pago</label>
-                        <asp:DropDownList ID="ddlMedioPagoGasto" runat="server" CssClass="form-select"></asp:DropDownList>
-                    </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Medio de pago</label>
+                    <asp:DropDownList ID="ddlMedioPagoGasto" runat="server" CssClass="form-select"></asp:DropDownList>
                 </div>
-
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label fw-semibold">Moneda</label>
-                       
-                        <asp:DropDownList ID="ddlMonedaGasto"
-                                          runat="server"
-                                          CssClass="form-select"
-                                          onchange="toggleCamposMonedaGasto()">
-                            <asp:ListItem Text="ARS" Value="1"></asp:ListItem>
-                            <asp:ListItem Text="USD" Value="2"></asp:ListItem>
-                            <asp:ListItem Text="EUR" Value="3"></asp:ListItem>
-                            <asp:ListItem Text="BRL" Value="4"></asp:ListItem>
-                        </asp:DropDownList>
-                    
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label fw-semibold">Monto en pesos</label>
-                       
-                        <asp:TextBox ID="txtMontoPesosGasto" runat="server" CssClass="form-control"></asp:TextBox>
-                    </div>
-
-                    <div class="col-md-4 mb-3" id="campoMontoUSDGasto" style="display:none;">
-                        <label class="form-label fw-semibold">Monto en moneda original</label>
-                        <asp:TextBox 
-                            ID="txtMontoUSDGasto"
-                            runat="server" 
-                            CssClass="form-control"
-                            oninput="calcularMontoPesosGasto()"
-                            ></asp:TextBox>
-                    </div>
-                </div>
-
-                <div class="row" id="campoCotizacionGasto" style="display:none;">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Cotización</label>
-                        <asp:TextBox 
-                            ID="txtCotizacionGasto" 
-                            runat="server" 
-                            CssClass="form-control"
-                            oninput="calcularMontoPesosGasto()"
-                            ></asp:TextBox>
-                    </div>
-                </div>
-
-                <asp:Label ID="lblMensajeGasto" runat="server" CssClass="d-block text-center mt-3"></asp:Label>
-
             </div>
 
-            <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-light border rounded-3" data-bs-dismiss="modal">Cancelar</button>
-                <asp:Button ID="btnGuardarGasto"
-                            runat="server"
-                            Text="Guardar"
-                            CssClass="btn btn-primary rounded-3 px-4"
-                            OnClick="btnGuardarGasto_Click" />
+            <%-- FORMA DE PAGO --%>
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label class="form-label fw-semibold">Forma de pago</label>
+                    <div class="d-flex gap-4">
+                        <div class="form-check">
+                            <asp:RadioButton ID="rbUnPago" runat="server" GroupName="FormaPago" CssClass="form-check-input" Checked="true" onclick="toggleFormaPagoGasto()" />
+                            <label class="form-check-label">En un pago</label>
+                        </div>
+                        <div class="form-check">
+                            <asp:RadioButton ID="rbCuotas" runat="server" GroupName="FormaPago" CssClass="form-check-input" onclick="toggleFormaPagoGasto()" />
+                            <label class="form-check-label">En cuotas</label>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-semibold">Moneda</label>
+
+                    <asp:DropDownList ID="ddlMonedaGasto"
+                                      runat="server"
+                                      CssClass="form-select"
+                                      onchange="toggleCamposMonedaGasto()">
+                        <asp:ListItem Text="ARS" Value="1"></asp:ListItem>
+                        <asp:ListItem Text="USD" Value="2"></asp:ListItem>
+                        <asp:ListItem Text="EUR" Value="3"></asp:ListItem>
+                        <asp:ListItem Text="BRL" Value="4"></asp:ListItem>
+                    </asp:DropDownList>
+                </div>
+
+                <%-- MONTO NORMAL --%>
+                <div class="col-md-4 mb-3" id="campoMontoPesosGasto">
+                    <label class="form-label fw-semibold">Monto en pesos</label>
+                    <asp:TextBox ID="txtMontoPesosGasto" runat="server" CssClass="form-control"></asp:TextBox>
+                </div>
+
+                <%-- MONTO CUOTA --%>
+                <div class="col-md-4 mb-3" id="campoMontoCuotaGasto" style="display:none;">
+                    <label class="form-label fw-semibold">Monto por cuota</label>
+                    <asp:TextBox ID="txtMontoCuotaGasto" runat="server" CssClass="form-control"></asp:TextBox>
+                </div>
+
+                <%-- CANTIDAD CUOTAS --%>
+                <div class="col-md-4 mb-3" id="campoCantidadCuotasGasto" style="display:none;">
+                    <label class="form-label fw-semibold">Cantidad de cuotas</label>
+                    <asp:TextBox ID="txtCantidadCuotasGasto" runat="server" CssClass="form-control" TextMode="Number"></asp:TextBox>
+                </div>
+
+                <%-- USD --%>
+                <div class="col-md-4 mb-3" id="campoMontoUSDGasto" style="display:none;">
+                    <label class="form-label fw-semibold">Monto en moneda original</label>
+                    <asp:TextBox ID="txtMontoUSDGasto" runat="server" CssClass="form-control" oninput="calcularMontoPesosGasto()"></asp:TextBox>
+                </div>
+            </div>
+
+            <div class="row" id="campoCotizacionGasto" style="display:none;">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Cotización</label>
+                    <asp:TextBox ID="txtCotizacionGasto" runat="server" CssClass="form-control" oninput="calcularMontoPesosGasto()"></asp:TextBox>
+                </div>
+            </div>
+
+            <asp:Label ID="lblMensajeGasto" runat="server" CssClass="d-block text-center mt-3"></asp:Label>
 
         </div>
-      </div>
+
+        <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-light border rounded-3" data-bs-dismiss="modal">Cancelar</button>
+            <asp:Button ID="btnGuardarGasto"
+                        runat="server"
+                        Text="Guardar"
+                        CssClass="btn btn-primary rounded-3 px-4"
+                        OnClick="btnGuardarGasto_Click" />
+        </div>
+
     </div>
+</div>
+</div>
 
      <%-- Se ocultan campos FECHA cuando no es crèdito el tipo de medio de pago  --%>
     <script> 
@@ -891,6 +947,18 @@
             }
         }
     </script>
+
+    <script>
+        function toggleFormaPagoGasto() {
+            var cuotas = document.getElementById('<%= rbCuotas.ClientID %>').checked;
+
+            document.getElementById('campoMontoPesosGasto').style.display = cuotas ? 'none' : 'block';
+            document.getElementById('campoMontoCuotaGasto').style.display = cuotas ? 'block' : 'none';
+            document.getElementById('campoCantidadCuotasGasto').style.display = cuotas ? 'block' : 'none';
+        }
+
+</script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const params = new URLSearchParams(window.location.search);
