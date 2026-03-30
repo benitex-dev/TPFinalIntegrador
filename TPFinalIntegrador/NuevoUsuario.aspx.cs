@@ -59,6 +59,27 @@ namespace TPFinalIntegrador
 
                 negocioUsuario.AgregarUsuario(nuevo);
 
+                /*--------------ENVIO DE MAIL----------------------*/
+                string rutaPlantillas = Server.MapPath("~/Template");
+               
+                var reemplazos = new Dictionary<string, string>()
+                {
+                    { "NOMBRE_USUARIO", nuevo.Nombre },
+                };
+
+                EmailService servicio = new EmailService();
+
+                servicio.armarCorreo(
+                    nuevo.Email,
+                    "Te damos la bienvenida al Sistema de Control de Gatos",
+                    reemplazos,
+                    TipoCorreo.NuevoUsuario,
+                    rutaPlantillas
+                );
+
+                servicio.enviarCorreo();
+                /*---------------------------------------------------------------*/
+
                 Response.Redirect("Login.aspx", false);
             }
             catch (Exception ex)
