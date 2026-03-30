@@ -88,7 +88,7 @@ namespace TPFinalIntegrador
 
                 servicio.armarCorreo(
                     usuarioActual.Email,
-                    "Te damos la bienvenida al Sistema de Control de Gatos",
+                    "Nuevo hogar creado correctamente",
                     reemplazos,
                     TipoCorreo.NuevoHogar,
                     rutaPlantillas
