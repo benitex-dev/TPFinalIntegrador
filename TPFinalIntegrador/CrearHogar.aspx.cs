@@ -1,8 +1,8 @@
 ﻿using dominio;
 using negocio;
 using System;
-using System.Linq;
 using System.Web.UI;
+using System.Collections.Generic;
 
 namespace TPFinalIntegrador
 {
@@ -75,6 +75,27 @@ namespace TPFinalIntegrador
                 lblMensaje.Text = "Hogar creado correctamente.";
                 lblMensaje.CssClass = "text-success";
 
+                /*--------------ENVIO DE MAIL----------------------*/
+                string rutaPlantillas = Server.MapPath("~/Template");
+
+                var reemplazos = new Dictionary<string, string>()
+                {
+                    { "NOMBRE_USUARIO", usuarioActual.Nombre },
+                    { "NOMBRE_HOGAR", nuevo.Nombre }
+                };
+
+                EmailService servicio = new EmailService();
+
+                servicio.armarCorreo(
+                    usuarioActual.Email,
+                    "Te damos la bienvenida al Sistema de Control de Gatos",
+                    reemplazos,
+                    TipoCorreo.NuevoHogar,
+                    rutaPlantillas
+                );
+
+                servicio.enviarCorreo();
+                /*---------------------------------------------------------------*/
                 // Limpiar formulario
                 txtNombre.Text = "";
                
