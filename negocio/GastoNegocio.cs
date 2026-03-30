@@ -191,6 +191,38 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+
+        public decimal TotalGastosMesActualHogar(int idHogar)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta("SELECT ISNULL(SUM(MontoPesos), 0) AS Total " +
+                                  "FROM GASTO " +
+                                  "WHERE IdHogar = @idHogar " +
+                                  "AND Estado = 1 " +
+                                  "AND MONTH(Fecha) = MONTH(GETDATE()) " +
+                                  "AND YEAR(Fecha) = YEAR(GETDATE())");
+
+                datos.setParametro("@idHogar", idHogar);
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                    return (decimal)datos.Lector["Total"];
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
         public List<Gasto> ListarPorUsuarioMesActual(int idUsuario)
         {
             List<Gasto> lista = new List<Gasto>();
@@ -225,6 +257,70 @@ namespace negocio
 
                     gasto.Usuario = new Usuario();
                     gasto.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+
+                    gasto.Categoria = new Categoria();
+                    gasto.Categoria.IdCategoria = (int)datos.Lector["IdCategoria"];
+                    gasto.Categoria.Nombre = (string)datos.Lector["NombreCategoria"];
+
+                    gasto.MedioDePago = new MedioPago();
+                    gasto.MedioDePago.IdMedioPago = (int)datos.Lector["IdMedioPago"];
+                    gasto.MedioDePago.Descripcion = (string)datos.Lector["NombreMedioPago"];
+
+                    if (datos.Lector["MontoUSD"] != DBNull.Value)
+                        gasto.MontoUSD = (decimal)datos.Lector["MontoUSD"];
+
+                    if (datos.Lector["Cotizacion"] != DBNull.Value)
+                        gasto.Cotizacion = (decimal)datos.Lector["Cotizacion"];
+
+                    lista.Add(gasto);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        public List<Gasto> ListarPorHogarMesActual(int idHogar)
+        {
+            List<Gasto> lista = new List<Gasto>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta("SELECT G.IdGasto, G.Fecha, G.MontoPesos, G.Moneda, G.IdCategoria, G.Descripcion, " +
+                                  "G.IdMedioPago, G.IdUsuario, G.IdHogar, G.MontoUSD, G.Cotizacion, G.Estado, " +
+                                  "C.Nombre AS NombreCategoria, MP.Descripcion AS NombreMedioPago " +
+                                  "FROM GASTO G " +
+                                  "INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria " +
+                                  "INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago " +
+                                  "WHERE G.IdHogar = @idHogar " +
+                                  "AND G.Estado = 1 " +
+                                  "AND MONTH(G.Fecha) = MONTH(GETDATE()) " +
+                                  "AND YEAR(G.Fecha) = YEAR(GETDATE())");
+
+                datos.setParametro("@idHogar", idHogar);
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Gasto gasto = new Gasto();
+
+                    gasto.IdGasto = (int)datos.Lector["IdGasto"];
+                    gasto.Fecha = (DateTime)datos.Lector["Fecha"];
+                    gasto.MontoPesos = (decimal)datos.Lector["MontoPesos"];
+                    gasto.Moneda = (Moneda)(int)datos.Lector["Moneda"];
+                    gasto.Descripcion = (string)datos.Lector["Descripcion"];
+                    gasto.Estado = (bool)datos.Lector["Estado"];
+
+                    gasto.Hogar = new Hogar();
+                    gasto.Hogar.IdHogar = (int)datos.Lector["IdUsuario"];
 
                     gasto.Categoria = new Categoria();
                     gasto.Categoria.IdCategoria = (int)datos.Lector["IdCategoria"];

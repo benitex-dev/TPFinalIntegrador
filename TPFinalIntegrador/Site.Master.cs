@@ -95,6 +95,7 @@ namespace TPFinalIntegrador
         {
             Session["ModoVista"] = "Personal";
             Session["IdHogarActual"] = null;
+            Session["HogarSeleccionado"] = null;
             Response.Redirect("Inicio.aspx");
         }
 
@@ -105,6 +106,8 @@ namespace TPFinalIntegrador
             {
                 int idHogarSeleccionado = Convert.ToInt32(e.CommandArgument);
 
+                HogarNegocio hogarSeleccionado = new HogarNegocio();
+                Session["HogarSeleccionado"] = hogarSeleccionado.Listar(idHogarSeleccionado);
                 Session["ModoVista"] = "Hogar";
                 Session["IdHogarActual"] = idHogarSeleccionado;
                 Response.Redirect("Inicio.aspx");

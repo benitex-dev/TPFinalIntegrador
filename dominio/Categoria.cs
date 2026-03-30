@@ -21,6 +21,7 @@ namespace dominio
             public Usuario Usuario { get; set; } //categoria personal
             public TipoCategoria Tipo { get; set; }
             public bool Estado { get; set; }
+            public Hogar Hogar { get; set; }
     }
 
     

@@ -150,6 +150,50 @@ namespace negocio
             }
         }
 
+        public List<Categoria> ListarPorHogarYTipo(int idHogar, TipoCategoria tipo)
+        {
+            List<Categoria> lista = new List<Categoria>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta("SELECT IdCategoria, Nombre, IdUsuario, IdHogar, Tipo, Estado " +
+                                  "FROM CATEGORIA " +
+                                  "WHERE IdHogar = @idHogar AND Tipo = @tipo AND Estado = 1");
+
+                datos.setParametro("@idHogar", idHogar);
+                datos.setParametro("@tipo", (int)tipo);
+
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Categoria categoria = new Categoria();
+
+                    categoria.IdCategoria = (int)datos.Lector["IdCategoria"];
+                    categoria.Nombre = (string)datos.Lector["Nombre"];
+
+                    categoria.Hogar = new Hogar();
+                    categoria.Hogar.IdHogar = (int)datos.Lector["IdHogar"];
+
+                    categoria.Tipo = (TipoCategoria)(int)datos.Lector["Tipo"];
+                    categoria.Estado = (bool)datos.Lector["Estado"];
+
+                    lista.Add(categoria);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
         public bool ExisteCategoria(int idCategoria)
         {
             AccesoDatos datos = new AccesoDatos();

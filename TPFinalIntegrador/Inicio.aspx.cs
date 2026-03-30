@@ -115,14 +115,22 @@ namespace TPFinalIntegrador
         {
             try
             {
-                Usuario usuarioLogueado = (Usuario)Session["usuario"];
                 CategoriaNegocio negocio = new CategoriaNegocio();
 
-                ddlCategoriaIngreso.DataSource = negocio.ListarPorUsuarioYTipo(usuarioLogueado.IdUsuario, TipoCategoria.Ingreso);
+                if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
+                {
+                    int idHogar = (int)Session["IdHogarActual"];
+                    ddlCategoriaIngreso.DataSource = negocio.ListarPorHogarYTipo(idHogar, TipoCategoria.Ingreso);
+                }
+                else
+                {
+                    Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                    ddlCategoriaIngreso.DataSource = negocio.ListarPorUsuarioYTipo(usuarioLogueado.IdUsuario, TipoCategoria.Ingreso);
+                }
+
                 ddlCategoriaIngreso.DataTextField = "Nombre";
                 ddlCategoriaIngreso.DataValueField = "IdCategoria";
                 ddlCategoriaIngreso.DataBind();
-
                 ddlCategoriaIngreso.Items.Insert(0, new ListItem("Seleccionar", "0"));
             }
             catch (Exception ex)
@@ -205,10 +213,19 @@ namespace TPFinalIntegrador
         {
             try
             {
-                Usuario usuarioLogueado = (Usuario)Session["usuario"];
                 IngresoNegocio negocio = new IngresoNegocio();
+                decimal total = 0;
+                if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
+                {
+                    int idHogar = (int)Session["idHogarActual"];
+                    total = negocio.TotalIngresosMesActualHogar(idHogar);
+                }
+                else
+                {
+                    Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                    total = negocio.TotalIngresosMesActual(usuarioLogueado.IdUsuario);
+                }
 
-                decimal total = negocio.TotalIngresosMesActual(usuarioLogueado.IdUsuario);
                 lblIngresosMes.Text = "$ " + total.ToString("N2");
             }
             catch (Exception ex)
@@ -296,14 +313,21 @@ namespace TPFinalIntegrador
         {
             try
             {
-                Usuario usuarioLogueado = (Usuario)Session["usuario"];
                 CategoriaNegocio negocio = new CategoriaNegocio();
 
-                ddlCategoriaGasto.DataSource = negocio.ListarPorUsuarioYTipo(usuarioLogueado.IdUsuario, TipoCategoria.Gasto);
+                if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
+                {
+                    int idHogar = (int)Session["IdHogarActual"];
+                    ddlCategoriaGasto.DataSource = negocio.ListarPorHogarYTipo(idHogar, TipoCategoria.Gasto);
+                }
+                else
+                {
+                    Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                    ddlCategoriaGasto.DataSource = negocio.ListarPorUsuarioYTipo(usuarioLogueado.IdUsuario, TipoCategoria.Gasto);
+                }
                 ddlCategoriaGasto.DataTextField = "Nombre";
                 ddlCategoriaGasto.DataValueField = "IdCategoria";
                 ddlCategoriaGasto.DataBind();
-
                 ddlCategoriaGasto.Items.Insert(0, new ListItem("Seleccionar", "0"));
             }
             catch (Exception ex)
@@ -316,15 +340,20 @@ namespace TPFinalIntegrador
         {
             try
             {
-                Usuario usuarioLogueado = (Usuario)Session["usuario"];
-
                 MedioPagoNegocio negocio = new MedioPagoNegocio();
-
-                ddlMedioPagoGasto.DataSource = negocio.ListarPorUsuario(usuarioLogueado.IdUsuario);
+                if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
+                {
+                    int idHogar = (int)Session["IdHogarActual"];
+                    ddlMedioPagoGasto.DataSource = negocio.ListarPorHogar(idHogar);
+                }
+                else
+                {
+                    Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                    ddlMedioPagoGasto.DataSource = negocio.ListarPorUsuario(usuarioLogueado.IdUsuario);
+                }
                 ddlMedioPagoGasto.DataTextField = "Descripcion";
                 ddlMedioPagoGasto.DataValueField = "IdMedioPago";
                 ddlMedioPagoGasto.DataBind();
-
                 ddlMedioPagoGasto.Items.Insert(0, new ListItem("Seleccionar", "0"));
             }
             catch (Exception ex)
@@ -433,10 +462,18 @@ namespace TPFinalIntegrador
         {
             try
             {
-                Usuario usuarioLogueado = (Usuario)Session["usuario"];
                 GastoNegocio negocio = new GastoNegocio();
-
-                decimal total = negocio.TotalGastosMesActual(usuarioLogueado.IdUsuario);
+                decimal total = 0;
+                if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
+                {
+                    int idHogar = (int)Session["IdHogarActual"];
+                    total = negocio.TotalGastosMesActualHogar(idHogar);
+                }
+                else
+                {
+                    Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                    total = negocio.TotalGastosMesActual(usuarioLogueado.IdUsuario);
+                }
                 lblGastosMes.Text = "$ " + total.ToString("N2");
             }
             catch (Exception ex)
@@ -448,14 +485,23 @@ namespace TPFinalIntegrador
         private List<Movimiento> ObtenerMovimientosDelMes()
         {
             List<Movimiento> movimientos = new List<Movimiento>();
-
-            Usuario usuarioLogueado = (Usuario)Session["usuario"];
-
             IngresoNegocio ingresoNegocio = new IngresoNegocio();
             GastoNegocio gastoNegocio = new GastoNegocio();
+            List<Ingreso> ingresos = null;
+            List<Gasto> gastos = null;
 
-            List<Ingreso> ingresos = ingresoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario);
-            List<Gasto> gastos = gastoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario);
+            if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
+            {
+                int idHogar = (int)Session["IdHogarActual"];
+                ingresos = ingresoNegocio.ListarPorHogarMesActual(idHogar);
+                gastos = gastoNegocio.ListarPorHogarMesActual(idHogar);
+            }
+            else
+            {
+                Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                ingresos = ingresoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario);
+                gastos = gastoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario);
+            }
 
             foreach (Ingreso ingreso in ingresos)
             {

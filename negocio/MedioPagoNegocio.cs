@@ -58,7 +58,55 @@ namespace negocio
                 }
             }
 
-            public bool ExisteMedioPago(string descripcion, int idUsuario)
+        public List<MedioPago> ListarPorHogar(int idHogar)
+        {
+            List<MedioPago> lista = new List<MedioPago>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta("SELECT IdMedioPago, Tipo, Descripcion, IdUsuario, IdHogar, DiaCierre, DiaVencimiento, Estado " +
+                                  "FROM MEDIOPAGO " +
+                                  "WHERE IdHogar = @idHogar AND Estado = 1");
+
+                datos.setParametro("@idHogar", idHogar);
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    MedioPago medio = new MedioPago();
+
+                    medio.IdMedioPago = (int)datos.Lector["IdMedioPago"];
+                    medio.Tipo = (TipoPago)(int)datos.Lector["Tipo"];
+                    medio.Descripcion = (string)datos.Lector["Descripcion"];
+
+                    medio.Hogar = new Hogar();
+                    medio.Hogar.IdHogar = (int)datos.Lector["IdUsuario"];
+
+                    if (datos.Lector["DiaCierre"] != DBNull.Value)
+                        medio.DiaCierre = (int)datos.Lector["DiaCierre"];
+
+                    if (datos.Lector["DiaVencimiento"] != DBNull.Value)
+                        medio.DiaVencimiento = (int)datos.Lector["DiaVencimiento"];
+
+                    medio.Estado = (bool)datos.Lector["Estado"];
+
+                    lista.Add(medio);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        public bool ExisteMedioPago(string descripcion, int idUsuario)
             {
                 AccesoDatos datos = new AccesoDatos();
 
