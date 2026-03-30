@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace negocio
 {
-    class MetaAhorroNegocio
+    public class MetaAhorroNegocio
     {
         //ALTA
         public void AgregarMetaAhorro(MetaAhorro nueva)
