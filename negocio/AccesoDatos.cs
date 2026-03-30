@@ -22,10 +22,10 @@ namespace negocio
         {
             conexion = new SqlConnection(
             //CONEXIÒN MERI
-            "server=.\\SQLEXPRESS; database=ADMIN_GASTOS_DB; integrated security=true"
+            //"server=.\\SQLEXPRESS; database=ADMIN_GASTOS_DB; integrated security=true"
 
             //
-            //"server=(localdb)\\MSSQLLocalDB; database=ADMIN_GASTOS_DB; integrated security=true"
+            "server=(localdb)\\MSSQLLocalDB; database=ADMIN_GASTOS_DB; integrated security=true"
 
             //CONEXION AILIN
             //"server=.\\sqlexpress; database=admin_gastos_db; integrated security=true"

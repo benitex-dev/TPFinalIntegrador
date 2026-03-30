@@ -9,7 +9,9 @@ namespace negocio
 {
     public class CuotaNegocio
     {
-        //ALTA
+        
+        // ALTA
+       
         public void AgregarCuota(Cuota nueva)
         {
             AccesoDatos datos = new AccesoDatos();
@@ -25,20 +27,25 @@ namespace negocio
                 if (nueva.NumeroCuota <= 0)
                     throw new Exception("El número de cuota debe ser mayor a cero.");
 
+                if (nueva.TotalCuotas <= 0)
+                    throw new Exception("Debe indicar la cantidad total de cuotas.");
+
                 if (nueva.Monto <= 0)
                     throw new Exception("El monto de la cuota debe ser mayor a cero.");
 
                 if (nueva.Vencimiento == DateTime.MinValue)
                     throw new Exception("Debe ingresar una fecha de vencimiento válida.");
 
-                datos.setConsulta("INSERT INTO CUOTA (IdGasto, NumeroCuota, Monto, Vencimiento, Estado) " +
-                                  "VALUES (@idGasto, @numeroCuota, @monto, @vencimiento, @estado)");
+                datos.setConsulta(@"INSERT INTO CUOTA 
+                (IdGasto, NumeroCuota, TotalCuotas, Monto, Vencimiento, Estado) 
+                VALUES (@idGasto, @numeroCuota, @totalCuotas, @monto, @vencimiento, @estado)");
 
                 datos.setParametro("@idGasto", nueva.Gasto.IdGasto);
                 datos.setParametro("@numeroCuota", nueva.NumeroCuota);
+                datos.setParametro("@totalCuotas", nueva.TotalCuotas);
                 datos.setParametro("@monto", nueva.Monto);
                 datos.setParametro("@vencimiento", nueva.Vencimiento);
-                datos.setParametro("@estado", nueva.Estado);
+                datos.setParametro("@estado", (int)nueva.Estado);
 
                 datos.ejecutarAccion();
             }
@@ -51,7 +58,10 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
-        //BAJA
+
+        
+        // BAJA (lógica)
+        
         public void EliminarLogico(int idCuota)
         {
             AccesoDatos datos = new AccesoDatos();
@@ -61,8 +71,9 @@ namespace negocio
                 if (idCuota <= 0)
                     throw new Exception("Id de cuota inválido.");
 
-                datos.setConsulta("UPDATE CUOTA SET Estado = 0 WHERE IdCuota = @idCuota");
+                datos.setConsulta("UPDATE CUOTA SET Estado = @estado WHERE IdCuota = @idCuota");
                 datos.setParametro("@idCuota", idCuota);
+                datos.setParametro("@estado", (int)EstadoCuota.Vencida); // o el que quieras usar como "inactivo"
 
                 datos.ejecutarAccion();
             }
@@ -75,7 +86,10 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
-        //LISTAR
+
+        
+        // LISTAR POR GASTO
+       
         public List<Cuota> ListarPorGasto(int idGasto)
         {
             List<Cuota> lista = new List<Cuota>();
@@ -83,7 +97,10 @@ namespace negocio
 
             try
             {
-                datos.setConsulta("SELECT IdCuota, IdGasto, NumeroCuota, Monto, Vencimiento, Estado FROM CUOTA WHERE IdGasto = @idGasto");
+                datos.setConsulta(@"SELECT IdCuota, IdGasto, NumeroCuota, TotalCuotas, Monto, Vencimiento, Estado 
+                                FROM CUOTA 
+                                WHERE IdGasto = @idGasto");
+
                 datos.setParametro("@idGasto", idGasto);
 
                 datos.ejecutarLectura();
@@ -93,14 +110,15 @@ namespace negocio
                     Cuota cuota = new Cuota();
 
                     cuota.IdCuota = (int)datos.Lector["IdCuota"];
-                    
+
                     cuota.Gasto = new Gasto();
                     cuota.Gasto.IdGasto = (int)datos.Lector["IdGasto"];
-                    
+
                     cuota.NumeroCuota = (int)datos.Lector["NumeroCuota"];
+                    cuota.TotalCuotas = (int)datos.Lector["TotalCuotas"];
                     cuota.Monto = (decimal)datos.Lector["Monto"];
                     cuota.Vencimiento = (DateTime)datos.Lector["Vencimiento"];
-                    cuota.Estado = (bool)datos.Lector["Estado"];
+                    cuota.Estado = (EstadoCuota)(int)datos.Lector["Estado"];
 
                     lista.Add(cuota);
                 }
@@ -117,7 +135,9 @@ namespace negocio
             }
         }
 
-        //listar 2
+        
+        // LISTAR GENERAL 
+       
         public List<Cuota> Listar(int idGasto = 0, int numeroCuota = 0, DateTime? vencimiento = null)
         {
             List<Cuota> lista = new List<Cuota>();
@@ -125,7 +145,8 @@ namespace negocio
 
             try
             {
-                string consulta = "SELECT IdCuota, IdGasto, NumeroCuota, Monto, Vencimiento, Estado FROM CUOTA WHERE 1=1";
+                string consulta = @"SELECT IdCuota, IdGasto, NumeroCuota, TotalCuotas, Monto, Vencimiento, Estado 
+                                FROM CUOTA WHERE 1=1";
 
                 if (idGasto > 0)
                     consulta += " AND IdGasto = @idGasto";
@@ -159,9 +180,10 @@ namespace negocio
                     cuota.Gasto.IdGasto = (int)datos.Lector["IdGasto"];
 
                     cuota.NumeroCuota = (int)datos.Lector["NumeroCuota"];
+                    cuota.TotalCuotas = (int)datos.Lector["TotalCuotas"];
                     cuota.Monto = (decimal)datos.Lector["Monto"];
                     cuota.Vencimiento = (DateTime)datos.Lector["Vencimiento"];
-                    cuota.Estado = (bool)datos.Lector["Estado"];
+                    cuota.Estado = (EstadoCuota)(int)datos.Lector["Estado"];
 
                     lista.Add(cuota);
                 }
@@ -178,7 +200,144 @@ namespace negocio
             }
         }
 
-        //MODIFICAR
+        public List<Cuota> ListarPorUsuarioMesActual(int idUsuario)
+        {
+            List<Cuota> lista = new List<Cuota>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta(@"
+            SELECT 
+                C.IdCuota,
+                C.IdGasto,
+                C.NumeroCuota,
+                C.TotalCuotas,
+                C.Monto,
+                C.Vencimiento,
+                C.Estado,
+                G.Descripcion,
+                G.IdCategoria,
+                CAT.Nombre AS NombreCategoria
+            FROM CUOTA C
+            INNER JOIN GASTO G ON G.IdGasto = C.IdGasto
+            INNER JOIN CATEGORIA CAT ON CAT.IdCategoria = G.IdCategoria
+            WHERE G.IdUsuario = @idUsuario
+              AND G.Estado = 1
+              AND MONTH(C.Vencimiento) = MONTH(GETDATE())
+              AND YEAR(C.Vencimiento) = YEAR(GETDATE())");
+
+                datos.setParametro("@idUsuario", idUsuario);
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Cuota cuota = new Cuota();
+
+                    cuota.IdCuota = (int)datos.Lector["IdCuota"];
+
+                    cuota.Gasto = new Gasto();
+                    cuota.Gasto.IdGasto = (int)datos.Lector["IdGasto"];
+                    cuota.Gasto.Descripcion = (string)datos.Lector["Descripcion"];
+
+                    cuota.Gasto.Categoria = new Categoria();
+                    cuota.Gasto.Categoria.IdCategoria = (int)datos.Lector["IdCategoria"];
+                    cuota.Gasto.Categoria.Nombre = (string)datos.Lector["NombreCategoria"];
+
+                    cuota.NumeroCuota = (int)datos.Lector["NumeroCuota"];
+                    cuota.TotalCuotas = (int)datos.Lector["TotalCuotas"];
+                    cuota.Monto = (decimal)datos.Lector["Monto"];
+                    cuota.Vencimiento = (DateTime)datos.Lector["Vencimiento"];
+                    cuota.Estado = (EstadoCuota)(int)datos.Lector["Estado"];
+
+                    lista.Add(cuota);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        public List<Cuota> ListarPorUsuarioPorMes(int idUsuario, int mes, int anio)
+        {
+            List<Cuota> lista = new List<Cuota>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta(@"
+            SELECT 
+                C.IdCuota,
+                C.IdGasto,
+                C.NumeroCuota,
+                C.TotalCuotas,
+                C.Monto,
+                C.Vencimiento,
+                C.Estado,
+                G.Descripcion,
+                G.IdCategoria,
+                CAT.Nombre AS NombreCategoria
+            FROM CUOTA C
+            INNER JOIN GASTO G ON G.IdGasto = C.IdGasto
+            INNER JOIN CATEGORIA CAT ON CAT.IdCategoria = G.IdCategoria
+            WHERE G.IdUsuario = @idUsuario
+              AND G.Estado = 1
+              AND MONTH(C.Vencimiento) = @mes
+              AND YEAR(C.Vencimiento) = @anio");
+
+                datos.setParametro("@idUsuario", idUsuario);
+                datos.setParametro("@mes", mes);
+                datos.setParametro("@anio", anio);
+
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Cuota cuota = new Cuota();
+
+                    cuota.IdCuota = (int)datos.Lector["IdCuota"];
+
+                    cuota.Gasto = new Gasto();
+                    cuota.Gasto.IdGasto = (int)datos.Lector["IdGasto"];
+                    cuota.Gasto.Descripcion = (string)datos.Lector["Descripcion"];
+
+                    cuota.Gasto.Categoria = new Categoria();
+                    cuota.Gasto.Categoria.IdCategoria = (int)datos.Lector["IdCategoria"];
+                    cuota.Gasto.Categoria.Nombre = (string)datos.Lector["NombreCategoria"];
+
+                    cuota.NumeroCuota = (int)datos.Lector["NumeroCuota"];
+                    cuota.TotalCuotas = (int)datos.Lector["TotalCuotas"];
+                    cuota.Monto = (decimal)datos.Lector["Monto"];
+                    cuota.Vencimiento = (DateTime)datos.Lector["Vencimiento"];
+                    cuota.Estado = (EstadoCuota)(int)datos.Lector["Estado"];
+
+                    lista.Add(cuota);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        
+
+
+        // MODIFICAR
+
         public void ModificarCuota(Cuota cuota)
         {
             AccesoDatos datos = new AccesoDatos();
@@ -186,31 +345,27 @@ namespace negocio
             try
             {
                 if (cuota == null)
-                    throw new Exception("La cuota no existe o fue saldada.");
+                    throw new Exception("La cuota no existe.");
 
                 if (cuota.IdCuota <= 0)
                     throw new Exception("La cuota debe tener un Id válido.");
 
-                if (cuota.Gasto == null || cuota.Gasto.IdGasto <= 0)
-                    throw new Exception("La cuota debe estar asociada a un gasto válido.");
-
-                if (cuota.NumeroCuota <= 0)
-                    throw new Exception("El número de cuota debe ser mayor a cero.");
-
-                if (cuota.Monto <= 0)
-                    throw new Exception("El monto debe ser mayor a cero.");
-
-                if (cuota.Vencimiento == DateTime.MinValue)
-                    throw new Exception("Debe ingresar un vencimiento válido.");
-
-                datos.setConsulta("UPDATE CUOTA SET IdGasto = @idGasto, NumeroCuota = @numeroCuota, Monto = @monto, Vencimiento = @vencimiento, Estado = @estado WHERE IdCuota = @idCuota");
+                datos.setConsulta(@"UPDATE CUOTA SET 
+                IdGasto = @idGasto,
+                NumeroCuota = @numeroCuota,
+                TotalCuotas = @totalCuotas,
+                Monto = @monto,
+                Vencimiento = @vencimiento,
+                Estado = @estado
+                WHERE IdCuota = @idCuota");
 
                 datos.setParametro("@idCuota", cuota.IdCuota);
                 datos.setParametro("@idGasto", cuota.Gasto.IdGasto);
                 datos.setParametro("@numeroCuota", cuota.NumeroCuota);
+                datos.setParametro("@totalCuotas", cuota.TotalCuotas);
                 datos.setParametro("@monto", cuota.Monto);
                 datos.setParametro("@vencimiento", cuota.Vencimiento);
-                datos.setParametro("@estado", cuota.Estado);
+                datos.setParametro("@estado", (int)cuota.Estado);
 
                 datos.ejecutarAccion();
             }
@@ -224,14 +379,19 @@ namespace negocio
             }
         }
 
-        //EXISTE
+        
+        // EXISTE
+        
         public Cuota ExisteCuota(int idCuota)
         {
             AccesoDatos datos = new AccesoDatos();
 
             try
             {
-                datos.setConsulta("SELECT IdCuota, IdGasto, NumeroCuota, Monto, Vencimiento, Estado FROM CUOTA WHERE IdCuota = @idCuota AND Estado = 1");
+                datos.setConsulta(@"SELECT IdCuota, IdGasto, NumeroCuota, TotalCuotas, Monto, Vencimiento, Estado 
+                                FROM CUOTA 
+                                WHERE IdCuota = @idCuota");
+
                 datos.setParametro("@idCuota", idCuota);
                 datos.ejecutarLectura();
 
@@ -245,9 +405,10 @@ namespace negocio
                     aux.Gasto.IdGasto = (int)datos.Lector["IdGasto"];
 
                     aux.NumeroCuota = (int)datos.Lector["NumeroCuota"];
+                    aux.TotalCuotas = (int)datos.Lector["TotalCuotas"];
                     aux.Monto = (decimal)datos.Lector["Monto"];
                     aux.Vencimiento = (DateTime)datos.Lector["Vencimiento"];
-                    aux.Estado = (bool)datos.Lector["Estado"];
+                    aux.Estado = (EstadoCuota)(int)datos.Lector["Estado"];
 
                     return aux;
                 }

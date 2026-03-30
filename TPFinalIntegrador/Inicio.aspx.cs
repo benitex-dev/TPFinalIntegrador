@@ -11,10 +11,39 @@ namespace TPFinalIntegrador
 {
     public partial class Inicio : System.Web.UI.Page
     {
+        public int MesSeleccionado
+        {
+            get
+            {
+                if (ViewState["MesSeleccionado"] != null)
+                    return (int)ViewState["MesSeleccionado"];
+                else
+                    return DateTime.Now.Month;
+            }
+            set
+            {
+                ViewState["MesSeleccionado"] = value;
+            }
+        }
+
+        public int AnioSeleccionado
+        {
+            get
+            {
+                if (ViewState["AnioSeleccionado"] != null)
+                    return (int)ViewState["AnioSeleccionado"];
+                else
+                    return DateTime.Now.Year;
+            }
+            set
+            {
+                ViewState["AnioSeleccionado"] = value;
+            }
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-        
+
             if (Session["usuario"] == null)
             {
                 Response.Redirect("Login.aspx", false);
@@ -23,9 +52,12 @@ namespace TPFinalIntegrador
 
             if (!IsPostBack)
             {
+                MesSeleccionado = DateTime.Now.Month;
+                AnioSeleccionado = DateTime.Now.Year;
+
                 Usuario usuarioLogueado = (Usuario)Session["usuario"];
                 lblBienvenida.Text = "Bienvenido/a, " + usuarioLogueado.Nombre;
-                CargarCategoriasIngreso(); //Carga desplegable 
+                CargarCategoriasIngreso();
                 CargarResumenIngresos();
                 CargarResumenGastos();
                 CargarCategoriasGasto();
@@ -292,6 +324,52 @@ namespace TPFinalIntegrador
             }
         }
 
+        protected void CargarMovimientosDelMes()
+        {
+            Usuario usuarioLogueado = (Usuario)Session["usuario"];
+            MovimientoNegocio movimientoNegocio = new MovimientoNegocio();
+
+            List<Movimiento> lista = movimientoNegocio.ListarMovimientosPorMes(
+                usuarioLogueado.IdUsuario,
+                MesSeleccionado,
+                AnioSeleccionado
+            );
+
+            rptMovimientos.DataSource = lista;
+            rptMovimientos.DataBind();
+
+            lblMesActual.Text = new DateTime(AnioSeleccionado, MesSeleccionado, 1)
+                .ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-AR"));
+        }
+
+
+
+        protected void btnMesAnterior_Click(object sender, EventArgs e)
+        {
+            MesSeleccionado--;
+
+            if (MesSeleccionado < 1)
+            {
+                MesSeleccionado = 12;
+                AnioSeleccionado--;
+            }
+
+            CargarMovimientosDelMes();
+        }
+
+        protected void btnMesSiguiente_Click(object sender, EventArgs e)
+        {
+            MesSeleccionado++;
+
+            if (MesSeleccionado > 12)
+            {
+                MesSeleccionado = 1;
+                AnioSeleccionado++;
+            }
+
+            CargarMovimientosDelMes();
+        }
+
         protected void CargarCategoriasGasto()
         {
             try
@@ -335,12 +413,12 @@ namespace TPFinalIntegrador
 
         protected void btnGuardarGasto_Click(object sender, EventArgs e)
         {
-          
             try
             {
+                bool esCuotas = rbCuotas.Checked;
+
                 if (string.IsNullOrWhiteSpace(txtDescripcionGasto.Text) ||
-                    string.IsNullOrWhiteSpace(txtFechaGasto.Text) ||
-                    string.IsNullOrWhiteSpace(txtMontoPesosGasto.Text))
+                    string.IsNullOrWhiteSpace(txtFechaGasto.Text))
                 {
                     ScriptManager.RegisterStartupScript(
                         this, this.GetType(),
@@ -348,6 +426,30 @@ namespace TPFinalIntegrador
                         "Swal.fire({icon: 'error', title: 'Error', text: 'Completá los campos obligatorios.'});",
                         true);
                     return;
+                }
+
+                if (!esCuotas && string.IsNullOrWhiteSpace(txtMontoPesosGasto.Text))
+                {
+                    ScriptManager.RegisterStartupScript(
+                        this, this.GetType(),
+                        "errorMonto",
+                        "Swal.fire({icon: 'error', title: 'Error', text: 'Ingresá el monto del gasto.'});",
+                        true);
+                    return;
+                }
+
+                if (esCuotas)
+                {
+                    if (string.IsNullOrWhiteSpace(txtMontoCuotaGasto.Text) ||
+                        string.IsNullOrWhiteSpace(txtCantidadCuotasGasto.Text))
+                    {
+                        ScriptManager.RegisterStartupScript(
+                            this, this.GetType(),
+                            "errorCuotas",
+                            "Swal.fire({icon: 'error', title: 'Error', text: 'Completá monto de cuota y cantidad de cuotas.'});",
+                            true);
+                        return;
+                    }
                 }
 
                 if (ddlCategoriaGasto.SelectedValue == "0")
@@ -376,8 +478,6 @@ namespace TPFinalIntegrador
 
                 gasto.Descripcion = txtDescripcionGasto.Text.Trim();
                 gasto.Fecha = DateTime.Parse(txtFechaGasto.Text);
-                gasto.MontoPesos = decimal.Parse(txtMontoPesosGasto.Text.Trim(),System.Globalization.CultureInfo.InvariantCulture);
-
                 gasto.Moneda = (Moneda)int.Parse(ddlMonedaGasto.SelectedValue);
 
                 gasto.Categoria = new Categoria();
@@ -387,9 +487,25 @@ namespace TPFinalIntegrador
                 gasto.MedioDePago.IdMedioPago = int.Parse(ddlMedioPagoGasto.SelectedValue);
 
                 gasto.Usuario = usuarioLogueado;
-
                 gasto.Estado = true;
 
+                // PAGO EN CUOTAS O UN PAGO 
+                gasto.EsEnCuotas = esCuotas;
+
+                if (esCuotas)
+                {
+                    gasto.MontoCuota = decimal.Parse(txtMontoCuotaGasto.Text.Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                    gasto.CantidadCuotas = int.Parse(txtCantidadCuotasGasto.Text.Trim());
+
+                    // Calcular total cuota
+                    gasto.MontoPesos = gasto.MontoCuota * gasto.CantidadCuotas;
+                }
+                else
+                {
+                    gasto.MontoPesos = decimal.Parse(txtMontoPesosGasto.Text.Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                }
+
+                // MONEDA EXTRANJERA
                 if (gasto.Moneda != Moneda.ARS)
                 {
                     gasto.MontoUSD = decimal.Parse(txtMontoUSDGasto.Text.Trim(), System.Globalization.CultureInfo.InvariantCulture);
@@ -397,20 +513,47 @@ namespace TPFinalIntegrador
                 }
 
                 GastoNegocio negocio = new GastoNegocio();
-                negocio.AgregarGasto(gasto);
 
-                // Limpiar campos
+                // Obtener el ID
+                int idGasto = negocio.AgregarGasto(gasto);
+
+                // GENERAR CUOTAS
+                if (gasto.EsEnCuotas)
+                {
+                    CuotaNegocio cuotaNegocio = new CuotaNegocio();
+
+                    for (int i = 1; i <= gasto.CantidadCuotas; i++)
+                    {
+                        Cuota cuota = new Cuota();
+                        cuota.Gasto = new Gasto { IdGasto = idGasto };
+                        cuota.NumeroCuota = i;
+                        cuota.TotalCuotas = gasto.CantidadCuotas;
+                        cuota.Monto = gasto.MontoCuota;
+                        cuota.Vencimiento = gasto.Fecha.AddMonths(i - 1);
+                        cuota.Estado = EstadoCuota.Pendiente;
+
+                        cuotaNegocio.AgregarCuota(cuota);
+                    }
+                }
+
+                // LIMPIAR CAMPOS
                 txtDescripcionGasto.Text = "";
                 txtFechaGasto.Text = "";
                 txtMontoPesosGasto.Text = "";
                 txtMontoUSDGasto.Text = "";
                 txtCotizacionGasto.Text = "";
+                txtMontoCuotaGasto.Text = "";
+                txtCantidadCuotasGasto.Text = "";
+
                 ddlCategoriaGasto.SelectedIndex = 0;
                 ddlMedioPagoGasto.SelectedIndex = 0;
                 ddlMonedaGasto.SelectedIndex = 0;
 
-                CargarResumenGastos(); //Refresca los gastos al agregar uno nuevo
-                CargarSaldoMes(); //Refresca el saldo al agregar un gasto
+                rbUnPago.Checked = true;
+
+                //REFRESCAR
+                CargarResumenGastos();
+                CargarSaldoMes();
                 CargarMovimientosDelMes();
 
                 ScriptManager.RegisterStartupScript(
@@ -445,54 +588,7 @@ namespace TPFinalIntegrador
             }
         }
 
-        private List<Movimiento> ObtenerMovimientosDelMes()
-        {
-            List<Movimiento> movimientos = new List<Movimiento>();
 
-            Usuario usuarioLogueado = (Usuario)Session["usuario"];
-
-            IngresoNegocio ingresoNegocio = new IngresoNegocio();
-            GastoNegocio gastoNegocio = new GastoNegocio();
-
-            List<Ingreso> ingresos = ingresoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario);
-            List<Gasto> gastos = gastoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario);
-
-            foreach (Ingreso ingreso in ingresos)
-            {
-                Movimiento mov = new Movimiento();
-                mov.Fecha = ingreso.Fecha;
-                mov.Descripcion = ingreso.Descripcion;
-                mov.Categoria = ingreso.Categoria.Nombre;
-                mov.Tipo = "Ingreso";
-                mov.Monto = ingreso.Monto;
-                mov.Estado = ingreso.Estado ? "Activo" : "Eliminado";
-
-                movimientos.Add(mov);
-            }
-
-            foreach (Gasto gasto in gastos)
-            {
-                Movimiento mov = new Movimiento();
-                mov.Fecha = gasto.Fecha;
-                mov.Descripcion = gasto.Descripcion;
-                mov.Categoria = gasto.Categoria.Nombre;
-                mov.Tipo = "Gasto";
-                mov.Monto = gasto.MontoPesos;
-                mov.Estado = gasto.Estado ? "Activo" : "Eliminado";
-
-                movimientos.Add(mov);
-            }
-
-            return movimientos.OrderByDescending(x => x.Fecha).ToList();
-        }
-
-        private void CargarMovimientosDelMes()
-        {
-            List<Movimiento> lista = ObtenerMovimientosDelMes();
-
-            rptMovimientos.DataSource = lista;
-            rptMovimientos.DataBind();
-        }
 
         private void CargarSaldoMes()
         {
@@ -642,6 +738,9 @@ namespace TPFinalIntegrador
                 $"document.getElementById('{pnlReportes.ClientID}').scrollIntoView({{behavior:'smooth'}});", true);
         }
 
+    
+
+    
     }
 }
     
