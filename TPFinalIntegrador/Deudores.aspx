@@ -1,0 +1,62 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Deudores.aspx.cs" Inherits="TPFinalIntegrador.Deudores" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+     <h2>Mis Deudores</h2>
+
+  <%-- Formulario para agregar deuda --%>
+  <div class="card mb-4">
+      <div class="card-header">
+          <h5>Nueva Deuda</h5>
+      </div>
+      <div class="card-body">
+          <div class="row g-3">
+              <div class="col-md-3">
+                  <label>Nombre del Deudor</label>
+                  <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" placeholder="Ej: Juan Pérez" />
+              </div>
+              <div class="col-md-3">
+                  <label>Email del Deudor</label>
+                  <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" placeholder="email@ejemplo.com" />
+              </div>
+              <div class="col-md-3">
+                  <label>Descripción</label>
+                  <asp:TextBox ID="txtDescripcion" runat="server" CssClass="form-control" placeholder="Motivo de la deuda" />
+              </div>
+              <div class="col-md-3">
+                  <label>Monto Total ($)</label>
+                  <asp:TextBox ID="txtMonto" runat="server" CssClass="form-control" TextMode="Number" placeholder="0" />
+              </div>
+              <div class="col-md-3">
+                  <label>Cantidad de Cuotas</label>
+                  <asp:TextBox ID="txtCuotas" runat="server" CssClass="form-control" TextMode="Number" placeholder="1" />
+              </div>
+              <div class="col-md-3">
+                  <label>Fecha de Inicio</label>
+                  <asp:TextBox ID="txtFecha" runat="server" CssClass="form-control" TextMode="Date" />
+              </div>
+              <div class="col-md-3 d-flex align-items-end">
+                  <asp:Button ID="btnAgregar" runat="server" Text="Agregar" CssClass="btn btn-primary w-100" OnClick="btnAgregar_Click1" />
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <%-- Grilla de deudores --%>
+  <asp:GridView ID="gvDeudas" runat="server" AutoGenerateColumns="False"
+      CssClass="table table-bordered table-hover"
+      DataKeyNames="IdDeuda,NombreDeudor"
+      OnRowEditing="gvDeudas_RowEditing"
+      OnRowUpdating="gvDeudas_RowUpdating"
+      OnRowCancelingEdit="gvDeudas_RowCancelingEdit"
+      OnRowDeleting="gvDeudas_RowDeleting"
+      EmptyDataText="No tenés deudores registrados.">
+      <Columns>
+          <asp:BoundField DataField="NombreDeudor" HeaderText="Nombre" />
+          <asp:BoundField DataField="EmailDeudor" HeaderText="Email" />
+          <asp:BoundField DataField="Descripcion" HeaderText="Descripción" />
+          <asp:BoundField DataField="MontoTotal" HeaderText="Monto Total" DataFormatString="{0:C}" HtmlEncode="False" />
+          <asp:BoundField DataField="Cuotas" HeaderText="Cuotas" />
+          <asp:BoundField DataField="FechaInicio" HeaderText="Fecha Inicio" DataFormatString="{0:dd/MM/yyyy}" HtmlEncode="False" />
+          <asp:CommandField ShowEditButton="True" ShowDeleteButton="True" />
+      </Columns>
+  </asp:GridView>
+</asp:Content>

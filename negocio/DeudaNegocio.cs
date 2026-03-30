@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace negocio
 {
-    class DeudaNegocio
+   public class DeudaNegocio
     {
         //ALTA
         public void AgregarDeuda(Deuda nueva)
@@ -215,7 +215,7 @@ namespace negocio
 
             try
             {
-                datos.setConsulta("SELECT IdDeuda FROM DEUDA WHERE IdUsuario = @idUsuario AND LOWER(NombreDeudor) = LOWER(@nombreDeudor) AND Estado = 1");
+                datos.setConsulta(" SELECT IdDeuda, IdUsuario, NombreDeudor, EmailDeudor, Descripcion, MontoTotal, Cuotas, FechaInicio, Estado\r\n  FROM DEUDA WHERE IdUsuario = @idUsuario AND LOWER(NombreDeudor) = LOWER(@nombreDeudor) AND Estado = 1");
 
                 datos.setParametro("@idUsuario", idUsuario);
                 datos.setParametro("@nombreDeudor", nombreDeudor.Trim());
