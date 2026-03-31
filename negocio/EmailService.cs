@@ -9,23 +9,24 @@ namespace negocio
     public enum TipoCorreo
     {
         //USUARIO
-        IniciodeSesion = 0,
-        ResetPassword = 1,
-        NuevoUsuario = 2,
+        IniciodeSesion,
+        ResetPassword,
+        NuevoUsuario,
         //HOGAR
-        NuevoHogar = 3,
-        TeAgregaronAHogar = 4,
-        TeEliminaronDeHogar = 5,
+        NuevoHogar,
+        TeAgregaronAHogar,
+        TeEliminaronDeHogar,
         //GASTO
-        RegistroGasto = 6,
+        RegistroGasto,
+        GastoEnCuotas,
         //INGRESO
-        RegistroIngreso = 7,
+        RegistroIngreso,
         //DEUDA
-        RegistroDeuda = 8,
-        RegistroPagoDeuda = 9,
-        CancelacionDeuda = 10,
-        DeudaVencida = 11,
-        RecordatorioDeuda = 12,
+        RegistroDeuda,
+        RegistroPagoDeuda,
+        CancelacionDeuda,
+        DeudaVencida,
+        RecordatorioDeuda,
     }
 
     public class EmailService

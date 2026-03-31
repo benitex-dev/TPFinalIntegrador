@@ -189,6 +189,7 @@
     <Content Include="Site.Master" />
     <Content Include="Template\CancelacionDeuda.html" />
     <Content Include="Template\DeudaVencida.html" />
+    <Content Include="Template\GastoEnCuotas.html" />
     <Content Include="Template\RecordatorioDeuda.html" />
     <Content Include="Template\RegistroDeuda.html" />
     <Content Include="Template\RegistroGasto.html" />

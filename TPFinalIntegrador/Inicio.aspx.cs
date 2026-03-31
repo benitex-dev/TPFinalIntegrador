@@ -214,6 +214,30 @@ namespace TPFinalIntegrador
                 IngresoNegocio negocio = new IngresoNegocio();
                 negocio.AgregarIngreso(ingreso);
 
+                /*--------------ENVIO DE MAIL----------------------*/
+                string rutaPlantillas = Server.MapPath("~/Template");
+
+                var reemplazos = new Dictionary<string, string>()
+                {
+                    { "NOMBRE_USUARIO", usuarioLogueado.Nombre },
+                    { "DESCRIPCION", ingreso.Descripcion},
+                    { "MONTO", ingreso.Monto.ToString("N2") },
+                    { "FECHA", ingreso.Fecha.ToString("dd/MM/yyyy")}
+                };
+
+                EmailService servicio = new EmailService();
+
+                servicio.armarCorreo(
+                    usuarioLogueado.Email,
+                    "Nuevo registro de ingreso",
+                    reemplazos,
+                    TipoCorreo.RegistroIngreso,
+                    rutaPlantillas
+                );
+
+                servicio.enviarCorreo();
+                /*---------------------------------------------------------------*/
+
                 txtDescripcionIngreso.Text = "";
                 txtFechaIngreso.Text = "";
                 txtMontoIngreso.Text = "";
@@ -526,7 +550,7 @@ namespace TPFinalIntegrador
 
                 // Obtener el ID
                 int idGasto = negocio.AgregarGasto(gasto);
-
+                               
                 // GENERAR CUOTAS
                 if (gasto.EsEnCuotas)
                 {
@@ -543,7 +567,59 @@ namespace TPFinalIntegrador
                         cuota.Estado = EstadoCuota.Pendiente;
 
                         cuotaNegocio.AgregarCuota(cuota);
+
                     }
+                    /*--------------ENVIO DE MAIL----------------------*/
+                    string rutaPlantillas = Server.MapPath("~/Template");
+
+                    var reemplazos = new Dictionary<string, string>()
+                    {
+                        { "NOMBRE_USUARIO", usuarioLogueado.Nombre },
+                        { "DESCRIPCION", gasto.Descripcion },
+                        { "MONTO_CUOTA", gasto.MontoCuota.ToString("N2") },
+                        { "CANTIDAD_CUOTAS", gasto.CantidadCuotas.ToString() },
+                        { "MONTO_TOTAL", gasto.MontoPesos.ToString("N2") },
+                        { "FECHA", gasto.Fecha.ToString("dd/MM/yyyy") }
+                    };
+
+                    EmailService servicio = new EmailService();
+
+                    servicio.armarCorreo(
+                        usuarioLogueado.Email,
+                        "Nuevo gasto en cuotas registrado",
+                        reemplazos,
+                        TipoCorreo.GastoEnCuotas,
+                        rutaPlantillas
+                    );
+
+                    servicio.enviarCorreo();
+                    /*---------------------------------------------------------------*/
+                }
+                else
+                {
+                    /*--------------ENVIO DE MAIL----------------------*/
+                    string rutaPlantillas = Server.MapPath("~/Template");
+
+                    var reemplazos = new Dictionary<string, string>()
+                    {
+                        { "NOMBRE_USUARIO", usuarioLogueado.Nombre },
+                        { "DESCRIPCION", gasto.Descripcion },
+                        { "MONTO", gasto.MontoPesos.ToString("N2") },
+                        { "FECHA", gasto.Fecha.ToString("dd/MM/yyyy") }
+                    };
+
+                    EmailService servicio = new EmailService();
+
+                    servicio.armarCorreo(
+                        usuarioLogueado.Email,
+                        "Nuevo gasto registrado",
+                        reemplazos,
+                        TipoCorreo.RegistroGasto,
+                        rutaPlantillas
+                    );
+
+                    servicio.enviarCorreo();
+                    /*---------------------------------------------------------------*/
                 }
 
                 // LIMPIAR CAMPOS
@@ -816,10 +892,5 @@ namespace TPFinalIntegrador
             ScriptManager.RegisterStartupScript(this, this.GetType(), "scrollReportes",
                 $"document.getElementById('{pnlReportes.ClientID}').scrollIntoView({{behavior:'smooth'}});", true);
         }
-
-    
-
-    
     }
 }
-    
