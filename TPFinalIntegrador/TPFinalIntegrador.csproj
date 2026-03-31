@@ -191,7 +191,8 @@
     <Content Include="Template\DeudaVencida.html" />
     <Content Include="Template\GastoEnCuotas.html" />
     <Content Include="Template\RecordatorioDeuda.html" />
-    <Content Include="Template\RegistroDeuda.html" />
+    <Content Include="Template\RegistroDeudaAcreedor.html" />
+    <Content Include="Template\RegistroDeudaDeudor.html" />
     <Content Include="Template\RegistroGasto.html" />
     <Content Include="Template\RegistroIngreso.html" />
     <Content Include="Template\IniciodeSesion.html" />

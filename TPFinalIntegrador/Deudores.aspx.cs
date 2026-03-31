@@ -126,6 +126,55 @@ namespace TPFinalIntegrador
                 DeudaNegocio negocio = new DeudaNegocio();
                 negocio.AgregarDeuda(nueva);
 
+                /*--------------ENVIO DE MAIL AL DEUDOR----------------------*/
+                string rutaPlantillas = Server.MapPath("~/Template");
+                var reemplazosDeudor = new Dictionary<string, string>()
+                {
+                    { "NOMBRE_DEUDOR", nueva.NombreDeudor },
+                    { "NOMBRE_USUARIO", usuario.Nombre},
+                    { "DESCRIPCION", nueva.Descripcion },
+                    { "MONTO_TOTAL", nueva.MontoTotal.ToString("N2") },
+                    { "CUOTAS", nueva.Cuotas.ToString() },
+                    { "MONTO_CUOTA", (nueva.MontoTotal / nueva.Cuotas).ToString("N2") },
+                    { "FECHA", nueva.FechaInicio.ToString("dd/MM/yyyy") }
+                };
+
+                EmailService servicioDeudor = new EmailService();
+
+                servicioDeudor.armarCorreo(
+                    nueva.EmailDeudor,
+                    "Aviso de adquisición de deuda",
+                    reemplazosDeudor,
+                    TipoCorreo.RegistroDeudaDeudor,
+                    rutaPlantillas
+                );
+
+                servicioDeudor.enviarCorreo();
+                /*---------------------------------------------------------------*/
+                /*--------------ENVIO DE MAIL AL ACREEDOR----------------------*/
+                var reemplazosUsuario = new Dictionary<string, string>()
+                {
+                    { "NOMBRE_DEUDOR", nueva.NombreDeudor },
+                    { "NOMBRE_USUARIO", usuario.Nombre },
+                    { "DESCRIPCION", nueva.Descripcion },
+                    { "MONTO_TOTAL", nueva.MontoTotal.ToString("N2") },
+                    { "CUOTAS", nueva.Cuotas.ToString() },
+                    { "MONTO_CUOTA", (nueva.MontoTotal / nueva.Cuotas).ToString("N2") },
+                    { "FECHA", nueva.FechaInicio.ToString("dd/MM/yyyy") }
+                };
+                EmailService servicioUsuario = new EmailService();
+
+                servicioUsuario.armarCorreo(
+                    usuario.Email,
+                    "Registro de deuda realizado correctamente",
+                    reemplazosUsuario,
+                    TipoCorreo.RegistroDeudaAcreedor,
+                    rutaPlantillas
+                );
+
+                servicioUsuario.enviarCorreo();
+                /*---------------------------------------------------------------*/
+
                 txtNombre.Text = "";
                 txtEmail.Text = "";
                 txtDescripcion.Text = "";
