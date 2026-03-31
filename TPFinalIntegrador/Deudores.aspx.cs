@@ -25,7 +25,7 @@ namespace TPFinalIntegrador
         {
             Usuario usuario = (Usuario)Session["usuario"];
             DeudaNegocio negocio = new DeudaNegocio();
-            gvDeudas.DataSource = negocio.Listar(usuario.IdUsuario,usuario.Nombre,usuario.Estado );
+            gvDeudas.DataSource = negocio.Listar(usuario.IdUsuario, estado:EstadoDeuda.Pendiente);
             gvDeudas.DataBind();
         }
 
@@ -69,7 +69,7 @@ namespace TPFinalIntegrador
                 deuda.MontoTotal = decimal.Parse(monto);
                 deuda.Cuotas = int.Parse(cuotas);
                 deuda.FechaInicio = DateTime.Parse(fecha);
-                deuda.Estado = true;
+                deuda.Estado = EstadoDeuda.Pendiente;
 
                 DeudaNegocio negocio = new DeudaNegocio();
                 negocio.ModificarDeuda(deuda);
@@ -111,6 +111,7 @@ namespace TPFinalIntegrador
         {
             try
             {
+
                 Usuario usuario = (Usuario)Session["usuario"];
 
                 Deuda nueva = new Deuda();
@@ -121,11 +122,11 @@ namespace TPFinalIntegrador
                 nueva.MontoTotal = decimal.Parse(txtMonto.Text);
                 nueva.Cuotas = int.Parse(txtCuotas.Text);
                 nueva.FechaInicio = DateTime.Parse(txtFecha.Text);
-                nueva.Estado = true;
+                nueva.Estado = EstadoDeuda.Pendiente;
 
                 DeudaNegocio negocio = new DeudaNegocio();
                 negocio.AgregarDeuda(nueva);
-
+                
                 txtNombre.Text = "";
                 txtEmail.Text = "";
                 txtDescripcion.Text = "";
@@ -133,6 +134,8 @@ namespace TPFinalIntegrador
                 txtCuotas.Text = "";
                 txtFecha.Text = "";
 
+                pnlFormulario.Visible = false;
+                btnNuevaDeuda.Visible = true;
                 CargarDeudas();
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
                     "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Deuda agregada correctamente.'});", true);
@@ -143,6 +146,12 @@ namespace TPFinalIntegrador
                     $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
             }
 
+        }
+
+        protected void btnNuevaDeuda_Click(object sender, EventArgs e)
+        {
+            pnlFormulario.Visible = true;
+            btnNuevaDeuda.Visible = false;
         }
     }
 }

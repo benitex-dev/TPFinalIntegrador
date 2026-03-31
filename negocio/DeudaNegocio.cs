@@ -146,7 +146,7 @@ namespace negocio
             }
         }
         //LISTAR
-        public List<Deuda> Listar(int idUsuario = 0, string nombreDeudor = "", bool? estado = null)
+        public List<Deuda> Listar(int idUsuario = 0, string nombreDeudor = "", EstadoDeuda? estado = null)
         {
             List<Deuda> lista = new List<Deuda>();
             AccesoDatos datos = new AccesoDatos();
@@ -192,7 +192,7 @@ namespace negocio
                     aux.MontoTotal = (decimal)datos.Lector["MontoTotal"];
                     aux.Cuotas = (int)datos.Lector["Cuotas"];
                     aux.FechaInicio = (DateTime)datos.Lector["FechaInicio"];
-                    aux.Estado = (bool)datos.Lector["Estado"];
+                    aux.Estado = (EstadoDeuda)int.Parse(datos.Lector["Estado"].ToString());
 
                     lista.Add(aux);
                 }
@@ -237,7 +237,7 @@ namespace negocio
                     aux.MontoTotal = (decimal)datos.Lector["MontoTotal"];
                     aux.Cuotas = (int)datos.Lector["Cuotas"];
                     aux.FechaInicio = (DateTime)datos.Lector["FechaInicio"];
-                    aux.Estado = (bool)datos.Lector["Estado"];
+                    aux.Estado = (EstadoDeuda)int.Parse(datos.Lector["Estado"].ToString());
 
                     return aux;
                 }
