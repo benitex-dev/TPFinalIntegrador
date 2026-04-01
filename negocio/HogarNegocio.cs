@@ -129,16 +129,13 @@ namespace negocio
 
             try
             {
-                string consulta = "SELECT IdHogar, Nombre, IdUsuario, Estado FROM HOGAR WHERE 1=1";
+                string consulta = "SELECT IdHogar, Nombre, Estado FROM HOGAR WHERE 1=1";
 
                 if (idHogar > 0)
                     consulta += " AND IdHogar = @idHogar";
 
                 if (!string.IsNullOrWhiteSpace(nombre))
-                    consulta += " AND Nombre LIKE @nombre";
-
-                if (idUsuario > 0)
-                    consulta += " AND IdUsuario = @idUsuario";
+                    consulta += " AND Nombre LIKE @nombre";              
 
                 if (estado != null)
                     consulta += " AND Estado = @estado";
@@ -151,9 +148,6 @@ namespace negocio
                 if (!string.IsNullOrWhiteSpace(nombre))
                     datos.setParametro("@nombre", "%" + nombre.Trim() + "%");
 
-                if (idUsuario > 0)
-                    datos.setParametro("@idUsuario", idUsuario);
-
                 if (estado != null)
                     datos.setParametro("@estado", estado.Value);
 
@@ -165,10 +159,6 @@ namespace negocio
 
                     aux.IdHogar = (int)datos.Lector["IdHogar"];
                     aux.Nombre = (string)datos.Lector["Nombre"];
-
-                    //aux.Usuario = new Usuario();
-                    //aux.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
-
                     aux.Estado = (bool)datos.Lector["Estado"];
 
                     lista.Add(aux);
