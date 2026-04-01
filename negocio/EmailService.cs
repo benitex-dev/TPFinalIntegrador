@@ -22,7 +22,8 @@ namespace negocio
         //INGRESO
         RegistroIngreso,
         //DEUDA
-        RegistroDeuda,
+        RegistroDeudaAcreedor,
+        RegistroDeudaDeudor,
         RegistroPagoDeuda,
         CancelacionDeuda,
         DeudaVencida,

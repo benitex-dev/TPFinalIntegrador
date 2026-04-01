@@ -1,44 +1,54 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Deudores.aspx.cs" Inherits="TPFinalIntegrador.Deudores" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-     <h2>Mis Deudores</h2>
+     <h2>Deudores</h2>
+    <asp:Button ID="btnNuevaDeuda" runat="server" Visible="true" Text="+ Nueva Deuda" 
+    CssClass="btn btn-primary mb-3" OnClick="btnNuevaDeuda_Click" />
 
-  <%-- Formulario para agregar deuda --%>
-  <div class="card mb-4">
-      <div class="card-header">
-          <h5>Nueva Deuda</h5>
-      </div>
-      <div class="card-body">
-          <div class="row g-3">
-              <div class="col-md-3">
-                  <label>Nombre del Deudor</label>
-                  <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" placeholder="Ej: Juan Pérez" />
-              </div>
-              <div class="col-md-3">
-                  <label>Email del Deudor</label>
-                  <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" placeholder="email@ejemplo.com" />
-              </div>
-              <div class="col-md-3">
-                  <label>Descripción</label>
-                  <asp:TextBox ID="txtDescripcion" runat="server" CssClass="form-control" placeholder="Motivo de la deuda" />
-              </div>
-              <div class="col-md-3">
-                  <label>Monto Total ($)</label>
-                  <asp:TextBox ID="txtMonto" runat="server" CssClass="form-control" TextMode="Number" placeholder="0" />
-              </div>
-              <div class="col-md-3">
-                  <label>Cantidad de Cuotas</label>
-                  <asp:TextBox ID="txtCuotas" runat="server" CssClass="form-control" TextMode="Number" placeholder="1" />
-              </div>
-              <div class="col-md-3">
-                  <label>Fecha de Inicio</label>
-                  <asp:TextBox ID="txtFecha" runat="server" CssClass="form-control" TextMode="Date" />
-              </div>
-              <div class="col-md-3 d-flex align-items-end">
-                  <asp:Button ID="btnAgregar" runat="server" Text="Agregar" CssClass="btn btn-primary w-100" OnClick="btnAgregar_Click1" />
-              </div>
-          </div>
-      </div>
-  </div>
+<asp:Panel ID="pnlFormulario" runat="server" Visible="false">
+  
+        
+        
+            <%-- Formulario para agregar deuda --%>
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>Nueva Deuda</h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label>Nombre del Deudor</label>
+                <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" placeholder="Ej: Juan Pérez" />
+            </div>
+            <div class="col-md-3">
+                <label>Email del Deudor</label>
+                <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" placeholder="email@ejemplo.com" />
+            </div>
+            <div class="col-md-3">
+                <label>Descripción</label>
+                <asp:TextBox ID="txtDescripcion" runat="server" CssClass="form-control" placeholder="Motivo de la deuda" />
+            </div>
+            <div class="col-md-3">
+                <label>Monto Total ($)</label>
+                <asp:TextBox ID="txtMonto" runat="server" CssClass="form-control" TextMode="Number" placeholder="0" />
+            </div>
+            <div class="col-md-3">
+                <label>Cantidad de Cuotas</label>
+                <asp:TextBox ID="txtCuotas" runat="server" CssClass="form-control" TextMode="Number" placeholder="1" />
+            </div>
+            <div class="col-md-3">
+                <label>Fecha de Inicio</label>
+                <asp:TextBox ID="txtFecha" runat="server" CssClass="form-control" TextMode="Date" />
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <asp:Button ID="btnAgregar" runat="server" Text="Agregar" CssClass="btn btn-primary w-100" OnClick="btnAgregar_Click1" />
+            </div>
+        </div>
+    </div>
+</div>
+        
+    
+</asp:Panel>
+  
 
   <%-- Grilla de deudores --%>
   <asp:GridView ID="gvDeudas" runat="server" AutoGenerateColumns="False"
@@ -48,7 +58,10 @@
       OnRowUpdating="gvDeudas_RowUpdating"
       OnRowCancelingEdit="gvDeudas_RowCancelingEdit"
       OnRowDeleting="gvDeudas_RowDeleting"
-      EmptyDataText="No tenés deudores registrados.">
+      EmptyDataText="No tenés deudores registrados."
+      AllowPaging="True"
+      PageSize="5"
+      OnPageIndexChanging ="gvDeudas_PageIndexChanging">
       <Columns>
           <asp:BoundField DataField="NombreDeudor" HeaderText="Nombre" />
           <asp:BoundField DataField="EmailDeudor" HeaderText="Email" />
@@ -56,7 +69,24 @@
           <asp:BoundField DataField="MontoTotal" HeaderText="Monto Total" DataFormatString="{0:C}" HtmlEncode="False" />
           <asp:BoundField DataField="Cuotas" HeaderText="Cuotas" />
           <asp:BoundField DataField="FechaInicio" HeaderText="Fecha Inicio" DataFormatString="{0:dd/MM/yyyy}" HtmlEncode="False" />
-          <asp:CommandField ShowEditButton="True" ShowDeleteButton="True" />
+          <asp:TemplateField>
+              <ItemTemplate>
+                  <asp:LinkButton ID="btnEditar" runat="server" CommandName="Edit"
+                      CssClass="btn btn-sm btn-warning" ToolTip="Editar">
+            <i class="bi bi-pencil"></i>
+        </asp:LinkButton>
+              </ItemTemplate>
+          </asp:TemplateField>
+
+          <asp:TemplateField>
+              <ItemTemplate>
+                  <asp:LinkButton ID="btnEliminar" runat="server" CommandName="Delete"
+                      CssClass="btn btn-sm btn-danger" ToolTip="Eliminar"
+                      OnClientClick="return confirm('¿Estás seguro que querés eliminar esta deuda?');">
+            <i class="bi bi-trash"></i>
+        </asp:LinkButton>
+              </ItemTemplate>
+          </asp:TemplateField>
       </Columns>
   </asp:GridView>
 </asp:Content>
