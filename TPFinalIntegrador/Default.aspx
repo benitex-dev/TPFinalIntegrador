@@ -139,26 +139,7 @@
 </div>
 </div>
 </section>
-<!-- CTA Section -->
-<section class="py-5 bg-primary">
-<div class="container py-5 text-center text-white">
-<div class="row justify-content-center">
-<div class="col-lg-8">
-<h2 class="display-5 fw-bold mb-4">¿Listo para transformar tus finanzas?</h2>
-<p class="lead mb-5 text-white text-opacity-75">
-                        Únete a miles de usuarios que ya optimizaron su capital y descubrieron la verdadera libertad financiera. Sin tarjetas, sin compromiso.
-                    </p>
-<div class="d-grid d-md-block gap-3">
-<a class="btn btn-light btn-lg px-5 py-3 fw-bold text-primary shadow" href="#">
-                            Empezar Ahora - Es Gratis
-                            <span class="material-symbols-outlined align-middle ms-1">arrow_forward</span>
-</a>
-</div>
-<p class="small mt-4 text-white text-opacity-50">Pruébalo por 14 días con acceso a todas las funciones Premium.</p>
-</div>
-</div>
-</div>
-</section>
+
 </main>
 
 </asp:Content>
