@@ -136,7 +136,7 @@ namespace TPFinalIntegrador
                     { "DESCRIPCION", nueva.Descripcion },
                     { "MONTO_TOTAL", nueva.MontoTotal.ToString("N2") },
                     { "CUOTAS", nueva.Cuotas.ToString() },
-                    { "MONTO_CUOTA", (nueva.MontoTotal / nueva.Cuotas).ToString("N2") },
+                    { "MONTO_CUOTA", (nueva.MontoTotal / nueva.Cuotas).Value.ToString("N2") },
                     { "FECHA", nueva.FechaInicio.ToString("dd/MM/yyyy") }
                 };
 
@@ -160,7 +160,7 @@ namespace TPFinalIntegrador
                     { "DESCRIPCION", nueva.Descripcion },
                     { "MONTO_TOTAL", nueva.MontoTotal.ToString("N2") },
                     { "CUOTAS", nueva.Cuotas.ToString() },
-                    { "MONTO_CUOTA", (nueva.MontoTotal / nueva.Cuotas).ToString("N2") },
+                    { "MONTO_CUOTA", (nueva.MontoTotal / nueva.Cuotas).Value.ToString("N2") },
                     { "FECHA", nueva.FechaInicio.ToString("dd/MM/yyyy") }
                 };
                 EmailService servicioUsuario = new EmailService();
