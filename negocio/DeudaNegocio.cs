@@ -188,9 +188,9 @@ namespace negocio
 
                     aux.NombreDeudor = (string)datos.Lector["NombreDeudor"];
                     aux.EmailDeudor = (string)datos.Lector["EmailDeudor"];
-                    aux.Descripcion = (string)datos.Lector["Descripcion"];
+                    aux.Descripcion = datos.Lector["Descripcion"] == DBNull.Value ? null : (string)datos.Lector["Descripcion"];
                     aux.MontoTotal = (decimal)datos.Lector["MontoTotal"];
-                    aux.Cuotas = (int)datos.Lector["Cuotas"];
+                    aux.Cuotas = datos.Lector["Cuotas"] == DBNull.Value ? (int?)null : (int)datos.Lector["Cuotas"];
                     aux.FechaInicio = (DateTime)datos.Lector["FechaInicio"];
                     aux.Estado = (EstadoDeuda)int.Parse(datos.Lector["Estado"].ToString());
 
@@ -233,9 +233,9 @@ namespace negocio
 
                     aux.NombreDeudor = (string)datos.Lector["NombreDeudor"];
                     aux.EmailDeudor = (string)datos.Lector["EmailDeudor"];
-                    aux.Descripcion = (string)datos.Lector["Descripcion"];
+                    aux.Descripcion = datos.Lector["Descripcion"] == DBNull.Value ? null : (string)datos.Lector["Descripcion"];
                     aux.MontoTotal = (decimal)datos.Lector["MontoTotal"];
-                    aux.Cuotas = (int)datos.Lector["Cuotas"];
+                    aux.Cuotas = datos.Lector["Cuotas"] == DBNull.Value ? (int?)null : (int)datos.Lector["Cuotas"];
                     aux.FechaInicio = (DateTime)datos.Lector["FechaInicio"];
                     aux.Estado = (EstadoDeuda)int.Parse(datos.Lector["Estado"].ToString());
 

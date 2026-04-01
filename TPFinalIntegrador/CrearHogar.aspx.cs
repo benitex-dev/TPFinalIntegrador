@@ -65,12 +65,12 @@ namespace TPFinalIntegrador
                 Hogar nuevo = new Hogar
                 {
                     Nombre = nombre,
-                    //Usuario = usuarioActual,
+                    
                     Estado = chkEstado.Checked
                 };
 
                 HogarNegocio hogarNeg = new HogarNegocio();
-                hogarNeg.AgregarHogar(nuevo);
+                hogarNeg.AgregarHogar(nuevo,usuarioActual.IdUsuario);
 
                 lblMensaje.Text = "Hogar creado correctamente.";
                 lblMensaje.CssClass = "text-success";

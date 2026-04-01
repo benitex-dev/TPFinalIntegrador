@@ -162,7 +162,7 @@ namespace negocio
             }
         }
         //LISTA
-        public List<MetaAhorro> Listar(int idUsuario = 0, int idHogar = 0, string nombre = "", bool? estado = null)
+        public List<MetaAhorro> Listar(int idUsuario = 0, int idHogar = 0, string nombre = "", EstadoMetaAhorro? estado = null)
         {
             List<MetaAhorro> lista = new List<MetaAhorro>();
             AccesoDatos datos = new AccesoDatos();
@@ -205,9 +205,20 @@ namespace negocio
 
                     aux.IdMeta = (int)datos.Lector["IdMeta"];
                     aux.Nombre = (string)datos.Lector["Nombre"];
-                    aux.MontoObjetivo = (decimal)datos.Lector["MontoObjetivo"];
-                    aux.FechaObjetivo = (DateTime)datos.Lector["FechaObjetivo"];
-                    aux.Estado = (bool)datos.Lector["Estado"];
+                    aux.MontoObjetivo = Convert.ToDecimal(datos.Lector["MontoObjetivo"]);
+                   
+                    aux.Estado = (EstadoMetaAhorro)Convert.ToInt32(datos.Lector["Estado"]);
+
+                    
+
+                    if(!(datos.Lector["FechaObjetivo"] is DBNull))
+                    {
+                        aux.FechaObjetivo = Convert.ToDateTime(datos.Lector["FechaObjetivo"]);
+                    }
+                    else
+                    {
+                        aux.FechaObjetivo = null;
+                    }
 
                     if (!(datos.Lector["IdUsuario"] is DBNull))
                     {
@@ -256,7 +267,7 @@ namespace negocio
                     aux.Nombre = (string)datos.Lector["Nombre"];
                     aux.MontoObjetivo = (decimal)datos.Lector["MontoObjetivo"];
                     aux.FechaObjetivo = (DateTime)datos.Lector["FechaObjetivo"];
-                    aux.Estado = (bool)datos.Lector["Estado"];
+                    aux.Estado = (EstadoMetaAhorro)datos.Lector["Estado"];
 
                     if (!(datos.Lector["IdUsuario"] is DBNull))
                     {

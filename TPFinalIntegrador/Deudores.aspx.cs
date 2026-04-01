@@ -153,5 +153,11 @@ namespace TPFinalIntegrador
             pnlFormulario.Visible = true;
             btnNuevaDeuda.Visible = false;
         }
+
+        protected void gvDeudas_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            gvDeudas.PageIndex = e.NewPageIndex;
+            CargarDeudas();
+        }
     }
 }

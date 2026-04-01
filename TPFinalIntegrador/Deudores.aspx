@@ -58,7 +58,10 @@
       OnRowUpdating="gvDeudas_RowUpdating"
       OnRowCancelingEdit="gvDeudas_RowCancelingEdit"
       OnRowDeleting="gvDeudas_RowDeleting"
-      EmptyDataText="No tenés deudores registrados.">
+      EmptyDataText="No tenés deudores registrados."
+      AllowPaging="True"
+      PageSize="5"
+      OnPageIndexChanging ="gvDeudas_PageIndexChanging">
       <Columns>
           <asp:BoundField DataField="NombreDeudor" HeaderText="Nombre" />
           <asp:BoundField DataField="EmailDeudor" HeaderText="Email" />

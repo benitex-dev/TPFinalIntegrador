@@ -1,6 +1,7 @@
 ﻿using dominio;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace negocio
     public class HogarNegocio
     {
         //ALTA
-        public void AgregarHogar(Hogar nuevo)
+        public void AgregarHogar(Hogar nuevo,int idUsuario)
         {
             AccesoDatos datos = new AccesoDatos();
 
@@ -25,8 +26,8 @@ namespace negocio
                 /*if (nuevo.Usuario == null || nuevo.Usuario.IdUsuario <= 0)
                     throw new Exception("El hogar debe estar asociado a un usuario.");*/
 
-                datos.setConsulta("INSERT INTO HOGAR (Nombre, IdUsuario, Estado) " +
-                                  "VALUES (@nombre, @idUsuario, @estado) SELECT SCOPE_IDENTITY();");
+                datos.setConsulta("INSERT INTO HOGAR (Nombre, Estado) " +
+                                  "VALUES (@nombre, @estado) SELECT SCOPE_IDENTITY();");
 
                 datos.setParametro("@nombre", nuevo.Nombre.Trim());
                 //datos.setParametro("@idUsuario", nuevo.Usuario.IdUsuario);
@@ -35,10 +36,10 @@ namespace negocio
                 int idNuevoHogar = datos.ejecutarEscalar();
 
                 datos.limpiarParametros();
-
+                
                 datos.setConsulta("INSERT INTO HOGAR_USUARIO (IdHogar, IdUsuario, Rol, Estado) VALUES (@idNuevoHogar, @idUsuario, 'ADMIN', 1)");
                 datos.setParametro("@idNuevoHogar", idNuevoHogar);
-                //datos.setParametro("@idUsuario", nuevo.Usuario.IdUsuario);
+                datos.setParametro("@idUsuario", idUsuario);
 
                 datos.ejecutarAccion();
             }
