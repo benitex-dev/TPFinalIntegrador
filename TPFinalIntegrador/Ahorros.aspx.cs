@@ -26,7 +26,7 @@ namespace TPFinalIntegrador
         {
             Usuario usuario = (Usuario)Session["usuario"];
             MetaAhorroNegocio negocio = new MetaAhorroNegocio();
-            gvMetas.DataSource = negocio.Listar(idUsuario: usuario.IdUsuario, estado: true);
+            gvMetas.DataSource = negocio.Listar(idUsuario: usuario.IdUsuario, estado: EstadoMetaAhorro.Activa);
             gvMetas.DataBind();
         }
 
@@ -41,7 +41,7 @@ namespace TPFinalIntegrador
                 nueva.MontoObjetivo = decimal.Parse(txtMonto.Text);
                 nueva.FechaObjetivo = DateTime.Parse(txtFecha.Text);
                 nueva.Usuario = usuario;
-                nueva.Estado = true;
+                nueva.Estado = EstadoMetaAhorro.Activa;
 
                 MetaAhorroNegocio negocio = new MetaAhorroNegocio();
                 negocio.AgregarMetaAhorro(nueva);
@@ -90,7 +90,7 @@ namespace TPFinalIntegrador
                 meta.MontoObjetivo = decimal.Parse(monto);
                 meta.FechaObjetivo = DateTime.Parse(fecha);
                 meta.Usuario = usuario;
-                meta.Estado = true;
+                meta.Estado = EstadoMetaAhorro.Activa;
 
                 MetaAhorroNegocio negocio = new MetaAhorroNegocio();
                 negocio.ModificarMeta(meta);

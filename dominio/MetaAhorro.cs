@@ -6,14 +6,19 @@ using System.Threading.Tasks;
 
 namespace dominio
 {
+    public enum EstadoMetaAhorro
+    {
+
+       Activa=1, Completada=2, Cancelada=3
+    }
     public class MetaAhorro
     {
         public int IdMeta { get; set; }
         public string Nombre { get; set; }
         public decimal MontoObjetivo { get; set; }
-        public DateTime FechaObjetivo { get; set; }
+        public DateTime? FechaObjetivo { get; set; }
         public Usuario Usuario { get; set; }
         public Hogar Hogar { get; set; }
-        public bool Estado { get; set; }
+        public EstadoMetaAhorro Estado { get; set; }
     }
 }
