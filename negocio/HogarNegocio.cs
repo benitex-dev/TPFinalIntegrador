@@ -184,6 +184,34 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+
+        public Hogar listarUno(int idHogar)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            Hogar hogar = new Hogar();
+            try
+            {
+                datos.setConsulta("SELECT IdHogar, Nombre, IdUsuario FROM HOGAR WHERE IdHogar = @idHogar AND Estado = 1");
+                datos.setParametro("@idHogar", idHogar);
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    hogar.Nombre = (string)datos.Lector["Nombre"];
+                    hogar.IdHogar = (int)datos.Lector["IdHogar"];
+                }
+                else
+                {
+                    hogar = null;
+                }
+                return hogar;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
         //EXISTE
         public int ExisteHogar(int idHogar)
         {

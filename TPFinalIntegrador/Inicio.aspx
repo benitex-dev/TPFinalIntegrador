@@ -235,45 +235,98 @@
     <div class="inicio-page">
 
         <div class="welcome-card">
-            <div class="row align-items-center g-4">
-                <div class="col-lg-8">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="welcome-icon">
-                            <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+            <asp:Panel ID="pnlInicioPersonal" runat="server">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="welcome-icon">
+                                <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+                            </div>
+                            <div>
+                                <h1 class="page-title">
+                                    <asp:Label ID="lblBienvenidaPersonal" runat="server" Text="Bienvenido/a"></asp:Label>
+                                </h1>
+                                <p class="page-subtitle"></p>
+                            </div>
                         </div>
-                        <div>
-                            <h1 class="page-title">
-                                <asp:Label ID="lblBienvenida" runat="server" Text="Bienvenido/a"></asp:Label>
-                            </h1>
-                            <p class="page-subtitle"></p> 
-                        </div>
-                    </div>
 
-                    <div class="d-flex flex-wrap gap-2">
                         <div class="d-flex flex-wrap gap-2">
-                            <button type="button" class="btn btn-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalGasto" onclick="limpiarModalGasto()">
-                            Cargar gasto
-                            </button>
-                            <button type="button" class="btn btn-outline-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalIngreso" onclick="limpiarModalIngreso()">
-                            Cargar ingreso
-                            </button>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" class="btn btn-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalGasto" onclick="limpiarModalGasto()">
+                                    Cargar gasto
+                                </button>
+                                <button type="button" class="btn btn-outline-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalIngreso" onclick="limpiarModalIngreso()">
+                                    Cargar ingreso
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-lg-4">
-                    <div class="panel-card">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="fw-semibold text-dark">Progreso mensual</span>
-                            <span class="text-muted fw-bold">--</span>
+                    <div class="col-lg-4">
+                        <div class="panel-card">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-semibold text-dark">Progreso mensual</span>
+                                <span class="text-muted fw-bold">--</span>
+                            </div>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-primary" style="width: 0%"></div>
+                            </div>
+                            <p class="sidebar-note">Acá vas a poder visualizar tu avance mensual una vez que cargues movimientos.</p>
                         </div>
-                        <div class="progress mb-3">
-                            <div class="progress-bar bg-primary" style="width:0%"></div>
-                        </div>
-                        <p class="sidebar-note">Acá vas a poder visualizar tu avance mensual una vez que cargues movimientos.</p>
                     </div>
                 </div>
-            </div>
+            </asp:Panel>
+
+            <asp:Panel ID="pnlInicioHogar" runat="server" Visible="false">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                         <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="welcome-icon">
+                                <span class="material-symbols-outlined text-primary">home</span>
+                            </div>
+                            <div>
+                                <h1 class="page-title mb-0">
+                                    <asp:Label ID="lblBienvenidaHogar" runat="server" Text="Bienvenido/a"></asp:Label>
+                                </h1>
+                                <p class="page-subtitle mb-0"></p>
+                            </div>
+                          </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 col-xl-5">
+                                <div class="summary-card h-100">
+                                    <div class="summary-value">
+                                        <asp:Label ID="lblGastosMesHogar" runat="server" Text="--"></asp:Label>
+                                    </div>
+                                    <p class="summary-foot">Total consumido por todos</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" class="btn btn-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalGasto" onclick="limpiarModalGasto()">
+                                    Cargar gasto
+           
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="panel-card">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-semibold text-dark">Progreso mensual</span>
+                                <span class="text-muted fw-bold">--</span>
+                            </div>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-primary" style="width: 0%"></div>
+                            </div>
+                            <p class="sidebar-note">Acá vas a poder visualizar tu avance mensual una vez que cargues movimientos.</p>
+                        </div>
+                    </div>
+                </div>
+            </asp:Panel>
         </div>
 
         <div class="row g-4 mb-4">

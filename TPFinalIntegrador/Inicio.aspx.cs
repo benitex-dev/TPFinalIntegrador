@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using negocio;
+using System.Diagnostics.Eventing.Reader;
 
 namespace TPFinalIntegrador
 {
@@ -55,8 +56,20 @@ namespace TPFinalIntegrador
                 MesSeleccionado = DateTime.Now.Month;
                 AnioSeleccionado = DateTime.Now.Year;
 
-                Usuario usuarioLogueado = (Usuario)Session["usuario"];
-                lblBienvenida.Text = "Bienvenido/a, " + usuarioLogueado.Nombre;
+                if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
+                {
+                    Hogar hogarSeleccionado = (Hogar)Session["HogarSeleccionado"];
+                    lblBienvenidaHogar.Text = "Bienvenido a " + hogarSeleccionado.Nombre;
+                    pnlInicioHogar.Visible = true;
+                    pnlInicioPersonal.Visible = false;
+                }
+                else
+                {
+                    Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                    lblBienvenidaPersonal.Text = "Bienvenido/a, " + usuarioLogueado.Nombre;
+                    pnlInicioPersonal.Visible = true;
+                    pnlInicioHogar.Visible = false;
+                }
                 CargarCategoriasIngreso();
                 CargarResumenIngresos();
                 CargarResumenGastos();
@@ -668,13 +681,14 @@ namespace TPFinalIntegrador
                 {
                     int idHogar = (int)Session["IdHogarActual"];
                     total = negocio.TotalGastosMesActualHogar(idHogar);
+                    lblGastosMesHogar.Text = "$ " + total.ToString("N2");
                 }
                 else
                 {
                     Usuario usuarioLogueado = (Usuario)Session["usuario"];
                     total = negocio.TotalGastosMesActual(usuarioLogueado.IdUsuario);
+                    lblGastosMes.Text = "$ " + total.ToString("N2");
                 }
-                lblGastosMes.Text = "$ " + total.ToString("N2");
             }
             catch (Exception ex)
             {

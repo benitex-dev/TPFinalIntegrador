@@ -107,7 +107,7 @@ namespace TPFinalIntegrador
                 int idHogarSeleccionado = Convert.ToInt32(e.CommandArgument);
 
                 HogarNegocio hogarSeleccionado = new HogarNegocio();
-                Session["HogarSeleccionado"] = hogarSeleccionado.Listar(idHogarSeleccionado);
+                Session["HogarSeleccionado"] = hogarSeleccionado.listarUno(idHogarSeleccionado);
                 Session["ModoVista"] = "Hogar";
                 Session["IdHogarActual"] = idHogarSeleccionado;
                 Response.Redirect("Inicio.aspx");
