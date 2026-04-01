@@ -19,8 +19,7 @@
                         Reemplaza tus hojas de cálculo con un sistema automatizado de seguimiento mensual. Toma el control total de tu dinero hoy mismo sin complicaciones manuales.
                     </p>
 <div class="d-flex flex-wrap gap-3 mb-5">
-<a class="btn btn-primary btn-lg px-4 py-3 fw-bold" href="#">Comenzar Gratis</a>
-<a class="btn btn-outline-secondary btn-lg px-4 py-3 fw-bold" href="#">Ver Demo</a>
+
 </div>
 <div class="d-flex align-items-center gap-3">
 <div class="avatar-group d-flex">
