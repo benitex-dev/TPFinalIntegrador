@@ -49,7 +49,26 @@
     
 </asp:Panel>
   
+    
+     <!-- Filtros -->
+  <div class="card mb-4">
+      <div class="card-header">
+          <h5 class="mb-0">Filtros</h5>
+      </div>
+      <div class="card-body">
+          <div class="mb-3">
+              <label for="ddlFiltroEstadoDeuda" class="form-label">Estado Deuda</label>
+              <asp:DropDownList ID="ddlFiltroEstadoDeuda" runat="server" CssClass="form-select" AutoPostBack="true" OnSelectedIndexChanged="ddlFiltroEstadoDeuda_SelectedIndexChanged"></asp:DropDownList>
+          </div>
 
+          
+
+<%--          <% if (negocio.Security.isAdmin(Session["usuario"]))
+              { %>
+          <asp:Button Text="Ver productos dados de baja" runat="server" CssClass="btn btn-outline-info mt-2" ID="btnProdBaja" OnClick="btnProdBaja_Click" />
+          <% } %>--%>
+      </div>
+  </div>
   <%-- Grilla de deudores --%>
   <asp:GridView ID="gvDeudas" runat="server" AutoGenerateColumns="False"
       CssClass="table table-bordered table-hover"
@@ -69,6 +88,7 @@
           <asp:BoundField DataField="MontoTotal" HeaderText="Monto Total" DataFormatString="{0:C}" HtmlEncode="False" />
           <asp:BoundField DataField="Cuotas" HeaderText="Cuotas" />
           <asp:BoundField DataField="FechaInicio" HeaderText="Fecha Inicio" DataFormatString="{0:dd/MM/yyyy}" HtmlEncode="False" />
+          <asp:BoundField DataField="Estado" HeaderText="Estado" />
           <asp:TemplateField>
               <ItemTemplate>
                   <asp:LinkButton ID="btnEditar" runat="server" CommandName="Edit"
