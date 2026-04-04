@@ -82,13 +82,39 @@
       PageSize="5"
       OnPageIndexChanging ="gvDeudas_PageIndexChanging">
       <Columns>
-          <asp:BoundField DataField="NombreDeudor" HeaderText="Nombre" />
-          <asp:BoundField DataField="EmailDeudor" HeaderText="Email" />
-          <asp:BoundField DataField="Descripcion" HeaderText="Descripción" />
-          <asp:BoundField DataField="MontoTotal" HeaderText="Monto Total" DataFormatString="{0:C}" HtmlEncode="False" />
-          <asp:BoundField DataField="Cuotas" HeaderText="Cuotas" />
-          <asp:BoundField DataField="FechaInicio" HeaderText="Fecha Inicio" DataFormatString="{0:dd/MM/yyyy}" HtmlEncode="False" />
-          <asp:BoundField DataField="Estado" HeaderText="Estado" />
+            <asp:TemplateField HeaderText="Nombre">
+      <ItemTemplate>
+          <%# Eval("NombreDeudor") %>
+      </ItemTemplate>
+      <EditItemTemplate>
+          <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control"
+              Text='<%# Eval("NombreDeudor") %>' />
+      </EditItemTemplate>
+  </asp:TemplateField>
+
+  <asp:TemplateField HeaderText="Email">
+      <ItemTemplate>
+          <%# Eval("EmailDeudor") %>
+      </ItemTemplate>
+      <EditItemTemplate>
+          <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control"
+              Text='<%# Eval("EmailDeudor") %>' />
+      </EditItemTemplate>
+  </asp:TemplateField>
+
+  <asp:TemplateField HeaderText="Descripción">
+      <ItemTemplate>
+          <%# Eval("Descripcion") %>
+      </ItemTemplate>
+      <EditItemTemplate>
+          <asp:TextBox ID="txtDescripcion" runat="server" CssClass="form-control"
+              Text='<%# Eval("Descripcion") %>' />
+      </EditItemTemplate>
+  </asp:TemplateField>
+          <asp:BoundField DataField="MontoTotal" HeaderText="Monto Total" DataFormatString="{0:C}" HtmlEncode="False"  ReadOnly="True"/>
+          <asp:BoundField DataField="Cuotas" HeaderText="Cuotas" ReadOnly="True" />
+          <asp:BoundField DataField="FechaInicio" ReadOnly="True" HeaderText="Fecha Inicio" DataFormatString="{0:dd/MM/yyyy}" HtmlEncode="False" />
+          <asp:BoundField DataField="Estado" ReadOnly="True" HeaderText="Estado" />
            <asp:TemplateField>
       <ItemTemplate>
           <asp:HyperLink ID="lnkDetalle" runat="server"
@@ -98,6 +124,7 @@
               <i class="bi bi-eye"></i>
           </asp:HyperLink>
       </ItemTemplate>
+                <EditItemTemplate></EditItemTemplate>
   </asp:TemplateField>
           <asp:TemplateField>
               <ItemTemplate>
@@ -106,6 +133,10 @@
             <i class="bi bi-pencil"></i>
         </asp:LinkButton>
               </ItemTemplate>
+               <EditItemTemplate>
+          <asp:LinkButton ID="btnGuardar" runat="server" CommandName="Update" CssClass="btn btn-sm btn-success" Text="Guardar" />
+          <asp:LinkButton ID="btnCancelar" runat="server" CommandName="Cancel" CssClass="btn btn-sm btn-secondary" Text="Cancelar" />
+      </EditItemTemplate>
           </asp:TemplateField>
 
           <asp:TemplateField>
@@ -116,6 +147,7 @@
             <i class="bi bi-trash"></i>
         </asp:LinkButton>
               </ItemTemplate>
+                <EditItemTemplate></EditItemTemplate>
           </asp:TemplateField>
       </Columns>
   </asp:GridView>

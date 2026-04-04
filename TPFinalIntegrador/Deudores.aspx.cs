@@ -53,7 +53,7 @@ namespace TPFinalIntegrador
 
         protected void gvDeudas_RowEditing(object sender, GridViewEditEventArgs e)
         {
-            gvDeudas.EditIndex = -1;
+            gvDeudas.EditIndex = e.NewEditIndex;
             CargarDeudas();
 
         }
@@ -62,21 +62,22 @@ namespace TPFinalIntegrador
         {
             try
             {
+
                 int idDeuda = (int)gvDeudas.DataKeys[e.RowIndex]["IdDeuda"];
-                string nombre = ((TextBox)gvDeudas.Rows[e.RowIndex].Cells[0].Controls[0]).Text;
-                string email = ((TextBox)gvDeudas.Rows[e.RowIndex].Cells[1].Controls[0]).Text;
-                string descripcion = ((TextBox)gvDeudas.Rows[e.RowIndex].Cells[2].Controls[0]).Text;
+                string nombre = ((TextBox)gvDeudas.Rows[e.RowIndex].FindControl("txtNombre")).Text;
+                string email = ((TextBox)gvDeudas.Rows[e.RowIndex].FindControl("txtEmail")).Text;
+                string descripcion = ((TextBox)gvDeudas.Rows[e.RowIndex].FindControl("txtDescripcion")).Text;
 
                 Usuario usuario = (Usuario)Session["usuario"];
 
-                Deuda deuda = new Deuda();
-                deuda.IdDeuda = idDeuda;
-                deuda.Usuario = usuario;
+                // Traemos la deuda original para no perder monto, cuotas y fecha
+                DeudaNegocio negocio = new DeudaNegocio();
+                Deuda deuda = negocio.ObtenerPorId(idDeuda);
+
                 deuda.NombreDeudor = nombre;
                 deuda.EmailDeudor = email;
                 deuda.Descripcion = descripcion;
 
-                DeudaNegocio negocio = new DeudaNegocio();
                 negocio.ModificarDeuda(deuda);
 
                 gvDeudas.EditIndex = -1;

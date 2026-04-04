@@ -80,9 +80,9 @@ namespace negocio
                 if (deuda == null)
                     throw new Exception("La deuda no existe o ya fue saldada.");
 
-                datos.setConsulta("UPDATE DEUDA SET Estado = 0 WHERE IdDeuda = @idDeuda");
+                datos.setConsulta("UPDATE DEUDA SET Estado = @estado WHERE IdDeuda = @idDeuda");
                 datos.setParametro("@idDeuda", deuda.IdDeuda);
-
+                datos.setParametro("@estado", (int)EstadoDeuda.Eliminado);
                 datos.ejecutarAccion();
             }
             catch (Exception ex)
@@ -132,7 +132,10 @@ namespace negocio
                 datos.setParametro("@emailDeudor", deuda.EmailDeudor.Trim());
                 datos.setParametro("@descripcion", deuda.Descripcion.Trim());
                 datos.setParametro("@montoTotal", deuda.MontoTotal);
-                datos.setParametro("@cuotas", deuda.Cuotas);
+                if (deuda.Cuotas.HasValue)
+                    datos.setParametro("@cuotas", deuda.Cuotas.Value);
+                else
+                    datos.setParametro("@cuotas", DBNull.Value);
                 datos.setParametro("@fechaInicio", deuda.FechaInicio);
                 datos.setParametro("@estado", deuda.Estado);
 
