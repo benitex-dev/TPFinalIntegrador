@@ -11,6 +11,9 @@ namespace TPFinalIntegrador
 {
     public partial class Deudores : System.Web.UI.Page
     {
+        Dictionary<string, int> estadosDeuda = new Dictionary<string, int>();
+        
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["usuario"] == null)
@@ -19,20 +22,34 @@ namespace TPFinalIntegrador
                 return;
             }
             if (!IsPostBack)
+            {
+                CargarFiltros();
                 CargarDeudas();
+            }
+               
         }
         private void CargarDeudas()
         {
             Usuario usuario = (Usuario)Session["usuario"];
             DeudaNegocio negocio = new DeudaNegocio();
-            gvDeudas.DataSource = negocio.Listar(usuario.IdUsuario, estado:EstadoDeuda.Pendiente);
+          
+            int idUsuario = usuario.IdUsuario;
+            gvDeudas.DataSource = negocio.ListarPorUsuario(idUsuario);
             gvDeudas.DataBind();
         }
-
-        protected void btnAgregar_Click(object sender, EventArgs e)
+        private void CargarFiltros()
         {
-            
+            estadosDeuda.Add("Pendiente", 1);
+            estadosDeuda.Add("Pago", 0);
+            estadosDeuda.Add("Eliminado", 2);
+            ddlFiltroEstadoDeuda.DataSource = estadosDeuda;
+            ddlFiltroEstadoDeuda.DataTextField = "Key";
+            ddlFiltroEstadoDeuda.DataValueField = "Value";
+
+            ddlFiltroEstadoDeuda.DataBind();
+            ddlFiltroEstadoDeuda.Items.Insert(0, new ListItem("Todos los estados", "-1"));
         }
+       
 
         protected void gvDeudas_RowEditing(object sender, GridViewEditEventArgs e)
         {
@@ -207,6 +224,44 @@ namespace TPFinalIntegrador
         {
             gvDeudas.PageIndex = e.NewPageIndex;
             CargarDeudas();
+        }
+
+        protected void ddlFiltroEstadoDeuda_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            AplicarFiltros();
+        }
+
+        private void AplicarFiltros()
+        {
+           DeudaNegocio negocio = new DeudaNegocio();
+           Usuario usuario = (Usuario)Session["usuario"];
+            int idUsuario = usuario.IdUsuario;  
+            int estadoDeuda = 0;
+
+             List<Deuda> deudasFiltradas = new List<Deuda>();
+            
+            if (!(string.IsNullOrEmpty(ddlFiltroEstadoDeuda.SelectedValue)))
+            {
+                estadoDeuda = int.Parse(ddlFiltroEstadoDeuda.SelectedValue);
+            }
+
+            if (estadoDeuda>= 0 && estadoDeuda <=3)
+            {
+                deudasFiltradas = negocio.FiltrarPorEstado(estadoDeuda,idUsuario);
+            }
+            else if(estadoDeuda == -1)
+            {
+                deudasFiltradas = negocio.FiltrarPorEstado(estadoDeuda, idUsuario);
+            }
+
+            if(deudasFiltradas.Count == 0)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "info",
+                    "Swal.fire({icon: 'info', title: 'Sin resultados', text: 'No se encontraron deudas con el estado seleccionado.'});", true);
+            }
+
+            gvDeudas.DataSource = deudasFiltradas;
+            gvDeudas.DataBind();
         }
     }
 }
