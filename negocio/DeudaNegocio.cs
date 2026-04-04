@@ -45,7 +45,8 @@ namespace negocio
                     throw new Exception("Debe ingresar una fecha válida.");
 
                 datos.setConsulta("INSERT INTO DEUDA (IdUsuario, NombreDeudor, EmailDeudor, Descripcion, MontoTotal, Cuotas, FechaInicio, Estado) " +
-                                  "VALUES (@idUsuario, @nombreDeudor, @emailDeudor, @descripcion, @montoTotal, @cuotas, @fechaInicio, @estado)");
+                                  "VALUES (@idUsuario, @nombreDeudor, @emailDeudor, @descripcion, @montoTotal, @cuotas, @fechaInicio, @estado)" +
+                                  "SELECT SCOPE_IDENTITY();");
 
                 datos.setParametro("@idUsuario", nueva.Usuario.IdUsuario);
                 datos.setParametro("@nombreDeudor", nueva.NombreDeudor.Trim());
@@ -56,7 +57,7 @@ namespace negocio
                 datos.setParametro("@fechaInicio", nueva.FechaInicio);
                 datos.setParametro("@estado", nueva.Estado);
 
-                datos.ejecutarAccion();
+                nueva.IdDeuda = Convert.ToInt32(datos.ejecutarEscalar());
             }
             catch (Exception ex)
             {
@@ -79,9 +80,9 @@ namespace negocio
                 if (deuda == null)
                     throw new Exception("La deuda no existe o ya fue saldada.");
 
-                datos.setConsulta("UPDATE DEUDA SET Estado = 0 WHERE IdDeuda = @idDeuda");
+                datos.setConsulta("UPDATE DEUDA SET Estado = @estado WHERE IdDeuda = @idDeuda");
                 datos.setParametro("@idDeuda", deuda.IdDeuda);
-
+                datos.setParametro("@estado", (int)EstadoDeuda.Eliminado);
                 datos.ejecutarAccion();
             }
             catch (Exception ex)
@@ -131,7 +132,10 @@ namespace negocio
                 datos.setParametro("@emailDeudor", deuda.EmailDeudor.Trim());
                 datos.setParametro("@descripcion", deuda.Descripcion.Trim());
                 datos.setParametro("@montoTotal", deuda.MontoTotal);
-                datos.setParametro("@cuotas", deuda.Cuotas);
+                if (deuda.Cuotas.HasValue)
+                    datos.setParametro("@cuotas", deuda.Cuotas.Value);
+                else
+                    datos.setParametro("@cuotas", DBNull.Value);
                 datos.setParametro("@fechaInicio", deuda.FechaInicio);
                 datos.setParametro("@estado", deuda.Estado);
 
@@ -383,6 +387,72 @@ namespace negocio
                 throw ex;
             }
             finally {                 datos.cerrarConexion(); }
+        }
+        public void MarcarPagada(int idDeuda)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                if (idDeuda <= 0)
+                    throw new Exception("Id de deuda inválido.");
+
+                datos.setConsulta("UPDATE DEUDA SET Estado = @estado WHERE IdDeuda = @idDeuda");
+                datos.setParametro("@idDeuda", idDeuda);
+                datos.setParametro("@estado", (int)EstadoDeuda.Pago);
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        public Deuda ObtenerPorId(int idDeuda)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta(@"SELECT IdDeuda, IdUsuario, NombreDeudor, EmailDeudor,
+              Descripcion, MontoTotal, Cuotas, FechaInicio, Estado
+              FROM DEUDA WHERE IdDeuda = @idDeuda");
+
+                datos.setParametro("@idDeuda", idDeuda);
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    Deuda aux = new Deuda();
+                    aux.IdDeuda = (int)datos.Lector["IdDeuda"];
+                    aux.Usuario = new Usuario();
+                    aux.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+                    aux.NombreDeudor = (string)datos.Lector["NombreDeudor"];
+                    aux.EmailDeudor = (string)datos.Lector["EmailDeudor"];
+                    aux.Descripcion = datos.Lector["Descripcion"] is DBNull ? null : (string)datos.Lector["Descripcion"];
+                    aux.MontoTotal = (decimal)datos.Lector["MontoTotal"];
+                    aux.Cuotas = datos.Lector["Cuotas"] is DBNull ? (int?)null : (int)datos.Lector["Cuotas"];
+                    aux.FechaInicio = (DateTime)datos.Lector["FechaInicio"];
+                    aux.Estado = (EstadoDeuda)int.Parse(datos.Lector["Estado"].ToString());
+
+                    return aux;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
         }
     }
 }

@@ -294,5 +294,30 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+
+        public Categoria ObtenerOCrearCobroDeuda(int idUsuario)
+        {
+            // Primero busco si ya existe
+            Categoria categoria = ListarPorUsuario(idUsuario)
+                .Find(c => c.Nombre == "Cobro de deuda");
+
+            // Si no existe la creo
+            if (categoria == null)
+            {
+                categoria = new Categoria();
+                categoria.Nombre = "Cobro de deuda";
+                categoria.Tipo = TipoCategoria.Ingreso;
+                categoria.Usuario = new Usuario() { IdUsuario = idUsuario };
+                categoria.Estado = true;
+
+                AgregarCategoria(categoria);
+
+                // La busco de nuevo para obtener el IdCategoria generado
+                categoria = ListarPorUsuario(idUsuario)
+                    .Find(c => c.Nombre == "Cobro de deuda");
+            }
+
+            return categoria;
+        }
     }
 }

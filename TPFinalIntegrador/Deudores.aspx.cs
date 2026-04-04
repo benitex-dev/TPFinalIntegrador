@@ -60,8 +60,36 @@ namespace TPFinalIntegrador
 
         protected void gvDeudas_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
-            gvDeudas.EditIndex = -1;
-            CargarDeudas();
+            try
+            {
+
+                int idDeuda = (int)gvDeudas.DataKeys[e.RowIndex]["IdDeuda"];
+                string nombre = ((TextBox)gvDeudas.Rows[e.RowIndex].FindControl("txtNombre")).Text;
+                string email = ((TextBox)gvDeudas.Rows[e.RowIndex].FindControl("txtEmail")).Text;
+                string descripcion = ((TextBox)gvDeudas.Rows[e.RowIndex].FindControl("txtDescripcion")).Text;
+
+                Usuario usuario = (Usuario)Session["usuario"];
+
+                // Traemos la deuda original para no perder monto, cuotas y fecha
+                DeudaNegocio negocio = new DeudaNegocio();
+                Deuda deuda = negocio.ObtenerPorId(idDeuda);
+
+                deuda.NombreDeudor = nombre;
+                deuda.EmailDeudor = email;
+                deuda.Descripcion = descripcion;
+
+                negocio.ModificarDeuda(deuda);
+
+                gvDeudas.EditIndex = -1;
+                CargarDeudas();
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
+                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Deuda modificada correctamente.'});", true);
+            }
+            catch (Exception ex)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+            }
         }
 
         protected void gvDeudas_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
@@ -143,6 +171,7 @@ namespace TPFinalIntegrador
 
                 DeudaNegocio negocio = new DeudaNegocio();
                 negocio.AgregarDeuda(nueva);
+                GenerarCuotas(nueva);
 
                 /*--------------ENVIO DE MAIL AL DEUDOR----------------------*/
                 string rutaPlantillas = Server.MapPath("~/Template");
@@ -262,6 +291,22 @@ namespace TPFinalIntegrador
 
             gvDeudas.DataSource = deudasFiltradas;
             gvDeudas.DataBind();
+        }
+        private void GenerarCuotas(Deuda deuda)
+        {
+            CuotaDeudaNegocio cuotaNegocio = new CuotaDeudaNegocio();
+            for (int i = 1; i <= deuda.Cuotas.Value; i++)
+            {
+                CuotaDeuda cuota = new CuotaDeuda();
+                cuota.Deuda = deuda;
+                cuota.NumeroCuota = i;
+                cuota.Monto = deuda.MontoTotal / deuda.Cuotas.Value;
+                cuota.FechaVencimiento = deuda.FechaInicio.AddMonths(i);
+                cuota.FechaPago = null;
+                cuota.Estado = EstadoCuota.Pendiente;
+
+                cuotaNegocio.AgregarCuota(cuota);
+            }
         }
     }
 }
