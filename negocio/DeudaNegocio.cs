@@ -388,6 +388,30 @@ namespace negocio
             }
             finally {                 datos.cerrarConexion(); }
         }
+        public void MarcarPagada(int idDeuda)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                if (idDeuda <= 0)
+                    throw new Exception("Id de deuda inválido.");
+
+                datos.setConsulta("UPDATE DEUDA SET Estado = @estado WHERE IdDeuda = @idDeuda");
+                datos.setParametro("@idDeuda", idDeuda);
+                datos.setParametro("@estado", (int)EstadoDeuda.Pago);
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
 
         public Deuda ObtenerPorId(int idDeuda)
         {

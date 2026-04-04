@@ -129,6 +129,44 @@ namespace negocio
 
         }
 
+        public CuotaDeuda ObtenerPorId(int idCuotaDeuda)
+        {
+            AccesoDatos datos = new AccesoDatos();
 
-     }
+            try
+            {
+                datos.setConsulta(@"SELECT IdCuotaDeuda, IdDeuda, NumeroCuota, Monto,
+              FechaVencimiento, FechaPago, Estado
+              FROM CUOTA_DEUDA WHERE IdCuotaDeuda = @idCuotaDeuda");
+
+                datos.setParametro("@idCuotaDeuda", idCuotaDeuda);
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    CuotaDeuda cuota = new CuotaDeuda();
+                    cuota.IdCuotaDeuda = (int)datos.Lector["IdCuotaDeuda"];
+                    cuota.Deuda = new Deuda();
+                    cuota.Deuda.IdDeuda = (int)datos.Lector["IdDeuda"];
+                    cuota.NumeroCuota = (int)datos.Lector["NumeroCuota"];
+                    cuota.Monto = (decimal)datos.Lector["Monto"];
+                    cuota.FechaVencimiento = (DateTime)datos.Lector["FechaVencimiento"];
+                    cuota.FechaPago = datos.Lector["FechaPago"] is DBNull ? (DateTime?)null : (DateTime)datos.Lector["FechaPago"];
+                    cuota.Estado = (EstadoCuota)(int)datos.Lector["Estado"];
+
+                    return cuota;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+    }
 }

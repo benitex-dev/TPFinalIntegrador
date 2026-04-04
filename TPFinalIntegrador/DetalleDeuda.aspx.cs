@@ -53,20 +53,59 @@ namespace TPFinalIntegrador
                 try
                 {
                     int idCuotaDeuda = int.Parse(e.CommandArgument.ToString());
-                    CuotaDeudaNegocio negocio = new CuotaDeudaNegocio();
-                    negocio.MarcarPagada(idCuotaDeuda);
 
+                    // Marcar cuota como pagada
+                    CuotaDeudaNegocio cuotaNegocio = new CuotaDeudaNegocio();
+                    cuotaNegocio.MarcarPagada(idCuotaDeuda);
+
+                    // Obtener datos de la cuota
+                    CuotaDeuda cuota = cuotaNegocio.ObtenerPorId(idCuotaDeuda);
                     Deuda deuda = (Deuda)Session["deudaActual"];
-                    CargarCuotas(deuda.IdDeuda);
+                    Usuario usuario = (Usuario)Session["usuario"];
 
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
-                        "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Cuota marcada como pagada.'});", true);
+                    // Obtener o crear categoría "Cobro de deuda"
+                    CategoriaNegocio categoriaNegocio = new CategoriaNegocio();
+                    Categoria categoria = categoriaNegocio.ObtenerOCrearCobroDeuda(usuario.IdUsuario);
+
+                    // Registrar ingreso
+                    Ingreso ingreso = new Ingreso();
+                    ingreso.Descripcion = "Cobro cuota " + cuota.NumeroCuota + " - " + deuda.NombreDeudor;
+                    ingreso.Fecha = DateTime.Today;
+                    ingreso.Monto = cuota.Monto;
+                    ingreso.Categoria = categoria;
+                    ingreso.Usuario = usuario;
+                    ingreso.Estado = true;
+
+                    IngresoNegocio ingresoNegocio = new IngresoNegocio();
+                    ingresoNegocio.AgregarIngreso(ingreso);
+
+                    CargarCuotas(deuda.IdDeuda);
+                    VerificarDeudaSaldada(cuotaNegocio, deuda);
                 }
                 catch (Exception ex)
                 {
                     ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
                         $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
                 }
+            }
+        }
+        private void VerificarDeudaSaldada(CuotaDeudaNegocio cuotaNegocio, Deuda deuda)
+        {
+            List<CuotaDeuda> todasLasCuotas = cuotaNegocio.ListarPorDeuda(deuda.IdDeuda);
+            bool todasPagadas = todasLasCuotas.TrueForAll(c => c.Estado == EstadoCuota.Pagada);
+
+            if (todasPagadas)
+            {
+                DeudaNegocio deudaNegocio = new DeudaNegocio();
+                deudaNegocio.MarcarPagada(deuda.IdDeuda);
+
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
+                    "Swal.fire({icon: 'success', title: '¡Deuda saldada!', text: 'Todas las cuotas fueron pagadas. La deuda quedó registrada comopaga.'});", true);
+            }
+            else
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
+                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Cuota marcada como pagada e ingreso registrado.'});", true);
             }
         }
     }
