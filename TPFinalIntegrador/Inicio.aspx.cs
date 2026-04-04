@@ -906,5 +906,72 @@ namespace TPFinalIntegrador
             ScriptManager.RegisterStartupScript(this, this.GetType(), "scrollReportes",
                 $"document.getElementById('{pnlReportes.ClientID}').scrollIntoView({{behavior:'smooth'}});", true);
         }
+
+        protected void btnGuardarIntegrante_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(txtMailIntegrante.Text))
+                {
+                    ScriptManager.RegisterStartupScript(
+                   this, this.GetType(),
+                   "ingresaNombre",
+                   "Swal.fire({icon: 'error', title: 'Error', text: 'Ingresá el mail del integrante.'});",
+                   true);
+
+                    return;
+                }
+
+                UsuarioNegocio negocio = new UsuarioNegocio();
+                HogarNegocio negocioHogar = new HogarNegocio();
+                Usuario user = new Usuario();
+
+                user = negocio.buscarMail(txtMailIntegrante.Text);
+
+                if(user != null)
+                {
+                    if(negocioHogar.AgregarIntegrante((int)Session["IdHogarActual"], user.IdUsuario, "Miembro"))
+                    {
+                        ScriptManager.RegisterStartupScript(
+                           this, this.GetType(),
+                           "categoriaCreada",
+                           "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Integrante agergado con exito!.'});",
+                           true);
+                    }
+                    else
+                    {
+                            ScriptManager.RegisterStartupScript(
+                        this, this.GetType(),
+                        "errorAlert",
+                        "Swal.fire({icon: 'error', title: 'El usuario ya forma parte del hogar!'});",
+                        true);
+                    }
+                }
+                else
+                {
+                    ScriptManager.RegisterStartupScript(
+                   this, this.GetType(),
+                   "errorAlert",
+                   "Swal.fire({icon: 'error', title: 'No se encontro un usuario con ese Mail.'});",
+                   true);
+                }
+                limpiarMailIntegrante();
+
+            }
+            catch (Exception ex)
+            {
+                ScriptManager.RegisterStartupScript(
+                    this, this.GetType(),
+                    "errorAlert",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});",
+                    true);
+            }
+        }
+
+        protected void limpiarMailIntegrante()
+        {
+            txtMailIntegrante.Text = "";
+        }
     }
+
 }

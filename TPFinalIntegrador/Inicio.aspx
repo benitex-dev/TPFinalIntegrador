@@ -305,6 +305,10 @@
 
                         <div class="d-flex flex-wrap gap-2">
                             <div class="d-flex flex-wrap gap-2">
+                                <button type="button" class="btn btn-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalIntegrante" onclick="limpiarModalAgregarIntegrante()">
+                                    Añadir miembro
+           
+                                </button>
                                 <button type="button" class="btn btn-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalGasto" onclick="limpiarModalGasto()">
                                     Cargar gasto
            
@@ -615,8 +619,33 @@
 
     </div>
 
+    <%-- MODAL PARA AGREGAR INTEGRANTE AL HOGAR --%>
+    <div class="modal fade" id="modalIntegrante" tabindex="-1" aria-labelledby="modalIntegranteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="modalIntegranteLabel">Agregar Integrante</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body pt-3">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Mail</label>
+                        <asp:TextBox ID="txtMailIntegrante" runat="server" CssClass="form-control"></asp:TextBox>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light border rounded-3" data-bs-dismiss="modal">Cancelar</button>
+                    <asp:Button ID="btnGuardarIntegrante" runat="server" Text="Guardar" CssClass="btn btn-primary rounded-3 px-4" OnClick="btnGuardarIntegrante_Click" />
+                </div>
+            </div>
+        </div>
+    </div>
+
     <%-- VENTANAS MODALES PARA CARGAR GASTOS, CATEGORÍAS, MEDIOS DE PAGO E INGRESOS --%>
-    <div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalCategoriaLabel" aria-hidden="true">
+
+            <div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalCategoriaLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 rounded-4 shadow">
 
@@ -959,6 +988,9 @@
             }
         }
 
+        function limpiarModalAgregarIntegrante() {
+            document.getElementById('<%= txtMailIntegrante.ClientID %>').value = '';
+        }
 
         async function buscarCotizacion(moneda) {            
             

@@ -63,7 +63,7 @@ namespace negocio
             }
         }
         
-        public void ejecutarAccion()
+        public int ejecutarAccion()
         {
             comando.Connection = conexion;
             try
@@ -72,7 +72,7 @@ namespace negocio
                 {
                     conexion.Open();
                 }
-                comando.ExecuteNonQuery();
+                return comando.ExecuteNonQuery();
             }
             catch (Exception ex)
             {

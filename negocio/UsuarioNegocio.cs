@@ -210,7 +210,6 @@ namespace negocio
         public Usuario buscarMail(string email)
         {
             AccesoDatos datos = new AccesoDatos();
-            Usuario usuario = new Usuario();
             try
             {
                 if (email != "")
@@ -218,18 +217,18 @@ namespace negocio
                     datos.setConsulta("select IdUsuario from usuario where email = @email");
                     datos.setParametro("@email", email);
                     datos.ejecutarLectura();
-                    datos.Lector.Read();
-                    usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
-                    usuario.Email = email;
-
-                    return usuario;
+                    if (datos.Lector.Read())
+                    {
+                        Usuario usuario = new Usuario();    
+                        usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+                        usuario.Email = email;
+                        return usuario;
+                    }
                 }
-
-                return usuario;
+                return null;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
             finally { datos.cerrarConexion(); }

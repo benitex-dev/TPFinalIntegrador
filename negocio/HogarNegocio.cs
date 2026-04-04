@@ -182,7 +182,7 @@ namespace negocio
             Hogar hogar = new Hogar();
             try
             {
-                datos.setConsulta("SELECT IdHogar, Nombre, IdUsuario FROM HOGAR WHERE IdHogar = @idHogar AND Estado = 1");
+                datos.setConsulta("SELECT IdHogar, Nombre FROM HOGAR WHERE IdHogar = @idHogar AND Estado = 1");
                 datos.setParametro("@idHogar", idHogar);
                 datos.ejecutarLectura();
 
@@ -218,6 +218,45 @@ namespace negocio
                     return (int)datos.Lector["IdHogar"];
                 else
                     return 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        //SI DEVUELVE FALSE ES QUE EL INTEGRANTE AUN NO EXISTE EN EL HOGAR
+        public bool AgregarIntegrante(int idHogar, int idUsuario, string rol)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                string query = @"
+            IF NOT EXISTS (SELECT 1 FROM HOGAR_USUARIO WHERE IdUsuario = @idUsuario AND IdHogar = @idHogar)
+            BEGIN
+                INSERT INTO HOGAR_USUARIO (IdHogar, IdUsuario, Rol, Estado) 
+                VALUES (@idHogar, @idUsuario, @rol, 1)
+            END";
+
+                datos.setConsulta(query);
+                datos.setParametro("@idHogar", idHogar);
+                datos.setParametro("@idUsuario", idUsuario);
+                datos.setParametro("@rol", rol);
+                int filasAfectadas = datos.ejecutarAccion();
+
+                if (filasAfectadas > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception ex)
             {
