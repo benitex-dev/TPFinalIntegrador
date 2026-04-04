@@ -385,5 +385,47 @@ namespace negocio
             }
             finally {                 datos.cerrarConexion(); }
         }
+
+        public Deuda ObtenerPorId(int idDeuda)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta(@"SELECT IdDeuda, IdUsuario, NombreDeudor, EmailDeudor,
+              Descripcion, MontoTotal, Cuotas, FechaInicio, Estado
+              FROM DEUDA WHERE IdDeuda = @idDeuda");
+
+                datos.setParametro("@idDeuda", idDeuda);
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    Deuda aux = new Deuda();
+                    aux.IdDeuda = (int)datos.Lector["IdDeuda"];
+                    aux.Usuario = new Usuario();
+                    aux.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+                    aux.NombreDeudor = (string)datos.Lector["NombreDeudor"];
+                    aux.EmailDeudor = (string)datos.Lector["EmailDeudor"];
+                    aux.Descripcion = datos.Lector["Descripcion"] is DBNull ? null : (string)datos.Lector["Descripcion"];
+                    aux.MontoTotal = (decimal)datos.Lector["MontoTotal"];
+                    aux.Cuotas = datos.Lector["Cuotas"] is DBNull ? (int?)null : (int)datos.Lector["Cuotas"];
+                    aux.FechaInicio = (DateTime)datos.Lector["FechaInicio"];
+                    aux.Estado = (EstadoDeuda)int.Parse(datos.Lector["Estado"].ToString());
+
+                    return aux;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }

@@ -89,6 +89,16 @@
           <asp:BoundField DataField="Cuotas" HeaderText="Cuotas" />
           <asp:BoundField DataField="FechaInicio" HeaderText="Fecha Inicio" DataFormatString="{0:dd/MM/yyyy}" HtmlEncode="False" />
           <asp:BoundField DataField="Estado" HeaderText="Estado" />
+           <asp:TemplateField>
+      <ItemTemplate>
+          <asp:HyperLink ID="lnkDetalle" runat="server"
+              NavigateUrl='<%# "DetalleDeuda.aspx?id=" + Eval("IdDeuda") %>'
+              CssClass="btn btn-sm btn-info"
+              ToolTip="Ver detalle">
+              <i class="bi bi-eye"></i>
+          </asp:HyperLink>
+      </ItemTemplate>
+  </asp:TemplateField>
           <asp:TemplateField>
               <ItemTemplate>
                   <asp:LinkButton ID="btnEditar" runat="server" CommandName="Edit"
