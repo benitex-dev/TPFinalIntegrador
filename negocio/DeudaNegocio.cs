@@ -45,7 +45,8 @@ namespace negocio
                     throw new Exception("Debe ingresar una fecha válida.");
 
                 datos.setConsulta("INSERT INTO DEUDA (IdUsuario, NombreDeudor, EmailDeudor, Descripcion, MontoTotal, Cuotas, FechaInicio, Estado) " +
-                                  "VALUES (@idUsuario, @nombreDeudor, @emailDeudor, @descripcion, @montoTotal, @cuotas, @fechaInicio, @estado)");
+                                  "VALUES (@idUsuario, @nombreDeudor, @emailDeudor, @descripcion, @montoTotal, @cuotas, @fechaInicio, @estado)" +
+                                  "SELECT SCOPE_IDENTITY();");
 
                 datos.setParametro("@idUsuario", nueva.Usuario.IdUsuario);
                 datos.setParametro("@nombreDeudor", nueva.NombreDeudor.Trim());
@@ -56,7 +57,7 @@ namespace negocio
                 datos.setParametro("@fechaInicio", nueva.FechaInicio);
                 datos.setParametro("@estado", nueva.Estado);
 
-                datos.ejecutarAccion();
+                nueva.IdDeuda = Convert.ToInt32(datos.ejecutarEscalar());
             }
             catch (Exception ex)
             {
