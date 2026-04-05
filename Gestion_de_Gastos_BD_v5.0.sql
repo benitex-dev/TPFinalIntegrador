@@ -164,4 +164,14 @@ CREATE TABLE DEUDA
     Estado       INT           NOT NULL,
     FOREIGN KEY (IdUsuario) REFERENCES USUARIO(IdUsuario)
 );
+CREATE TABLE CUOTA_DEUDA (
+      IdCuotaDeuda INT IDENTITY(1,1) PRIMARY KEY,
+      IdDeuda INT NOT NULL,
+      NumeroCuota INT NOT NULL,
+      Monto DECIMAL(18,2) NOT NULL,
+      FechaVencimiento DATE NOT NULL,
+      FechaPago DATE NULL,
+      Estado INT NOT NULL DEFAULT 1,
+      FOREIGN KEY (IdDeuda) REFERENCES DEUDA(IdDeuda)
+  )
 GO
