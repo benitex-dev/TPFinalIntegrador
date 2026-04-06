@@ -59,16 +59,16 @@ namespace TPFinalIntegrador
                 if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
                 {
                     Hogar hogarSeleccionado = (Hogar)Session["HogarSeleccionado"];
-                    lblBienvenidaHogar.Text = "Bienvenido a " + hogarSeleccionado.Nombre;
-                    pnlInicioHogar.Visible = true;
-                    pnlInicioPersonal.Visible = false;
+                    //lblBienvenidaHogar.Text = "Bienvenido a " + hogarSeleccionado.Nombre;
+                    //pnlInicioHogar.Visible = true;
+                    //pnlInicioPersonal.Visible = false;
                 }
                 else
                 {
                     Usuario usuarioLogueado = (Usuario)Session["usuario"];
-                    lblBienvenidaPersonal.Text = "Bienvenido/a, " + usuarioLogueado.Nombre;
-                    pnlInicioPersonal.Visible = true;
-                    pnlInicioHogar.Visible = false;
+                    //lblBienvenidaPersonal.Text = "Bienvenido/a, " + usuarioLogueado.Nombre;
+                    //pnlInicioPersonal.Visible = true;
+                    //pnlInicioHogar.Visible = false;
                 }
                 CargarCategoriasIngreso();
                 CargarResumenIngresos();
@@ -77,7 +77,7 @@ namespace TPFinalIntegrador
                 CargarMediosPago();
                 CargarMovimientosDelMes();
                 CargarSaldoMes();
-                pnlReportes.Visible = false;
+                //pnlReportes.Visible = false;
             }
         }
 
@@ -295,7 +295,7 @@ namespace TPFinalIntegrador
                     total = negocio.TotalIngresosMesActual(usuarioLogueado.IdUsuario);
                 }
 
-                lblIngresosMes.Text = "$ " + total.ToString("N2");
+                h2Ingresos.InnerText = "$ " + total.ToString("N2");
             }
             catch (Exception ex)
             {
@@ -681,13 +681,13 @@ namespace TPFinalIntegrador
                 {
                     int idHogar = (int)Session["IdHogarActual"];
                     total = negocio.TotalGastosMesActualHogar(idHogar);
-                    lblGastosMesHogar.Text = "$ " + total.ToString("N2");
+                    //lblGastosMesHogar.Text = "$ " + total.ToString("N2");
                 }
                 else
                 {
                     Usuario usuarioLogueado = (Usuario)Session["usuario"];
                     total = negocio.TotalGastosMesActual(usuarioLogueado.IdUsuario);
-                    lblGastosMes.Text = "$ " + total.ToString("N2");
+                    h2Gasto.InnerText = "$ " + total.ToString("N2");
                 }
             }
             catch (Exception ex)
@@ -754,8 +754,7 @@ namespace TPFinalIntegrador
             rptMovimientos.DataSource = lista;
             rptMovimientos.DataBind();
 
-            lblMesActual.Text = new DateTime(AnioSeleccionado, MesSeleccionado, 1)
-                .ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-AR"));
+            //lblMesActual.Text = new DateTime(AnioSeleccionado, MesSeleccionado, 1).ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-AR"));
         }
 
 
@@ -779,7 +778,7 @@ namespace TPFinalIntegrador
 
 
                 decimal total = ingresos - gastos;
-                lblsaldoMes.Text = "$ " + total.ToString("N2");
+                h2Saldo.InnerText = "$ " + total.ToString("N2");
             }
             catch (Exception ex)
             {
@@ -790,24 +789,24 @@ namespace TPFinalIntegrador
         private void CargarMesesAnios()
         {
             // Meses
-            ddlMesIngresos.Items.Clear();
-            ddlMesGastos.Items.Clear();
+            //ddlMesIngresos.Items.Clear();
+            //ddlMesGastos.Items.Clear();
             var meses = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames;
             for (int i = 0; i < 12; i++)
             {
                 string nombre = meses[i];
-                ddlMesIngresos.Items.Add(new ListItem(nombre, (i + 1).ToString()));
-                ddlMesGastos.Items.Add(new ListItem(nombre, (i + 1).ToString()));
+                //ddlMesIngresos.Items.Add(new ListItem(nombre, (i + 1).ToString()));
+                //ddlMesGastos.Items.Add(new ListItem(nombre, (i + 1).ToString()));
             }
 
             // Años: últimos 5 años hasta el año actual
-            ddlAnioIngresos.Items.Clear();
-            ddlAnioGastos.Items.Clear();
+            //ddlAnioIngresos.Items.Clear();
+            //ddlAnioGastos.Items.Clear();
             int anioActual = DateTime.Now.Year;
             for (int y = anioActual; y >= anioActual - 5; y--)
             {
-                ddlAnioIngresos.Items.Add(new ListItem(y.ToString(), y.ToString()));
-                ddlAnioGastos.Items.Add(new ListItem(y.ToString(), y.ToString()));
+                //ddlAnioIngresos.Items.Add(new ListItem(y.ToString(), y.ToString()));
+                //ddlAnioGastos.Items.Add(new ListItem(y.ToString(), y.ToString()));
             }
         }
 
@@ -819,8 +818,8 @@ namespace TPFinalIntegrador
                 IngresoNegocio ingresoNegocio = new IngresoNegocio();
                 var lista = ingresoNegocio.ListarPorUsuarioPorMes(usuarioLogueado.IdUsuario, mes, anio);
 
-                gvIngresosMes.DataSource = lista;
-                gvIngresosMes.DataBind();
+                //gvIngresosMes.DataSource = lista;
+                //gvIngresosMes.DataBind();
             }
             catch (Exception ex)
             {
@@ -835,10 +834,10 @@ namespace TPFinalIntegrador
             int mes = 0;
             int anio = 0;
 
-            if (!int.TryParse(ddlMesIngresos.SelectedValue, out mes))
+            //if (!int.TryParse(ddlMesIngresos.SelectedValue, out mes))
                 mes = DateTime.Now.Month;
 
-            if (!int.TryParse(ddlAnioIngresos.SelectedValue, out anio))
+            //if (!int.TryParse(ddlAnioIngresos.SelectedValue, out anio))
                 anio = DateTime.Now.Year;
 
             CargarIngresosPorMes(mes, anio);
@@ -862,8 +861,8 @@ namespace TPFinalIntegrador
                     Monto = g.MontoPesos
                 }).ToList();
 
-                gvGastosMes.DataSource = datos;
-                gvGastosMes.DataBind();
+                //gvGastosMes.DataSource = datos;
+                //gvGastosMes.DataBind();
             }
             catch (Exception ex)
             {
@@ -877,10 +876,10 @@ namespace TPFinalIntegrador
             int mes = 0;
             int anio = 0;
 
-            if (!int.TryParse(ddlMesGastos.SelectedValue, out mes))
+            //if (!int.TryParse(ddlMesGastos.SelectedValue, out mes))
                 mes = DateTime.Now.Month;
 
-            if (!int.TryParse(ddlAnioGastos.SelectedValue, out anio))
+            //if (!int.TryParse(ddlAnioGastos.SelectedValue, out anio))
                 anio = DateTime.Now.Year;
 
             CargarGastosPorMes(mes, anio);
@@ -889,22 +888,21 @@ namespace TPFinalIntegrador
         protected void lnkVerMetricas_Click(object sender, EventArgs e)
         {
             // Mostrar el panel de reportes y cargar datos iniciales (mes corriente)
-            pnlReportes.Visible = true;
+            //pnlReportes.Visible = true;
 
             CargarMesesAnios();
             // Ingresos
-            ddlMesIngresos.SelectedValue = DateTime.Now.Month.ToString();
-            ddlAnioIngresos.SelectedValue = DateTime.Now.Year.ToString();
+            //ddlMesIngresos.SelectedValue = DateTime.Now.Month.ToString();
+            //ddlAnioIngresos.SelectedValue = DateTime.Now.Year.ToString();
             CargarIngresosPorMes(DateTime.Now.Month, DateTime.Now.Year);
 
             // Gastos
-            ddlMesGastos.SelectedValue = DateTime.Now.Month.ToString();
-            ddlAnioGastos.SelectedValue = DateTime.Now.Year.ToString();
+            //ddlMesGastos.SelectedValue = DateTime.Now.Month.ToString();
+            //ddlAnioGastos.SelectedValue = DateTime.Now.Year.ToString();
             CargarGastosPorMes(DateTime.Now.Month, DateTime.Now.Year);
 
             // Hacer scroll suave hacia el contenedor de reportes
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "scrollReportes",
-                $"document.getElementById('{pnlReportes.ClientID}').scrollIntoView({{behavior:'smooth'}});", true);
+            //ScriptManager.RegisterStartupScript(this, this.GetType(), "scrollReportes",$"document.getElementById('{pnlReportes.ClientID}').scrollIntoView({{behavior:'smooth'}});", true);
         }
 
         protected void btnGuardarIntegrante_Click(object sender, EventArgs e)

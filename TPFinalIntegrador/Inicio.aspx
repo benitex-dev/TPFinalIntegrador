@@ -3,236 +3,334 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
     <style>
-        .inicio-page {
-            padding-top: 2rem;
-            padding-bottom: 2rem;
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #191c1d;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        .form-check span {
-    display: contents;
-}
-        .welcome-card,
-        .summary-card,
-        .panel-card,
-        .table-card,
-        .quick-card {
-            background-color: #ffffff;
-            border: 1px solid rgba(0,0,0,.06);
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,.05);
-        }
-
-        .welcome-card {
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .summary-card,
-        .quick-card,
-        .panel-card {
-            padding: 1.25rem;
-        }
-
-        .table-card {
-            overflow: hidden;
-        }
-
-        .page-title {
-            font-size: 2rem;
+        h1, h2, h3, h4, .balance-text {
+            font-family: 'Manrope', sans-serif;
             font-weight: 800;
-            margin-bottom: .4rem;
-            color: #111827;
+            letter-spacing: -0.03em;
         }
-
-        .page-subtitle {
-            color: #6b7280;
-            font-size: 1rem;
-            margin-bottom: 0;
+        .rounded-4 {
+            border-radius: 1.5rem !important;
         }
-
-        .welcome-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 18px;
+        .btn-rounded {
+            border-radius: 2rem;
+        }
+        .icon-box {
+            width: 48px;
+            height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(var(--bs-primary-rgb), .10);
+            border-radius: 1rem;
         }
-
-        .welcome-icon .material-symbols-outlined,
-        .summary-icon .material-symbols-outlined,
-        .quick-icon .material-symbols-outlined {
-            font-size: 30px;
+        .bg-primary-light { background-color: #dae2ff; color: #0057cd; }
+        .bg-success-light { background-color: #93f7ba; color: #006d41; }
+        .bg-danger-light { background-color: #ffdad9; color: #b91830; }
+        
+        .progress { height: 8px; border-radius: 4px; }
+        
+        /* Custom Bottom Nav for Mobile */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #dee2e6;
+            z-index: 1030;
         }
-
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 1rem;
-        }
-
-        .summary-card .summary-label {
-            font-size: .82rem;
-            color: #6b7280;
-            font-weight: 600;
-            margin-bottom: .4rem;
-        }
-
-        .summary-card .summary-value {
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin-bottom: .25rem;
-            line-height: 1;
-            color: #111827;
-        }
-
-        .summary-card .summary-foot {
-            font-size: .88rem;
-            color: #6b7280;
-            margin-bottom: 0;
-        }
-
-        .summary-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 16px;
+        
+        .nav-link-custom {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
-
-        .summary-green .summary-icon {
-            background: rgba(25, 135, 84, .12);
-            color: #198754;
-        }
-
-        .summary-red .summary-icon {
-            background: rgba(220, 53, 69, .12);
-            color: #dc3545;
-        }
-
-        .summary-blue .summary-icon {
-            background: rgba(13, 110, 253, .12);
-            color: #0d6efd;
-        }
-
-        .summary-yellow .summary-icon {
-            background: rgba(255, 193, 7, .18);
-            color: #b88900;
-        }
-
-        .custom-table thead th {
-            font-size: .75rem;
+            font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: .04em;
-            color: #6b7280;
-            font-weight: 700;
-            border-bottom: 1px solid rgba(0,0,0,.06);
-            background: #f8fafc;
-        }
-
-        .custom-table tbody td {
-            vertical-align: middle;
-            border-color: rgba(0,0,0,.05);
-            color: #6b7280;
-        }
-
-        .badge-soft-primary {
-            background: rgba(13, 110, 253, .10);
-            color: #0d6efd;
             font-weight: 600;
-            border-radius: 999px;
-            padding: .45rem .8rem;
-        }
-
-        .badge-soft-success {
-            background: rgba(25, 135, 84, .10);
-            color: #198754;
-            font-weight: 600;
-            border-radius: 999px;
-            padding: .45rem .8rem;
-        }
-
-        .badge-soft-danger {
-            background: rgba(220, 53, 69, .10);
-            color: #dc3545;
-            font-weight: 600;
-            border-radius: 999px;
-            padding: .45rem .8rem;
-        }
-
-        .quick-link {
+            color: #6c757d;
             text-decoration: none;
-            color: inherit;
-            display: block;
+            padding: 10px 0;
         }
-
-        .quick-item {
-            border: 1px solid rgba(0,0,0,.06);
-            border-radius: 18px;
-            padding: 1rem;
-            transition: .2s ease;
-            background-color: #fff;
-        }
-
-        .quick-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,.05);
-            border-color: rgba(13, 110, 253, .20);
-        }
-
-        .quick-icon {
-            width: 46px;
-            height: 46px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(var(--bs-primary-rgb), .10);
+        .nav-link-custom.active {
             color: #0d6efd;
-            margin-bottom: .9rem;
         }
-
-        .sidebar-note {
-            font-size: .92rem;
-            color: #6b7280;
-            margin-bottom: 0;
-        }
-
-        .progress {
-            height: .8rem;
-            border-radius: 999px;
-            background-color: #e9ecef;
-        }
-
-        .mini-kpi {
-            border-radius: 18px;
-            padding: 1rem;
-            border: 1px solid rgba(0,0,0,.06);
-        }
-
-        .mini-kpi h6 {
-            font-size: .78rem;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-            margin-bottom: .4rem;
-            font-weight: 700;
-        }
-
-        .mini-kpi p {
-            font-size: 1.35rem;
-            font-weight: 800;
-            margin-bottom: 0;
-        }
-
-        .empty-text {
-            color: #9ca3af;
+        
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
         }
     </style>
 
-    <div class="inicio-page">
+    <div class="bg-light">
+        <!-- Top Navigation (Desktop) -->
+        <%--<nav class="navbar navbar-expand-md navbar-light bg-white sticky-top shadow-sm d-none d-md-block">
+            <div class="container py-2">
+                <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                    <span class="material-symbols-outlined text-primary">account_balance</span>
+                    <span class="fw-bold">The Private Banker</span>
+                </a>
+                <div class="ms-auto d-flex align-items-center gap-4">
+                    <a class="nav-link active text-primary fw-semibold" href="#">Inicio</a>
+                    <a class="nav-link text-secondary" href="#">Ahorros</a>
+                    <a class="nav-link text-secondary" href="#">Deudores</a>
+                    <a class="nav-link text-secondary" href="#">Perfil</a>
+                    <button class="btn btn-primary btn-rounded px-4 ms-2">Inicio</button>
+                </div>
+            </div>
+        </nav>
+        <!-- Mobile Header -->
+        <div class="d-md-none bg-white p-3 shadow-sm sticky-top">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">account_balance</span>
+                    <span class="fw-bold h5 mb-0">The Private Banker</span>
+                </div>
+                <button class="btn btn-primary btn-sm btn-rounded px-3">Inicio</button>
+            </div>
+        </div>--%>
+        <main class="py-4 mb-5 pb-5">
+            <!-- Hero Section -->
+            <section class="row align-items-center mb-4 g-3">
+                <div class="col-lg-7">
+                    <h1 class="display-6 mb-1">Tu Resumen Personal</h1>
+                    <p class="text-secondary fw-medium">Gestiona tu patrimonio con precisión editorial.</p>
+                </div>
+                <div class="col-lg-5 d-flex gap-2 justify-content-lg-end">
+                    <button class="btn btn-outline-primary bg-white btn-rounded px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
+                        <span class="material-symbols-outlined fs-5">payments</span>
+                        Cargar ingreso
+                    </button>
+                    <button class="btn btn-primary btn-rounded px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
+                        <span class="material-symbols-outlined fs-5">add_circle</span>
+                        Cargar gasto
+                    </button>
+                </div>
+            </section>
+            <!-- Metrics Grid (Bento) -->
+            <section class="row g-3 mb-4">
+                <!-- Saldo -->
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <span class="text-uppercase small fw-bold text-secondary tracking-wider">Saldo Disponible</span>
+                            <div class="icon-box bg-primary-light">
+                                <span class="material-symbols-outlined">savings</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="balance-text mb-1" runat="server" id="h2Saldo">$ --</h2>
+                            <span class="text-primary small fw-bold text-uppercase">Actualizado hace 2 min</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Ingresos -->
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <span class="text-uppercase small fw-bold text-secondary tracking-wider">Ingresos del mes</span>
+                            <div class="icon-box bg-success-light">
+                                <span class="material-symbols-outlined">trending_up</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="balance-text text-success mb-1" runat="server" id="h2Ingresos">$ --</h2>
+                            <div class="d-flex align-items-center gap-1 text-success small fw-bold">
+                                <span class="material-symbols-outlined fs-6">arrow_upward</span>
+                                <span>12% MÁS QUE EL MES PASADO</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Gastos -->
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <span class="text-uppercase small fw-bold text-secondary tracking-wider">Gastos del mes</span>
+                            <div class="icon-box bg-danger-light">
+                                <span class="material-symbols-outlined">trending_down</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="balance-text text-danger mb-3" runat="server" id="h2Gasto">$ --</h2>
+                            <div class="progress mb-2">
+                                <div class="progress-bar bg-danger" style="width: 68%"></div>
+                            </div>
+                            <span class="text-secondary small fw-medium">68% de tu límite mensual</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div class="row g-4">
+                <!-- Left Column: Transactions -->
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                        <div class="card-header bg-white border-bottom p-4 d-flex justify-content-between align-items-center">
+                            <h3 class="h5 mb-0 fw-bold">Movimientos Recientes</h3>
+                            <a class="text-primary text-decoration-none small fw-bold" href="#">Ver todo</a>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-borderless table-hover align-middle mb-0">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th class="ps-4 py-3 text-uppercase small text-secondary fw-bold">Concepto</th>
+                                            <th class="py-3 text-uppercase small text-secondary fw-bold">Fecha</th>
+                                            <th class="py-3 text-uppercase small text-secondary fw-bold">Categoría</th>
+                                            <th class="pe-4 py-3 text-uppercase small text-secondary fw-bold text-end">Monto</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <asp:Repeater ID="rptMovimientos" runat="server">
+                                            <ItemTemplate>
+                                                <tr class="align-middle border-bottom">
+
+                                                    <td class="ps-4 py-3">
+                                                        <div class="d-flex align-items-center gap-3">
+
+                                                            <div class='<%# Eval("Tipo").ToString() == "Gasto" ? "icon-box bg-danger-light" : "icon-box bg-success-light" %>' style="width: 40px; height: 40px;">
+                                                                <span class="material-symbols-outlined fs-5">
+                                                                    <%# Eval("Tipo").ToString() == "Gasto" ? "shopping_bag" : "payments" %>
+                                                                </span>
+                                                            </div>
+
+                                                            <span class="fw-bold"><%# Eval("Descripcion") %></span>
+                                                        </div>
+                                                    </td>
+
+                                                    <td class="text-secondary small">
+                                                        <%# Eval("Fecha", "{0:dd/MM/yyyy}") %>
+                                                    </td>
+
+                                                    <td>
+                                                        <span class="badge bg-light text-secondary rounded-pill px-3 py-2 text-uppercase" style="font-size: 10px;">
+                                                            <%# Eval("Categoria") %>
+                                                        </span>
+                                                    </td>
+
+                                                    <td class='<%# Eval("Tipo").ToString() == "Gasto" ? "pe-4 text-end fw-bold text-danger" : "pe-4 text-end fw-bold text-success" %>'>
+                                                        <%# Eval("MontoMostrado") %>
+                                                    </td>
+                                                </tr>
+                                            </ItemTemplate>
+                                        </asp:Repeater>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right Column: Insights -->
+                <div class="col-lg-4 d-flex flex-column gap-4">
+                    <!-- Category Analysis -->
+                    <div class="card border-0 shadow-sm rounded-4 p-4">
+                        <div class="mb-4">
+                            <span class="text-uppercase small fw-bold text-secondary tracking-widest" style="font-size: 10px;">Distribución de Gastos</span>
+                            <h4 class="h5 mt-1 fw-bold">Análisis por Categoría</h4>
+                        </div>
+                        <div class="d-flex flex-column align-items-center gap-4">
+                            <!-- Donut Chart Placeholder -->
+                            <div class="position-relative" style="width: 160px; height: 160px;">
+                                <svg class="w-100 h-100" style="transform: rotate(-90deg);" viewbox="0 0 36 36">
+                                    <circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#e9ecef" stroke-width="4"></circle>
+                                    <circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#0d6efd" stroke-dasharray="40 100" stroke-width="4"></circle>
+                                    <circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#198754" stroke-dasharray="25 100" stroke-dashoffset="-40" stroke-width="4"></circle>
+                                    <circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#ffc107" stroke-dasharray="20 100" stroke-dashoffset="-65" stroke-width="4"></circle>
+                                </svg>
+                                <div class="position-absolute top-50 start-50 translate-middle text-center">
+                                    <span class="d-block h5 fw-bold mb-0">$550k</span>
+                                    <span class="text-secondary small text-uppercase" style="font-size: 10px;">Total</span>
+                                </div>
+                            </div>
+                            <div class="row w-100 g-2">
+                                <div class="col-6 d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-primary" style="width: 10px; height: 10px;"></div>
+                                    <span class="small text-secondary fw-medium">Supermercado</span>
+                                </div>
+                                <div class="col-6 d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-success" style="width: 10px; height: 10px;"></div>
+                                    <span class="small text-secondary fw-medium">Servicios</span>
+                                </div>
+                                <div class="col-6 d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-warning" style="width: 10px; height: 10px;"></div>
+                                    <span class="small text-secondary fw-medium">Ocio</span>
+                                </div>
+                                <div class="col-6 d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-light border" style="width: 10px; height: 10px;"></div>
+                                    <span class="small text-secondary fw-medium">Otros</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Savings Goals -->
+                    <div class="card border-0 shadow-sm rounded-4 p-4">
+                        <h4 class="h5 mb-4 fw-bold">Metas de Ahorro</h4>
+                        <div class="d-flex flex-column gap-4">
+                            <div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-semibold text-secondary small">Viaje a Japón</span>
+                                    <span class="fw-bold text-primary small">75%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-primary" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-semibold text-secondary small">Fondo de Emergencia</span>
+                                    <span class="fw-bold text-primary small">40%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-primary" style="width: 40%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- Bottom Nav (Mobile Only) -->
+        <div class="bottom-nav d-md-none">
+            <div class="container">
+                <div class="row text-center">
+                    <div class="col">
+                        <a class="nav-link-custom active" href="#">
+                            <span class="material-symbols-outlined">grid_view</span>
+                            <span>Inicio</span>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link-custom" href="#">
+                            <span class="material-symbols-outlined">account_balance_wallet</span>
+                            <span>Ahorros</span>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link-custom" href="#">
+                            <span class="material-symbols-outlined">payments</span>
+                            <span>Deudores</span>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link-custom" href="#">
+                            <span class="material-symbols-outlined">person</span>
+                            <span>Perfil</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%--<div class="inicio-page">
 
         <div class="welcome-card">
             <asp:Panel ID="pnlInicioPersonal" runat="server">
@@ -617,7 +715,7 @@
             </div>
         </div>
 
-    </div>
+    </div>--%>
 
     <%-- MODAL PARA AGREGAR INTEGRANTE AL HOGAR --%>
     <div class="modal fade" id="modalIntegrante" tabindex="-1" aria-labelledby="modalIntegranteLabel" aria-hidden="true">
