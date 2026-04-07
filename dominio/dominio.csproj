@@ -52,6 +52,7 @@
     <Compile Include="MedioPago.cs" />
     <Compile Include="MetaAhorro.cs" />
     <Compile Include="Movimiento.cs" />
+    <Compile Include="PresupuestoCategoria.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Usuario.cs" />
   </ItemGroup>

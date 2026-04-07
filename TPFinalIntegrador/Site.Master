@@ -83,6 +83,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="Ahorros.aspx">Ahorros</a>
                         </li>
+                         <li class="nav-item">
+     <a class="nav-link" href="Presupuesto.aspx">Presupuesto</a>
+ </li>
                         <li class="nav-item">
                             <a class="nav-link" href="Deudores.aspx">Deudores</a>
                         </li>
