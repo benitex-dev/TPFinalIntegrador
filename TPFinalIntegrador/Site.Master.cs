@@ -29,11 +29,13 @@ namespace TPFinalIntegrador
             {
                 divSesionIniciada.Visible = true;
                 divInvitado.Visible = false;
+                divMenuPrincipal.Visible = true;
             }
             else
             {
                 divSesionIniciada.Visible = false;
                 divInvitado.Visible = true;
+                divMenuPrincipal.Visible = false;
             }
 
             UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
