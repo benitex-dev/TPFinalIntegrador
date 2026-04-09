@@ -56,28 +56,37 @@ namespace TPFinalIntegrador
                 MesSeleccionado = DateTime.Now.Month;
                 AnioSeleccionado = DateTime.Now.Year;
 
+                // ¿Estamos en la vista de Hogar?
                 if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
                 {
                     Hogar hogarSeleccionado = (Hogar)Session["HogarSeleccionado"];
-                    //lblBienvenidaHogar.Text = "Bienvenido a " + hogarSeleccionado.Nombre;
-                    //pnlInicioHogar.Visible = true;
-                    //pnlInicioPersonal.Visible = false;
+                    // Lógica de Hogar...
                 }
                 else
                 {
-                    Usuario usuarioLogueado = (Usuario)Session["usuario"];
-                    //lblBienvenidaPersonal.Text = "Bienvenido/a, " + usuarioLogueado.Nombre;
-                    //pnlInicioPersonal.Visible = true;
-                    //pnlInicioHogar.Visible = false;
+                    if (Session["usuario"] != null)
+                    {
+                        Usuario usuarioLogueado = (Usuario)Session["usuario"];
+
+                        GastoResumenNegocio negocio = new GastoResumenNegocio();
+                        List<GastoResumen> gastos = negocio.ObtenerGastosDelMes(usuarioLogueado.IdUsuario);
+                        CargarGraficoDeTorta(gastos);
+                    }
+                    else
+                    {
+                        Response.Redirect("Login.aspx", false);
+                        return;
+                    }
                 }
+
+                // Carga de combos y tablas
                 CargarCategoriasIngreso();
                 CargarResumenIngresos();
                 CargarResumenGastos();
                 CargarCategoriasGasto();
                 CargarMediosPago();
-                CargarMovimientosDelMes();
+                CargarMovimientosDelMesRecientes();
                 CargarSaldoMes();
-                //pnlReportes.Visible = false;
             }
         }
 
@@ -266,7 +275,7 @@ namespace TPFinalIntegrador
                 CargarSaldoMes(); //refresca el saldo al agregar un ingreso nuevo
 
 
-                CargarMovimientosDelMes();
+                CargarMovimientosDelMesRecientes();
             }
             catch (Exception ex)
             {
@@ -563,6 +572,7 @@ namespace TPFinalIntegrador
 
                 // Obtener el ID
                 int idGasto = negocio.AgregarGasto(gasto);
+                
                                
                 // GENERAR CUOTAS
                 if (gasto.EsEnCuotas)
@@ -651,9 +661,13 @@ namespace TPFinalIntegrador
                 rbUnPago.Checked = true;
 
                 //REFRESCAR
+                GastoResumenNegocio negocioResumen = new GastoResumenNegocio();
+                List<GastoResumen> gastosFrescos = negocioResumen.ObtenerGastosDelMes(usuarioLogueado.IdUsuario);
+                CargarGraficoDeTorta(gastosFrescos);
+                upGraficoTorta.Update();
                 CargarResumenGastos();
                 CargarSaldoMes();
-                CargarMovimientosDelMes();
+                CargarMovimientosDelMesRecientes();
 
                 ScriptManager.RegisterStartupScript(
                     this, this.GetType(),
@@ -747,9 +761,69 @@ namespace TPFinalIntegrador
             return movimientos.OrderByDescending(x => x.Fecha).ToList();
         }
 
+        private List<Movimiento> ObtenerMovimientosDelMesRecientes()
+        {
+            List<Movimiento> movimientos = new List<Movimiento>();
+            IngresoNegocio ingresoNegocio = new IngresoNegocio();
+            GastoNegocio gastoNegocio = new GastoNegocio();
+            List<Ingreso> ingresos = null;
+            List<Gasto> gastos = null;
+
+            if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
+            {
+                int idHogar = (int)Session["IdHogarActual"];
+                ingresos = ingresoNegocio.ListarPorHogarMesActual(idHogar);
+                gastos = gastoNegocio.ListarPorHogarMesActual(idHogar);
+            }
+            else
+            {
+                Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                ingresos = ingresoNegocio.ListarPorUsuarioMesReciente(usuarioLogueado.IdUsuario);
+                gastos = gastoNegocio.ListarPorUsuarioMesReciente(usuarioLogueado.IdUsuario);
+            }
+
+            foreach (Ingreso ingreso in ingresos)
+            {
+                Movimiento mov = new Movimiento();
+                mov.Fecha = ingreso.Fecha;
+                mov.Descripcion = ingreso.Descripcion;
+                mov.Categoria = ingreso.Categoria.Nombre;
+                mov.Tipo = "Ingreso";
+                mov.Monto = ingreso.Monto;
+                mov.Estado = ingreso.Estado ? "Activo" : "Eliminado";
+
+                movimientos.Add(mov);
+            }
+
+            foreach (Gasto gasto in gastos)
+            {
+                Movimiento mov = new Movimiento();
+                mov.Fecha = gasto.Fecha;
+                mov.Descripcion = gasto.Descripcion;
+                mov.Categoria = gasto.Categoria.Nombre;
+                mov.Tipo = "Gasto";
+                mov.Monto = gasto.MontoPesos;
+                mov.Estado = gasto.Estado ? "Activo" : "Eliminado";
+
+                movimientos.Add(mov);
+            }
+
+            return movimientos.OrderByDescending(x => x.Fecha).Take(8).ToList();
+        }
+
         protected void CargarMovimientosDelMes()
         {
             List<Movimiento> lista = ObtenerMovimientosDelMes();
+
+            rptMovimientos.DataSource = lista;
+            rptMovimientos.DataBind();
+
+            //lblMesActual.Text = new DateTime(AnioSeleccionado, MesSeleccionado, 1).ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-AR"));
+        }
+
+        protected void CargarMovimientosDelMesRecientes()
+        {
+            List<Movimiento> lista = ObtenerMovimientosDelMesRecientes();
 
             rptMovimientos.DataSource = lista;
             rptMovimientos.DataBind();
@@ -969,6 +1043,79 @@ namespace TPFinalIntegrador
         protected void limpiarMailIntegrante()
         {
             txtMailIntegrante.Text = "";
+        }
+
+        private void CargarGraficoDeTorta(List<GastoResumen> gastosMes)
+        {
+            // 1. Simulo obtener tus gastos de la base de datos (reemplazá esto con tu llamado a la BD)
+            // Supongamos que esto te devuelve un DataTable o una Lista con (Categoria, Monto)
+            GastoResumenNegocio negocio = new GastoResumenNegocio();
+
+            decimal totalGastos = gastosMes.Sum(g => g.Monto);
+
+            // Si no hay gastos, limpiamos el gráfico y salimos
+            if (totalGastos == 0)
+            {
+                litTotalGrafico.Text = "$0";
+                return;
+            }
+
+            // Ponemos el total en el centro (ej: $550k)
+            litTotalGrafico.Text = totalGastos >= 1000 ? "$" + (totalGastos / 1000).ToString("0k") : "$" + totalGastos.ToString("0");
+
+            // 2. Agrupamos por categoría, sumamos los montos y ordenamos de mayor a menor
+            var categoriasAgrupadas = gastosMes
+                .GroupBy(g => g.Categoria)
+                .Select(grupo => new { Nombre = grupo.Key, Total = grupo.Sum(x => x.Monto) })
+                .OrderByDescending(x => x.Total)
+                .ToList();
+
+            // 3. Preparamos los colores de tu diseño (Azul, Verde, Amarillo, Gris para Otros)
+            string[] coloresHex = { "#0d6efd", "#198754", "#ffc107", "#e9ecef" };
+            List<ItemGrafico> datosGrafico = new List<ItemGrafico>();
+
+            decimal offsetActual = 0;
+
+            // 4. Armamos el Top 3
+            for (int i = 0; i < Math.Min(3, categoriasAgrupadas.Count); i++)
+            {
+                var cat = categoriasAgrupadas[i];
+                decimal porcentaje = (cat.Total / totalGastos) * 100;
+
+                datosGrafico.Add(new ItemGrafico
+                {
+                    Nombre = cat.Nombre,
+                    Monto = cat.Total,
+                    Porcentaje = porcentaje,
+                    Offset = offsetActual, // El primero es 0, los siguientes restan
+                    ColorHex = coloresHex[i]
+                });
+
+                offsetActual -= porcentaje; // Acá está la magia de restar el offset
+            }
+
+            // 5. Calculamos "Otros" (si hay más de 3 categorías)
+            if (categoriasAgrupadas.Count > 3)
+            {
+                decimal montoOtros = categoriasAgrupadas.Skip(3).Sum(x => x.Total);
+                decimal porcentajeOtros = (montoOtros / totalGastos) * 100;
+
+                datosGrafico.Add(new ItemGrafico
+                {
+                    Nombre = "Otros",
+                    Monto = montoOtros,
+                    Porcentaje = porcentajeOtros,
+                    Offset = offsetActual,
+                    ColorHex = coloresHex[3] // Gris
+                });
+            }
+
+            // 6. Bindeamos a los Repeaters
+            rptGraficoTorta.DataSource = datosGrafico;
+            rptGraficoTorta.DataBind();
+
+            rptLeyendaGrafico.DataSource = datosGrafico;
+            rptLeyendaGrafico.DataBind();
         }
     }
 

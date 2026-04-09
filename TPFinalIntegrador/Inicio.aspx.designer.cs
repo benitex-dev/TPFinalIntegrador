@@ -51,6 +51,42 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Repeater rptMovimientos;
 
         /// <summary>
+        /// upGraficoTorta control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel upGraficoTorta;
+
+        /// <summary>
+        /// rptGraficoTorta control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptGraficoTorta;
+
+        /// <summary>
+        /// litTotalGrafico control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litTotalGrafico;
+
+        /// <summary>
+        /// rptLeyendaGrafico control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptLeyendaGrafico;
+
+        /// <summary>
         /// txtMailIntegrante control.
         /// </summary>
         /// <remarks>

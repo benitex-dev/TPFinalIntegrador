@@ -23,6 +23,8 @@ namespace TPFinalIntegrador
 
             UsuarioNegocio negocioUsuario = new UsuarioNegocio();
             Usuario usuarioLogueado = negocioUsuario.Login(email, password);
+            usuarioLogueado.IdUsuario = negocioUsuario.buscarMail(email).IdUsuario;
+
 
             if (usuarioLogueado != null)
             {

@@ -2,6 +2,7 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -68,9 +69,40 @@
                 padding-right: 12px;
             }
         }
+
+        .btn-glow-primary {
+            background-color: #0d6efd; /* Si usás otro azul en tu paleta, cambialo acá */
+            color: #ffffff;
+            border: none;
+            /* Eje X, Eje Y, Difuminado, Color azul con 30% de opacidad */
+            box-shadow: 0px 8px 24px rgba(13, 110, 253, 0.3);
+            transition: all 0.3s ease;
+        }
+
+            .btn-glow-primary:hover {
+                transform: translateY(-2px); /* Se levanta un poquito al pasar el mouse */
+                box-shadow: 0px 12px 28px rgba(13, 110, 253, 0.4);
+                color: #ffffff;
+            }
+
+        /* Magia para el botón blanco: Borde suavecito en lugar de azul fuerte */
+        .btn-outline-subtle {
+            background-color: #ffffff;
+            color: #0d6efd;
+            border: 1px solid #e2e8f0; /* Un gris muy clarito y elegante */
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.02); /* Sombrita imperceptible */
+            transition: all 0.3s ease;
+        }
+
+            .btn-outline-subtle:hover {
+                background-color: #f8f9fa;
+                border-color: #cbd5e1;
+                color: #0056b3;
+            }
     </style>
 
     <div class="bg-light">
+        
         <!-- Top Navigation (Desktop) -->
         <%--<nav class="navbar navbar-expand-md navbar-light bg-white sticky-top shadow-sm d-none d-md-block">
             <div class="container py-2">
@@ -105,13 +137,16 @@
                     <p class="text-secondary fw-medium">Gestiona tu patrimonio con precisión editorial.</p>
                 </div>
                 <div class="col-lg-5 d-flex gap-2 justify-content-lg-end">
-                    <button class="btn btn-outline-primary bg-white btn-rounded px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
-                        <span class="material-symbols-outlined fs-5">payments</span>
-                        Cargar ingreso
-                    </button>
-                    <button class="btn btn-primary btn-rounded px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
+                    <button type="button" class="btn btn-glow-primary rounded-pill d-flex align-items-center gap-2 px-4 py-2 fw-bold" data-bs-toggle="modal" data-bs-target="#modalGasto" onclick="limpiarModalGasto()">
                         <span class="material-symbols-outlined fs-5">add_circle</span>
                         Cargar gasto
+   
+                    </button>
+
+                    <button type="button" class="btn btn-outline-subtle rounded-pill d-flex align-items-center gap-2 px-4 py-2 fw-bold" data-bs-toggle="modal" data-bs-target="#modalIngreso" onclick="limpiarModalIngreso()">
+                        <span class="material-symbols-outlined fs-5">payments</span>
+                        Cargar ingreso
+   
                     </button>
                 </div>
             </section>
@@ -231,45 +266,53 @@
                 <!-- Right Column: Insights -->
                 <div class="col-lg-4 d-flex flex-column gap-4">
                     <!-- Category Analysis -->
-                    <div class="card border-0 shadow-sm rounded-4 p-4">
-                        <div class="mb-4">
-                            <span class="text-uppercase small fw-bold text-secondary tracking-widest" style="font-size: 10px;">Distribución de Gastos</span>
-                            <h4 class="h5 mt-1 fw-bold">Análisis por Categoría</h4>
-                        </div>
-                        <div class="d-flex flex-column align-items-center gap-4">
-                            <!-- Donut Chart Placeholder -->
-                            <div class="position-relative" style="width: 160px; height: 160px;">
-                                <svg class="w-100 h-100" style="transform: rotate(-90deg);" viewbox="0 0 36 36">
-                                    <circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#e9ecef" stroke-width="4"></circle>
-                                    <circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#0d6efd" stroke-dasharray="40 100" stroke-width="4"></circle>
-                                    <circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#198754" stroke-dasharray="25 100" stroke-dashoffset="-40" stroke-width="4"></circle>
-                                    <circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#ffc107" stroke-dasharray="20 100" stroke-dashoffset="-65" stroke-width="4"></circle>
-                                </svg>
-                                <div class="position-absolute top-50 start-50 translate-middle text-center">
-                                    <span class="d-block h5 fw-bold mb-0">$550k</span>
-                                    <span class="text-secondary small text-uppercase" style="font-size: 10px;">Total</span>
+                    <asp:UpdatePanel ID="upGraficoTorta" runat="server" UpdateMode="Conditional">
+                        <ContentTemplate>
+                            <div class="card border-0 shadow-sm rounded-4 p-4">
+                                <div class="mb-4">
+                                    <span class="text-uppercase small fw-bold text-secondary tracking-widest" style="font-size: 10px;">Distribución de Gastos</span>
+                                    <h4 class="h5 mt-1 fw-bold">Análisis por Categoría</h4>
+                                </div>
+
+                                <div class="d-flex flex-column align-items-center gap-4">
+                                    <div class="position-relative" style="width: 160px; height: 160px;">
+                                        <svg class="w-100 h-100" style="transform: rotate(-90deg);" viewBox="0 0 36 36">
+                                            <circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#e9ecef" stroke-width="4"></circle>
+
+                                            <asp:Repeater ID="rptGraficoTorta" runat="server">
+                                                <ItemTemplate>
+                                                    <circle cx="18" cy="18" fill="transparent" r="15.9"
+                                                        stroke='<%# Eval("ColorHex") %>'
+                                                        stroke-dasharray='<%# Eval("PorcentajeStr") + " 100" %>'
+                                                        stroke-dashoffset='<%# Eval("OffsetStr") %>'
+                                                        stroke-width="4">
+                                                    </circle>
+                                                </ItemTemplate>
+                                            </asp:Repeater>
+                                        </svg>
+
+                                        <div class="position-absolute top-50 start-50 translate-middle text-center">
+                                            <span class="d-block h5 fw-bold mb-0">
+                                                <asp:Literal ID="litTotalGrafico" runat="server"></asp:Literal>
+                                            </span>
+                                            <span class="text-secondary small text-uppercase" style="font-size: 10px;">Total</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row w-100 g-2">
+                                        <asp:Repeater ID="rptLeyendaGrafico" runat="server">
+                                            <ItemTemplate>
+                                                <div class="col-6 d-flex align-items-center gap-2">
+                                                    <div class="rounded-circle" style='<%# "width: 10px; height: 10px; background-color: " + Eval("ColorHex") + ";" %>'></div>
+                                                    <span class="small text-secondary fw-medium"><%# Eval("Nombre") %></span>
+                                                </div>
+                                            </ItemTemplate>
+                                        </asp:Repeater>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="row w-100 g-2">
-                                <div class="col-6 d-flex align-items-center gap-2">
-                                    <div class="rounded-circle bg-primary" style="width: 10px; height: 10px;"></div>
-                                    <span class="small text-secondary fw-medium">Supermercado</span>
-                                </div>
-                                <div class="col-6 d-flex align-items-center gap-2">
-                                    <div class="rounded-circle bg-success" style="width: 10px; height: 10px;"></div>
-                                    <span class="small text-secondary fw-medium">Servicios</span>
-                                </div>
-                                <div class="col-6 d-flex align-items-center gap-2">
-                                    <div class="rounded-circle bg-warning" style="width: 10px; height: 10px;"></div>
-                                    <span class="small text-secondary fw-medium">Ocio</span>
-                                </div>
-                                <div class="col-6 d-flex align-items-center gap-2">
-                                    <div class="rounded-circle bg-light border" style="width: 10px; height: 10px;"></div>
-                                    <span class="small text-secondary fw-medium">Otros</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
                     <!-- Savings Goals -->
                     <div class="card border-0 shadow-sm rounded-4 p-4">
                         <h4 class="h5 mb-4 fw-bold">Metas de Ahorro</h4>
@@ -298,7 +341,7 @@
             </div>
         </main>
         <!-- Bottom Nav (Mobile Only) -->
-        <div class="bottom-nav d-md-none">
+        <%--<div class="bottom-nav d-md-none">
             <div class="container">
                 <div class="row text-center">
                     <div class="col">
@@ -327,7 +370,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>--%>
     </div>
 
     <%--<div class="inicio-page">
@@ -716,8 +759,12 @@
         </div>
 
     </div>--%>
+   
+</asp:Content>
 
-    <%-- MODAL PARA AGREGAR INTEGRANTE AL HOGAR --%>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="ModalsContent" runat="server">
+        <%-- MODAL PARA AGREGAR INTEGRANTE AL HOGAR --%>
     <div class="modal fade" id="modalIntegrante" tabindex="-1" aria-labelledby="modalIntegranteLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 shadow">
@@ -729,7 +776,7 @@
                 <div class="modal-body pt-3">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Mail</label>
-                        <asp:TextBox ID="txtMailIntegrante" runat="server" CssClass="form-control"></asp:TextBox>
+                        <asp:TextBox ID="txtMailIntegrante" TextMode="Email" runat="server" CssClass="form-control"></asp:TextBox>
                     </div>
                 </div>
 
@@ -778,7 +825,7 @@
     </div>
 </div>
     <%--MODAL INGRESO--%>
-    <div class="modal fade" id="modalIngreso" tabindex="-1" aria-labelledby="modalIngresoLabel" aria-hidden="true">
+    <div class="modal fade" id="modalIngreso" tabindex="1" aria-labelledby="modalIngresoLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 rounded-4 shadow">
 
@@ -1014,7 +1061,7 @@
             lbl.innerText = '';
             lbl.className = '';
             document.getElementById('camposCredito').style.display = 'none';
-        } 
+        }
 
     </script>
 
@@ -1026,7 +1073,7 @@
             const campoMontoUSD = document.getElementById('campoMontoUSDGasto');
             const campoCotizacion = document.getElementById('campoCotizacionGasto');
             const txtMontoPesos = document.getElementById('<%= txtMontoPesosGasto.ClientID %>');
-        const txtMontoUSD = document.getElementById('<%= txtMontoUSDGasto.ClientID %>');
+            const txtMontoUSD = document.getElementById('<%= txtMontoUSDGasto.ClientID %>');
             const txtCotizacion = document.getElementById('<%= txtCotizacionGasto.ClientID %>');
 
             if (ddl.value === "1") {
@@ -1042,7 +1089,7 @@
                 campoCotizacion.style.display = "flex";
                 txtMontoPesos.readOnly = true;
                 txtMontoPesos.value = '';
-                
+
 
                 // Llamamos a la API automáticamente
                 buscarCotizacion(ddl.options[ddl.selectedIndex].text);
@@ -1156,6 +1203,5 @@
             }
         });
     </script>
-   
-   
+
 </asp:Content>

@@ -37,6 +37,14 @@
             margin-left: 0;
         }
 
+        @media (min-width: 1400px) {
+    .container-fluid {
+        max-width: 2000px !important; /* El tope ideal para que no se estire de más */
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
     </style>
     <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/bundles/modernizr") %>
@@ -202,7 +210,7 @@
                 </div>
             </div>
         </nav>
-        <div class="container body-content">
+        <div class="container-fluid px-4 px-xl-5 body-content">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
             <hr />
@@ -210,6 +218,8 @@
                 <p>&copy; <%: DateTime.Now.Year %> - Mi aplicación ASP.NET</p>
             </footer>
         </div>
+        <asp:ContentPlaceHolder ID="ModalsContent" runat="server">
+        </asp:ContentPlaceHolder>
     </form>
     <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/Scripts/bootstrap.js") %>

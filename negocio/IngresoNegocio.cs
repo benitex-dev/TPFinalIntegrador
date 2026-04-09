@@ -167,6 +167,56 @@ namespace negocio
             }
         }
 
+        public List<Ingreso> ListarPorUsuarioMesReciente(int idUsuario)
+        {
+            List<Ingreso> lista = new List<Ingreso>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta("SELECT TOP 8 I.IdIngreso, I.Descripcion, I.Fecha, I.Monto, I.IdCategoria, I.IdUsuario, I.Estado, C.Nombre AS NombreCategoria " +
+                                  "FROM INGRESO I " +
+                                  "INNER JOIN CATEGORIA C ON I.IdCategoria = C.IdCategoria " +
+                                  "WHERE I.IdUsuario = @idUsuario " +
+                                  "AND I.Estado = 1 " +
+                                  "AND MONTH(I.Fecha) = MONTH(GETDATE()) " +
+                                  "AND YEAR(I.Fecha) = YEAR(GETDATE())");
+
+                datos.setParametro("@idUsuario", idUsuario);
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Ingreso ingreso = new Ingreso();
+
+                    ingreso.IdIngreso = (int)datos.Lector["IdIngreso"];
+                    ingreso.Descripcion = (string)datos.Lector["Descripcion"];
+                    ingreso.Fecha = (DateTime)datos.Lector["Fecha"];
+                    ingreso.Monto = (decimal)datos.Lector["Monto"];
+                    ingreso.Estado = (bool)datos.Lector["Estado"];
+
+                    ingreso.Usuario = new Usuario();
+                    ingreso.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+
+                    ingreso.Categoria = new Categoria();
+                    ingreso.Categoria.IdCategoria = (int)datos.Lector["IdCategoria"];
+                    ingreso.Categoria.Nombre = (string)datos.Lector["NombreCategoria"];
+
+                    lista.Add(ingreso);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
         public List<Ingreso> ListarPorHogarMesActual(int idHogar)
         {
             List<Ingreso> lista = new List<Ingreso>();

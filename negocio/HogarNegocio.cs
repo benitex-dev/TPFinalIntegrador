@@ -202,6 +202,10 @@ namespace negocio
 
                 throw ex;
             }
+            finally
+            {
+                datos.cerrarConexion();
+            }
         }
         //EXISTE
         public int ExisteHogar(int idHogar)

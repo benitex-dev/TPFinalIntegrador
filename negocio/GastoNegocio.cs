@@ -351,6 +351,75 @@ namespace negocio
             }
         }
 
+        public List<Gasto> ListarPorUsuarioMesReciente(int idUsuario)
+        {
+            List<Gasto> lista = new List<Gasto>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta(@"SELECT TOP 8 
+                    G.Descripcion,
+                    C.Nombre AS Categoria,
+                    MP.Descripcion AS MedioPago,
+     
+    
+                    ISNULL(CU.Monto, G.MontoPesos) AS MontoDelMes, 
+    
+                    CU.NumeroCuota, 
+    
+                    ISNULL(CU.Vencimiento, G.Fecha) AS FechaMovimiento 
+
+                FROM GASTO G 
+                INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria
+                INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago
+                LEFT JOIN CUOTA CU ON CU.IdGasto = G.IdGasto
+                WHERE G.IdUsuario = 1
+                  AND G.Estado = 1 
+                  AND (
+                      (CU.IdGasto IS NULL 
+                       AND MONTH(G.Fecha) = MONTH(GETDATE()) 
+                       AND YEAR(G.Fecha) = YEAR(GETDATE()))
+       
+                      OR
+     
+                      (CU.IdGasto IS NOT NULL 
+                       AND MONTH(CU.Vencimiento) = MONTH(GETDATE()) 
+                       AND YEAR(CU.Vencimiento) = YEAR(GETDATE()))
+                  )
+                  ORDER BY FechaMovimiento desc");
+
+                datos.setParametro("@idUsuario", idUsuario);
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Gasto gasto = new Gasto();
+
+                    
+                    gasto.Fecha = (DateTime)datos.Lector["FechaMovimiento"];
+                    gasto.MontoPesos = (decimal)datos.Lector["MontoDelMes"];
+                    gasto.Descripcion = (string)datos.Lector["Descripcion"];
+                    gasto.Categoria = new Categoria();
+                    gasto.Categoria.Nombre = (string)datos.Lector["Categoria"];
+                    gasto.MedioDePago = new MedioPago();
+                    gasto.MedioDePago.Descripcion = (string)datos.Lector["MedioPago"];
+
+                    lista.Add(gasto);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
         public List<Gasto> ListarPorHogarMesActual(int idHogar)
         {
             List<Gasto> lista = new List<Gasto>();
