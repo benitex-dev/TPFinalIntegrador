@@ -315,27 +315,43 @@
                     </asp:UpdatePanel>
                     <!-- Savings Goals -->
                     <div class="card border-0 shadow-sm rounded-4 p-4">
-                        <h4 class="h5 mb-4 fw-bold">Metas de Ahorro</h4>
-                        <div class="d-flex flex-column gap-4">
-                            <div>
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span class="fw-semibold text-secondary small">Viaje a Japón</span>
-                                    <span class="fw-bold text-primary small">75%</span>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar bg-primary" style="width: 75%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span class="fw-semibold text-secondary small">Fondo de Emergencia</span>
-                                    <span class="fw-bold text-primary small">40%</span>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar bg-primary" style="width: 40%"></div>
-                                </div>
-                            </div>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="h5 mb-0 fw-bold">Metas de Ahorro</h4>
+                            <a href="#" class="text-decoration-none small text-primary fw-semibold">Ver detalles</a>
                         </div>
+
+                        <asp:Panel ID="pnlMetasVacias" runat="server" Visible="false">
+                            <div class="text-center p-4 border rounded-3 bg-light" style="border-style: dashed !important;">
+                                <span class="material-symbols-outlined text-secondary mb-2" style="font-size: 32px;">savings</span>
+                                <p class="text-muted small mb-3">Aún no tenés metas definidas. ¡Ponete un objetivo!</p>
+                                <asp:Button ID="btnCrearMeta" runat="server" Text="+ Crear meta" CssClass="btn btn-sm btn-outline-primary rounded-pill" OnClientClick="abrirModalMeta(); return false;" />
+                            </div>
+                        </asp:Panel>
+
+                        <asp:Panel ID="pnlMetasActivas" runat="server">
+                            <div class="d-flex flex-column gap-4">
+
+                                <asp:Repeater ID="rptMetasDashboard" runat="server">
+                                    <ItemTemplate>
+                                        <div>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span class="fw-semibold text-secondary small"><%# Eval("Nombre") %></span>
+                                                <span class="fw-bold text-primary small"><%# Eval("Porcentaje") %>%</span>
+                                            </div>
+                                            <div class="progress">
+                                                <div class="progress-bar bg-primary"
+                                                    style='<%# "width: " + Eval("Porcentaje") + "%" %>'
+                                                    aria-valuenow='<%# Eval("Porcentaje") %>'
+                                                    aria-valuemin="0"
+                                                    aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ItemTemplate>
+                                </asp:Repeater>
+
+                            </div>
+                        </asp:Panel>
                     </div>
                 </div>
             </div>

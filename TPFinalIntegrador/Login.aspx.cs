@@ -23,12 +23,12 @@ namespace TPFinalIntegrador
 
             UsuarioNegocio negocioUsuario = new UsuarioNegocio();
             Usuario usuarioLogueado = negocioUsuario.Login(email, password);
-            usuarioLogueado.IdUsuario = negocioUsuario.buscarMail(email).IdUsuario;
 
 
             if (usuarioLogueado != null)
             {
                 Session["usuario"] = usuarioLogueado;
+                usuarioLogueado.IdUsuario = negocioUsuario.buscarMail(email).IdUsuario;
 
                 /*--------------ENVIO DE MAIL----------------------*/
                 string rutaPlantillas = Server.MapPath("~/Template");

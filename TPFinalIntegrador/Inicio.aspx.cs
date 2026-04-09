@@ -87,6 +87,7 @@ namespace TPFinalIntegrador
                 CargarMediosPago();
                 CargarMovimientosDelMesRecientes();
                 CargarSaldoMes();
+                cargarMetasAhorro();
             }
         }
 
@@ -1047,36 +1048,29 @@ namespace TPFinalIntegrador
 
         private void CargarGraficoDeTorta(List<GastoResumen> gastosMes)
         {
-            // 1. Simulo obtener tus gastos de la base de datos (reemplazá esto con tu llamado a la BD)
-            // Supongamos que esto te devuelve un DataTable o una Lista con (Categoria, Monto)
             GastoResumenNegocio negocio = new GastoResumenNegocio();
 
             decimal totalGastos = gastosMes.Sum(g => g.Monto);
 
-            // Si no hay gastos, limpiamos el gráfico y salimos
             if (totalGastos == 0)
             {
                 litTotalGrafico.Text = "$0";
                 return;
             }
 
-            // Ponemos el total en el centro (ej: $550k)
             litTotalGrafico.Text = totalGastos >= 1000 ? "$" + (totalGastos / 1000).ToString("0k") : "$" + totalGastos.ToString("0");
 
-            // 2. Agrupamos por categoría, sumamos los montos y ordenamos de mayor a menor
             var categoriasAgrupadas = gastosMes
                 .GroupBy(g => g.Categoria)
                 .Select(grupo => new { Nombre = grupo.Key, Total = grupo.Sum(x => x.Monto) })
                 .OrderByDescending(x => x.Total)
                 .ToList();
 
-            // 3. Preparamos los colores de tu diseño (Azul, Verde, Amarillo, Gris para Otros)
             string[] coloresHex = { "#0d6efd", "#198754", "#ffc107", "#e9ecef" };
             List<ItemGrafico> datosGrafico = new List<ItemGrafico>();
 
             decimal offsetActual = 0;
 
-            // 4. Armamos el Top 3
             for (int i = 0; i < Math.Min(3, categoriasAgrupadas.Count); i++)
             {
                 var cat = categoriasAgrupadas[i];
@@ -1087,14 +1081,12 @@ namespace TPFinalIntegrador
                     Nombre = cat.Nombre,
                     Monto = cat.Total,
                     Porcentaje = porcentaje,
-                    Offset = offsetActual, // El primero es 0, los siguientes restan
+                    Offset = offsetActual,
                     ColorHex = coloresHex[i]
                 });
 
-                offsetActual -= porcentaje; // Acá está la magia de restar el offset
+                offsetActual -= porcentaje;
             }
-
-            // 5. Calculamos "Otros" (si hay más de 3 categorías)
             if (categoriasAgrupadas.Count > 3)
             {
                 decimal montoOtros = categoriasAgrupadas.Skip(3).Sum(x => x.Total);
@@ -1106,16 +1098,41 @@ namespace TPFinalIntegrador
                     Monto = montoOtros,
                     Porcentaje = porcentajeOtros,
                     Offset = offsetActual,
-                    ColorHex = coloresHex[3] // Gris
+                    ColorHex = coloresHex[3]
                 });
             }
-
-            // 6. Bindeamos a los Repeaters
             rptGraficoTorta.DataSource = datosGrafico;
             rptGraficoTorta.DataBind();
 
             rptLeyendaGrafico.DataSource = datosGrafico;
             rptLeyendaGrafico.DataBind();
+        }
+        
+        public void cargarMetasAhorro()
+        {
+            Usuario usuarioLogueado = (Usuario)Session["usuario"];
+            MetaResumenNegocio negocio = new MetaResumenNegocio();
+            List<MetaResumen> misMetas = negocio.obtenerMetasPorUsuario(usuarioLogueado.IdUsuario);
+
+            if (misMetas.Count == 0)
+            {
+                // Prendemos el cartelito vacío
+                pnlMetasVacias.Visible = true;
+                pnlMetasActivas.Visible = false;
+            }
+            else
+            {
+                pnlMetasVacias.Visible = false;
+                pnlMetasActivas.Visible = true;
+
+                var metasParaDashboard = misMetas
+                .OrderByDescending(m => m.Porcentaje)
+                .Take(2)
+                .ToList();
+
+                rptMetasDashboard.DataSource = metasParaDashboard;
+                rptMetasDashboard.DataBind();
+            }
         }
     }
 

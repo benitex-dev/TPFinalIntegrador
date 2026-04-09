@@ -52,6 +52,7 @@
     <Compile Include="ItemGrafico.cs" />
     <Compile Include="MedioPago.cs" />
     <Compile Include="MetaAhorro.cs" />
+    <Compile Include="MetaResumen.cs" />
     <Compile Include="Movimiento.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Usuario.cs" />

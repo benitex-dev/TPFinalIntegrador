@@ -87,6 +87,42 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Repeater rptLeyendaGrafico;
 
         /// <summary>
+        /// pnlMetasVacias control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlMetasVacias;
+
+        /// <summary>
+        /// btnCrearMeta control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCrearMeta;
+
+        /// <summary>
+        /// pnlMetasActivas control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlMetasActivas;
+
+        /// <summary>
+        /// rptMetasDashboard control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptMetasDashboard;
+
+        /// <summary>
         /// txtMailIntegrante control.
         /// </summary>
         /// <remarks>
