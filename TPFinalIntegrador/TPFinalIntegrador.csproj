@@ -123,6 +123,7 @@
     <Content Include="Deudores.aspx" />
     <Content Include="Error.aspx" />
     <Content Include="favicon.ico" />
+    <Content Include="GastoIntegranteHogar.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Inicio.aspx" />
     <Content Include="Login.aspx" />
@@ -266,6 +267,13 @@
     </Compile>
     <Compile Include="Error.aspx.designer.cs">
       <DependentUpon>Error.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="GastoIntegranteHogar.aspx.cs">
+      <DependentUpon>GastoIntegranteHogar.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GastoIntegranteHogar.aspx.designer.cs">
+      <DependentUpon>GastoIntegranteHogar.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

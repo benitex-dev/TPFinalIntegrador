@@ -252,9 +252,11 @@
 
                         <div class="d-flex flex-wrap gap-2">
                             <div class="d-flex flex-wrap gap-2">
+                               <%-- CARGAR GASTO --%>
                                 <button type="button" class="btn btn-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalGasto" onclick="limpiarModalGasto()">
                                     Cargar gasto
                                 </button>
+                               <%-- CARGAR INGRESO --%>
                                 <button type="button" class="btn btn-outline-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalIngreso" onclick="limpiarModalIngreso()">
                                     Cargar ingreso
                                 </button>
@@ -309,6 +311,7 @@
                                     Añadir miembro
            
                                 </button>
+                              <%--  AGREGAR GASTO --%>
                                 <button type="button" class="btn btn-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalGasto" onclick="limpiarModalGasto()">
                                     Cargar gasto
            
@@ -887,7 +890,7 @@
             <asp:Label ID="lblMensajeGasto" runat="server" CssClass="d-block text-center mt-3"></asp:Label>
 
         </div>
-
+       <%-- BOTÓN GUARDAR GASTO--%>
         <div class="modal-footer border-0 pt-0">
             <button type="button" class="btn btn-light border rounded-3" data-bs-dismiss="modal">Cancelar</button>
             <asp:Button ID="btnGuardarGasto"

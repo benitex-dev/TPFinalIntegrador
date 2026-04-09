@@ -128,11 +128,13 @@ namespace negocio
                         throw new Exception("Debe ingresar una cotización válida.");
                 }
 
-                datos.setConsulta(@"INSERT INTO GASTO 
-            (Fecha, MontoPesos, Moneda, IdCategoria, Descripcion, IdMedioPago, IdUsuario, MontoUSD, Cotizacion, Estado, EsEnCuotas, CantidadCuotas, MontoCuota)
-            OUTPUT INSERTED.IdGasto
-            VALUES 
-            (@fecha, @montoPesos, @moneda, @idCategoria, @descripcion, @idMedioPago, @idUsuario, @montoUSD, @cotizacion, @estado, @esEnCuotas, @cantidadCuotas, @montoCuota)");
+                datos.setConsulta(@"INSERT INTO GASTO
+      (Fecha, MontoPesos, Moneda, IdCategoria, Descripcion, IdMedioPago, IdUsuario, IdHogar, MontoUSD, Cotizacion, Estado, EsEnCuotas,
+  CantidadCuotas, MontoCuota)
+      OUTPUT INSERTED.IdGasto
+      VALUES
+      (@fecha, @montoPesos, @moneda, @idCategoria, @descripcion, @idMedioPago, @idUsuario, @idHogar, @montoUSD, @cotizacion, @estado, @esEnCuotas,
+  @cantidadCuotas, @montoCuota)");
 
                 datos.setParametro("@fecha", nuevo.Fecha);
                 datos.setParametro("@montoPesos", nuevo.MontoPesos);
@@ -141,7 +143,7 @@ namespace negocio
                 datos.setParametro("@descripcion", nuevo.Descripcion.Trim());
                 datos.setParametro("@idMedioPago", nuevo.MedioDePago.IdMedioPago);
                 datos.setParametro("@idUsuario", nuevo.Usuario.IdUsuario);
-
+                datos.setParametro("@idHogar", nuevo.Hogar != null ? (object)nuevo.Hogar.IdHogar : DBNull.Value);
                 if (nuevo.Moneda == Moneda.ARS)
                 {
                     datos.setParametro("@montoUSD", DBNull.Value);
@@ -478,6 +480,64 @@ namespace negocio
 
 
                     lista.Add(gasto);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+        public List<GastoPorIntegrante> ListarGastosPorIntegranteYCategoria(int idHogar, int mes, int anio)
+        {
+            List<GastoPorIntegrante> lista = new List<GastoPorIntegrante>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta(@"
+              SELECT
+                  U.Nombre AS NombreIntegrante,
+                  C.Nombre AS NombreCategoria,
+                  SUM(G.MontoPesos) AS Total
+              FROM GASTO G
+              INNER JOIN USUARIO U ON G.IdUsuario = U.IdUsuario
+              INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria
+              WHERE G.IdHogar = @idHogar
+                  AND G.Estado = 1
+                  AND MONTH(G.Fecha) = @mes
+                  AND YEAR(G.Fecha) = @anio
+              GROUP BY U.Nombre, C.Nombre
+              ORDER BY U.Nombre, C.Nombre");
+
+                datos.setParametro("@idHogar", idHogar);
+                datos.setParametro("@mes", mes);
+                datos.setParametro("@anio", anio);
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    string nombreIntegrante = (string)datos.Lector["NombreIntegrante"];
+
+                    GastoPorIntegrante integrante = lista.Find(i => i.NombreIntegrante == nombreIntegrante);
+
+                    if (integrante == null)
+                    {
+                        integrante = new GastoPorIntegrante();
+                        integrante.NombreIntegrante = nombreIntegrante;
+                        lista.Add(integrante);
+                    }
+
+                    integrante.Categorias.Add(new GastoCategoria
+                    {
+                        NombreCategoria = (string)datos.Lector["NombreCategoria"],
+                        Total = (decimal)datos.Lector["Total"]
+                    });
                 }
 
                 return lista;

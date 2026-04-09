@@ -558,7 +558,14 @@ namespace TPFinalIntegrador
                     gasto.MontoUSD = decimal.Parse(txtMontoUSDGasto.Text.Trim(), System.Globalization.CultureInfo.InvariantCulture);
                     gasto.Cotizacion = decimal.Parse(txtCotizacionGasto.Text.Trim(), System.Globalization.CultureInfo.InvariantCulture);
                 }
-
+               
+                //agregamos logica para guardar el id del hogar en el gasto
+                if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
+                {
+                    gasto.Hogar = new Hogar();
+                    gasto.Hogar.IdHogar = (int)Session["IdHogarActual"];
+                }
+                
                 GastoNegocio negocio = new GastoNegocio();
 
                 // Obtener el ID
