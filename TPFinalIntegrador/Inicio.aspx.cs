@@ -1015,6 +1015,32 @@ namespace TPFinalIntegrador
                 {
                     if(negocioHogar.AgregarIntegrante((int)Session["IdHogarActual"], user.IdUsuario, "Miembro"))
                     {
+                        /*--------------------------------ENVIO DE MAIL----------------------------------*/
+                        Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                        Hogar hogar = (Hogar)Session["HogarSeleccionado"];
+
+                        string rutaPlantillas = Server.MapPath("~/Template");
+
+                        var reemplazos = new Dictionary<string, string>()
+                        {
+                            { "NOMBRE_USUARIO", user.Nombre },
+                            { "NOMBRE_HOGAR", hogar.Nombre },
+                            { "ADMIN_HOGAR", usuarioLogueado.Nombre }
+                        };
+
+                        EmailService servicio = new EmailService();
+
+                        servicio.armarCorreo(
+                            user.Email,
+                            "Te han agregado a un hogar",
+                            reemplazos,
+                            TipoCorreo.TeAgregaronAHogar,
+                            rutaPlantillas
+                        );
+
+                        servicio.enviarCorreo();
+                        /*--------------------------------------------------------------------------------*/
+
                         ScriptManager.RegisterStartupScript(
                            this, this.GetType(),
                            "categoriaCreada",
