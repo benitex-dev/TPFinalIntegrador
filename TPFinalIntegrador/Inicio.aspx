@@ -311,11 +311,14 @@
                                     Añadir miembro
            
                                 </button>
-                              <%--  AGREGAR GASTO --%>
+                                <%--  AGREGAR GASTO --%>
                                 <button type="button" class="btn btn-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalGasto" onclick="limpiarModalGasto()">
                                     Cargar gasto
            
                                 </button>
+                                <%-- gastos por integrante --%>
+                               <%-- <a href="GastoIntegranteHogar.aspx" class="btn btn-outline-primary px-4 fw-semibold">Ver gastos por integrante
+                                </a>--%>
                             </div>
                         </div>
                     </div>

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -157,9 +158,7 @@ namespace negocio
 
             try
             {
-                datos.setConsulta("SELECT IdCategoria, Nombre, IdUsuario, IdHogar, Tipo, Estado " +
-                                  "FROM CATEGORIA " +
-                                  "WHERE IdHogar = @idHogar AND Tipo = @tipo AND Estado = 1");
+                datos.setConsulta("SELECT DISTINCT C.IdCategoria, C.Nombre, C.IdUsuario, C.Tipo, C.Estado FROM CATEGORIA C INNER JOIN HOGAR_USUARIO HU ON C.IdUsuario = HU.IdUsuario WHERE HU.IdHogar = @idHogar AND HU.Estado = 1 AND C.Tipo = @tipo AND C.Estado = 1");
 
                 datos.setParametro("@idHogar", idHogar);
                 datos.setParametro("@tipo", (int)tipo);
@@ -173,8 +172,8 @@ namespace negocio
                     categoria.IdCategoria = (int)datos.Lector["IdCategoria"];
                     categoria.Nombre = (string)datos.Lector["Nombre"];
 
-                    categoria.Hogar = new Hogar();
-                    categoria.Hogar.IdHogar = (int)datos.Lector["IdHogar"];
+                   // categoria.Hogar = new Hogar();
+                   // categoria.Hogar.IdHogar = (int)datos.Lector["IdHogar"];
 
                     categoria.Tipo = (TipoCategoria)(int)datos.Lector["Tipo"];
                     categoria.Estado = (bool)datos.Lector["Estado"];
