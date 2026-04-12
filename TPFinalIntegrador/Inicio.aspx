@@ -633,7 +633,7 @@
           </ItemTemplate>
           <FooterTemplate>
               <asp:Label ID="lblSinPresupuesto" runat="server"
-                  Text="<small class='text-muted'>No hay presupuestos cargados para este mes. <a href=\'Presupuesto.aspx\'>Cargá uno</a>.</small>"
+                  Text="<small class='text-muted'>No hay presupuestos cargados para este mes. <a href=\Presupuesto.aspx>Cargá uno</a>.</small>"
                   Visible='<%# rptPresupuesto.Items.Count == 0 %>' />
           </FooterTemplate>
       </asp:Repeater>
