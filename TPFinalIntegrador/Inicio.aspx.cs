@@ -301,12 +301,12 @@ namespace TPFinalIntegrador
                 if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
                 {
                     int idHogar = (int)Session["idHogarActual"];
-                    total = negocio.TotalIngresosMesActualHogar(idHogar);
+                    total = negocio.TotalIngresosMesActualHogar(idHogar,MesSeleccionado,AnioSeleccionado);
                 }
                 else
                 {
                     Usuario usuarioLogueado = (Usuario)Session["usuario"];
-                    total = negocio.TotalIngresosMesActual(usuarioLogueado.IdUsuario);
+                    total = negocio.TotalIngresosMesActual(usuarioLogueado.IdUsuario,MesSeleccionado,AnioSeleccionado);
                 }
 
                 lblIngresosMes.Text = "$ " + total.ToString("N2");
@@ -404,6 +404,9 @@ namespace TPFinalIntegrador
             }
 
             CargarMovimientosDelMes();
+            CargarResumenIngresos();
+            CargarResumenGastos();
+            CargarSaldoMes();
         }
 
         protected void btnMesSiguiente_Click(object sender, EventArgs e)
@@ -417,6 +420,9 @@ namespace TPFinalIntegrador
             }
 
             CargarMovimientosDelMes();
+            CargarResumenIngresos();
+            CargarResumenGastos();
+            CargarSaldoMes();
         }
 
         protected void CargarCategoriasGasto()
@@ -734,13 +740,13 @@ namespace TPFinalIntegrador
                 if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
                 {
                     int idHogar = (int)Session["IdHogarActual"];
-                    total = negocio.TotalGastosMesActualHogar(idHogar);
+                    total = negocio.TotalGastosMesActualHogar(idHogar, MesSeleccionado, AnioSeleccionado);
                     lblGastosMesHogar.Text = "$ " + total.ToString("N2");
                 }
                 else
                 {
                     Usuario usuarioLogueado = (Usuario)Session["usuario"];
-                    total = negocio.TotalGastosMesActual(usuarioLogueado.IdUsuario);
+                    total = negocio.TotalGastosMesActual(usuarioLogueado.IdUsuario, MesSeleccionado, AnioSeleccionado);
                     lblGastosMes.Text = "$ " + total.ToString("N2");
                 }
             }
@@ -820,8 +826,8 @@ namespace TPFinalIntegrador
                 Usuario usuarioLogueado = (Usuario)Session["usuario"];
                 GastoNegocio negocioGasto = new GastoNegocio();
                 IngresoNegocio negocioIngreso = new IngresoNegocio();
-                decimal ingresos = negocioIngreso.TotalIngresosMesActual(usuarioLogueado.IdUsuario);
-                decimal gastos = negocioGasto.TotalGastosMesActual(usuarioLogueado.IdUsuario);
+                decimal ingresos = negocioIngreso.TotalIngresosMesActual(usuarioLogueado.IdUsuario, MesSeleccionado, AnioSeleccionado);
+                decimal gastos = negocioGasto.TotalGastosMesActual(usuarioLogueado.IdUsuario, MesSeleccionado, AnioSeleccionado);
                 //decimal ingresoTotal = 0;
                 //decimal gastoTotal = 0;
 
