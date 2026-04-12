@@ -762,14 +762,14 @@ namespace TPFinalIntegrador
             if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
             {
                 int idHogar = (int)Session["IdHogarActual"];
-                ingresos = ingresoNegocio.ListarPorHogarMesActual(idHogar);
-                gastos = gastoNegocio.ListarPorHogarMesActual(idHogar);
+                ingresos = ingresoNegocio.ListarPorHogarMesActual(idHogar,MesSeleccionado,AnioSeleccionado);
+                gastos = gastoNegocio.ListarPorHogarMesActual(idHogar,MesSeleccionado,AnioSeleccionado);
             }
             else
             {
                 Usuario usuarioLogueado = (Usuario)Session["usuario"];
-                ingresos = ingresoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario);
-                gastos = gastoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario);
+                ingresos = ingresoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario,MesSeleccionado,AnioSeleccionado);
+                gastos = gastoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario,MesSeleccionado,AnioSeleccionado);
             }
 
             foreach (Ingreso ingreso in ingresos)
