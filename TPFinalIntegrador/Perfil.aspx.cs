@@ -37,7 +37,11 @@ namespace TPFinalIntegrador
 
                         }
                     }
-                    
+                    else
+                    {
+                        Response.Redirect("~/Login.aspx");
+                    }
+
                     if (Session["Mensaje"] != null)
                     {
                         lblMensaje.Text = Session["Mensaje"].ToString();

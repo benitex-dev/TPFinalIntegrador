@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Categoria.cs" />
     <Compile Include="Cuota.cs" />
+    <Compile Include="CuotaDeuda.cs" />
     <Compile Include="Deuda.cs" />
     <Compile Include="Gasto.cs" />
     <Compile Include="GastoResumen.cs" />

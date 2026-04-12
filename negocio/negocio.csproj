@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="AccesoDatos.cs" />
     <Compile Include="CategoriaNegocio.cs" />
+    <Compile Include="CuotaDeudaNegocio.cs" />
     <Compile Include="CuotaNegocio.cs" />
     <Compile Include="DeudaNegocio.cs" />
     <Compile Include="EmailService.cs" />
