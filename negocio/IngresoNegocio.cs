@@ -169,7 +169,7 @@ namespace negocio
             }
         }
 
-        public List<Ingreso> ListarPorHogarMesActual(int idHogar)
+        public List<Ingreso> ListarPorHogarMesActual(int idHogar,int mes, int anio)
         {
             List<Ingreso> lista = new List<Ingreso>();
             AccesoDatos datos = new AccesoDatos();
@@ -181,10 +181,12 @@ namespace negocio
                                   "INNER JOIN CATEGORIA C ON I.IdCategoria = C.IdCategoria " +
                                   "WHERE I.IdHogar = @idHogar " +
                                   "AND I.Estado = 1 " +
-                                  "AND MONTH(I.Fecha) = MONTH(GETDATE()) " +
-                                  "AND YEAR(I.Fecha) = YEAR(GETDATE())");
+                                  "AND MONTH(I.Fecha) = @mes " +
+                                  "AND YEAR(I.Fecha) = @anio");
 
                 datos.setParametro("@idHogar", idHogar);
+                datos.setParametro("@mes", mes);
+                datos.setParametro("@anio", anio);
                 datos.ejecutarLectura();
 
                 while (datos.Lector.Read())
