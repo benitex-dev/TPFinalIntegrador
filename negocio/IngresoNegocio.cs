@@ -221,7 +221,7 @@ namespace negocio
             }
         }
 
-        public decimal TotalIngresosMesActual(int idUsuario)
+        public decimal TotalIngresosMesActual(int idUsuario,int mes,int anio)
         {
             AccesoDatos datos = new AccesoDatos();
 
@@ -231,10 +231,12 @@ namespace negocio
                                   "FROM INGRESO " +
                                   "WHERE IdUsuario = @idUsuario " +
                                   "AND Estado = 1 " +
-                                  "AND MONTH(Fecha) = MONTH(GETDATE()) " +
-                                  "AND YEAR(Fecha) = YEAR(GETDATE())");
+                                  "AND MONTH(Fecha) = @mes " +
+                                  "AND YEAR(Fecha) = @anio");
 
                 datos.setParametro("@idUsuario", idUsuario);
+                datos.setParametro("@mes", mes);
+                datos.setParametro("@anio", anio);
                 datos.ejecutarLectura();
 
                 if (datos.Lector.Read())
@@ -252,7 +254,7 @@ namespace negocio
             }
         }
 
-        public decimal TotalIngresosMesActualHogar(int idHogar)
+        public decimal TotalIngresosMesActualHogar(int idHogar, int mes, int anio )
         {
             AccesoDatos datos = new AccesoDatos();
 
@@ -262,10 +264,12 @@ namespace negocio
                                   "FROM INGRESO " +
                                   "WHERE IdHogar = @idHogar " +
                                   "AND Estado = 1 " +
-                                  "AND MONTH(Fecha) = MONTH(GETDATE()) " +
-                                  "AND YEAR(Fecha) = YEAR(GETDATE())");
+                                  "AND MONTH(Fecha) = @mes " +
+                                  "AND YEAR(Fecha) = @anio");
 
                 datos.setParametro("@idHogar", idHogar);
+                datos.setParametro("@mes", mes);
+                datos.setParametro("@anio", anio);  
                 datos.ejecutarLectura();
 
                 if (datos.Lector.Read())
