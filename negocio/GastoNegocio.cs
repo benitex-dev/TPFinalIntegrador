@@ -198,7 +198,7 @@ namespace negocio
             }
         }
 
-        public decimal TotalGastosMesActual(int idUsuario)
+        public decimal TotalGastosMesActual(int idUsuario,int mes, int anio)
         {
             AccesoDatos datos = new AccesoDatos();
 
@@ -214,8 +214,8 @@ namespace negocio
                 WHERE G.IdUsuario = @idUsuario
                   AND G.Estado = 1
                   AND ISNULL(G.EsEnCuotas, 0) = 0
-                  AND MONTH(G.Fecha) = MONTH(GETDATE())
-                  AND YEAR(G.Fecha) = YEAR(GETDATE())
+                  AND MONTH(G.Fecha) = @mes
+                  AND YEAR(G.Fecha) = @anio
 
                 UNION ALL
 
@@ -226,11 +226,13 @@ namespace negocio
                 WHERE G.IdUsuario = @idUsuario
                   AND G.Estado = 1
                   AND ISNULL(G.EsEnCuotas, 0) = 1
-                  AND MONTH(C.Vencimiento) = MONTH(GETDATE())
-                  AND YEAR(C.Vencimiento) = YEAR(GETDATE())
+                  AND MONTH(C.Vencimiento) = @mes
+                  AND YEAR(C.Vencimiento) = @anio
             ) AS Movimientos");
 
                 datos.setParametro("@idUsuario", idUsuario);
+                datos.setParametro("@mes", mes);
+                datos.setParametro("@anio", anio);  
                 datos.ejecutarLectura();
 
                 if (datos.Lector.Read())
@@ -248,7 +250,7 @@ namespace negocio
             }
         }
 
-        public decimal TotalGastosMesActualHogar(int idHogar)
+        public decimal TotalGastosMesActualHogar(int idHogar,int mes,int anio)
         {
             AccesoDatos datos = new AccesoDatos();
 
@@ -258,10 +260,12 @@ namespace negocio
                                   "FROM GASTO " +
                                   "WHERE IdHogar = @idHogar " +
                                   "AND Estado = 1 " +
-                                  "AND MONTH(Fecha) = MONTH(GETDATE()) " +
-                                  "AND YEAR(Fecha) = YEAR(GETDATE())");
+                                  "AND MONTH(Fecha) = @mes " +
+                                  "AND YEAR(Fecha) = @anio");
 
                 datos.setParametro("@idHogar", idHogar);
+                datos.setParametro("@mes", mes);
+                datos.setParametro("@anio", anio);
                 datos.ejecutarLectura();
 
                 if (datos.Lector.Read())
@@ -279,7 +283,7 @@ namespace negocio
             }
         }
 
-        public List<Gasto> ListarPorUsuarioMesActual(int idUsuario)
+        public List<Gasto> ListarPorUsuarioMesActual(int idUsuario,int mes, int anio)
         {
             List<Gasto> lista = new List<Gasto>();
             AccesoDatos datos = new AccesoDatos();
@@ -295,10 +299,12 @@ namespace negocio
                   "INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago " +
                   "WHERE G.IdUsuario = @idUsuario " +
                   "AND G.Estado = 1 " +
-                  "AND MONTH(G.Fecha) = MONTH(GETDATE()) " +
-                  "AND YEAR(G.Fecha) = YEAR(GETDATE())");
+                  "AND MONTH(G.Fecha) = @mes " +
+                  "AND YEAR(G.Fecha) = @anio");
 
                 datos.setParametro("@idUsuario", idUsuario);
+                datos.setParametro("@mes", mes);
+                datos.setParametro("@anio", anio);  
                 datos.ejecutarLectura();
 
                 while (datos.Lector.Read())
@@ -353,7 +359,7 @@ namespace negocio
             }
         }
 
-        public List<Gasto> ListarPorHogarMesActual(int idHogar)
+        public List<Gasto> ListarPorHogarMesActual(int idHogar,int mes,int anio)
         {
             List<Gasto> lista = new List<Gasto>();
             AccesoDatos datos = new AccesoDatos();
@@ -368,10 +374,12 @@ namespace negocio
                                   "INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago " +
                                   "WHERE G.IdHogar = @idHogar " +
                                   "AND G.Estado = 1 " +
-                                  "AND MONTH(G.Fecha) = MONTH(GETDATE()) " +
-                                  "AND YEAR(G.Fecha) = YEAR(GETDATE())");
+                                  "AND MONTH(G.Fecha) = @mes " +
+                                  "AND YEAR(G.Fecha) = @anio");
 
                 datos.setParametro("@idHogar", idHogar);
+                datos.setParametro("@mes", mes);
+                datos.setParametro("@anio", anio);
                 datos.ejecutarLectura();
 
                 while (datos.Lector.Read())
