@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Globalization;
 using negocio;
 using System.Diagnostics.Eventing.Reader;
 
@@ -214,10 +215,23 @@ namespace TPFinalIntegrador
 
                 Usuario usuarioLogueado = (Usuario)Session["usuario"];
 
+                // Parsear monto de ingreso usando cultura argentina (es-AR) por defecto
+                var culturaARS = new CultureInfo("es-AR");
+                decimal montoIngreso;
+                if (!TryParseDecimalFlexible(txtMontoIngreso.Text.Trim(), culturaARS, out montoIngreso))
+                {
+                    ScriptManager.RegisterStartupScript(
+                       this, this.GetType(),
+                       "completaCampos",
+                       "Swal.fire({icon: 'error', title: 'Error', text: 'Monto de ingreos inválido.'});",
+                       true);
+                    return;
+                }
+
                 Ingreso ingreso = new Ingreso();
                 ingreso.Descripcion = txtDescripcionIngreso.Text.Trim();
                 ingreso.Fecha = DateTime.Parse(txtFechaIngreso.Text);
-                ingreso.Monto = decimal.Parse(txtMontoIngreso.Text);
+                ingreso.Monto = montoIngreso;
 
                 ingreso.Categoria = new Categoria();
                 ingreso.Categoria.IdCategoria = int.Parse(ddlCategoriaIngreso.SelectedValue);
@@ -288,12 +302,12 @@ namespace TPFinalIntegrador
                 if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
                 {
                     int idHogar = (int)Session["idHogarActual"];
-                    total = negocio.TotalIngresosMesActualHogar(idHogar);
+                    total = negocio.TotalIngresosMesActualHogar(idHogar,MesSeleccionado,AnioSeleccionado);
                 }
                 else
                 {
                     Usuario usuarioLogueado = (Usuario)Session["usuario"];
-                    total = negocio.TotalIngresosMesActual(usuarioLogueado.IdUsuario);
+                    total = negocio.TotalIngresosMesActual(usuarioLogueado.IdUsuario,MesSeleccionado,AnioSeleccionado);
                 }
 
                 lblIngresosMes.Text = "$ " + total.ToString("N2");
@@ -391,6 +405,9 @@ namespace TPFinalIntegrador
             }
 
             CargarMovimientosDelMes();
+            CargarResumenIngresos();
+            CargarResumenGastos();
+            CargarSaldoMes();
         }
 
         protected void btnMesSiguiente_Click(object sender, EventArgs e)
@@ -404,6 +421,9 @@ namespace TPFinalIntegrador
             }
 
             CargarMovimientosDelMes();
+            CargarResumenIngresos();
+            CargarResumenGastos();
+            CargarSaldoMes();
         }
 
         protected void CargarCategoriasGasto()
@@ -468,21 +488,15 @@ namespace TPFinalIntegrador
                 if (string.IsNullOrWhiteSpace(txtDescripcionGasto.Text) ||
                     string.IsNullOrWhiteSpace(txtFechaGasto.Text))
                 {
-                    ScriptManager.RegisterStartupScript(
-                        this, this.GetType(),
-                        "errorGastoCampos",
-                        "Swal.fire({icon: 'error', title: 'Error', text: 'Completá los campos obligatorios.'});",
-                        true);
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "errorGastoCampos",
+                        "Swal.fire({icon: 'error', title: 'Error', text: 'Completá los campos obligatorios.'});", true);
                     return;
                 }
 
                 if (!esCuotas && string.IsNullOrWhiteSpace(txtMontoPesosGasto.Text))
                 {
-                    ScriptManager.RegisterStartupScript(
-                        this, this.GetType(),
-                        "errorMonto",
-                        "Swal.fire({icon: 'error', title: 'Error', text: 'Ingresá el monto del gasto.'});",
-                        true);
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "errorMonto",
+                        "Swal.fire({icon: 'error', title: 'Error', text: 'Ingresá el monto del gasto.'});", true);
                     return;
                 }
 
@@ -491,32 +505,23 @@ namespace TPFinalIntegrador
                     if (string.IsNullOrWhiteSpace(txtMontoCuotaGasto.Text) ||
                         string.IsNullOrWhiteSpace(txtCantidadCuotasGasto.Text))
                     {
-                        ScriptManager.RegisterStartupScript(
-                            this, this.GetType(),
-                            "errorCuotas",
-                            "Swal.fire({icon: 'error', title: 'Error', text: 'Completá monto de cuota y cantidad de cuotas.'});",
-                            true);
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "errorCuotas",
+                            "Swal.fire({icon: 'error', title: 'Error', text: 'Completá monto de cuota y cantidad de cuotas.'});", true);
                         return;
                     }
                 }
 
                 if (ddlCategoriaGasto.SelectedValue == "0")
                 {
-                    ScriptManager.RegisterStartupScript(
-                        this, this.GetType(),
-                        "errorGastoCategoria",
-                        "Swal.fire({icon: 'error', title: 'Error', text: 'Seleccioná una categoría.'});",
-                        true);
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "errorGastoCategoria",
+                        "Swal.fire({icon: 'error', title: 'Error', text: 'Seleccioná una categoría.'});", true);
                     return;
                 }
 
                 if (ddlMedioPagoGasto.SelectedValue == "0")
                 {
-                    ScriptManager.RegisterStartupScript(
-                        this, this.GetType(),
-                        "errorGastoMedioPago",
-                        "Swal.fire({icon: 'error', title: 'Error', text: 'Seleccioná un medio de pago.'});",
-                        true);
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "errorGastoMedioPago",
+                        "Swal.fire({icon: 'error', title: 'Error', text: 'Seleccioná un medio de pago.'});", true);
                     return;
                 }
 
@@ -540,24 +545,82 @@ namespace TPFinalIntegrador
                 // PAGO EN CUOTAS O UN PAGO 
                 gasto.EsEnCuotas = esCuotas;
 
+                // Si la moneda es ARS usamos la cultura argentina preferente
+                var culturaARS = new CultureInfo("es-AR");
+
                 if (esCuotas)
                 {
-                    gasto.MontoCuota = decimal.Parse(txtMontoCuotaGasto.Text.Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                    gasto.CantidadCuotas = int.Parse(txtCantidadCuotasGasto.Text.Trim());
+                    decimal montoCuota;
+                    if (!TryParseDecimalFlexible(txtMontoCuotaGasto.Text.Trim(), culturaARS, out montoCuota))
+                    {
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "errorParseMontoCuota",
+                            "Swal.fire({icon: 'error', title: 'Error', text: 'Monto de cuota inválido.'});", true);
+                        return;
+                    }
+
+                    int cantidadCuotas;
+                    if (!int.TryParse(txtCantidadCuotasGasto.Text.Trim(), out cantidadCuotas) || cantidadCuotas <= 0)
+                    {
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "errorCantidadCuotas",
+                            "Swal.fire({icon: 'error', title: 'Error', text: 'Cantidad de cuotas inválida.'});", true);
+                        return;
+                    }
+
+                    gasto.MontoCuota = montoCuota;
+                    gasto.CantidadCuotas = cantidadCuotas;
 
                     // Calcular total cuota
                     gasto.MontoPesos = gasto.MontoCuota * gasto.CantidadCuotas;
                 }
                 else
                 {
-                    gasto.MontoPesos = decimal.Parse(txtMontoPesosGasto.Text.Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                    decimal montoPesos;
+                    // Para ARS: preferir cultura es-AR; para otras monedas aquí se guardará en MontoPesos si la moneda es ARS
+                    if (gasto.Moneda == Moneda.ARS)
+                    {
+                        if (!TryParseDecimalFlexible(txtMontoPesosGasto.Text.Trim(), culturaARS, out montoPesos))
+                        {
+                            ScriptManager.RegisterStartupScript(this, this.GetType(), "errorParseMontoPesos",
+                                "Swal.fire({icon: 'error', title: 'Error', text: 'Monto en pesos inválido.'});", true);
+                            return;
+                        }
+                        gasto.MontoPesos = montoPesos;
+                    }
+                    else
+                    {
+                        // Si la moneda no es ARS, el campo txtMontoPesosGasto suele quedar vacío; manejamos más abajo MontoUSD/Cotizacion
+                        // Si se completó el campo en pesos por alguna razón, intentamos parsear con cultura flexible
+                        if (!string.IsNullOrWhiteSpace(txtMontoPesosGasto.Text) &&
+                            TryParseDecimalFlexible(txtMontoPesosGasto.Text.Trim(), CultureInfo.InvariantCulture, out montoPesos))
+                        {
+                            gasto.MontoPesos = montoPesos;
+                        }
+                    }
                 }
 
-                // MONEDA EXTRANJERA
+                // MONEDA EXTRANJERA: parseo MontoUSD y Cotizacion (aceptar '.' o ',' mediante flexible)
                 if (gasto.Moneda != Moneda.ARS)
                 {
-                    gasto.MontoUSD = decimal.Parse(txtMontoUSDGasto.Text.Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                    gasto.Cotizacion = decimal.Parse(txtCotizacionGasto.Text.Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                    decimal montoUsd;
+                    decimal cotizacion;
+                    if (!TryParseDecimalFlexible(txtMontoUSDGasto.Text.Trim(), CultureInfo.InvariantCulture, out montoUsd))
+                    {
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "errorParseUSD",
+                            "Swal.fire({icon: 'error', title: 'Error', text: 'Monto en moneda original inválido.'});", true);
+                        return;
+                    }
+                    if (!TryParseDecimalFlexible(txtCotizacionGasto.Text.Trim(), CultureInfo.InvariantCulture, out cotizacion))
+                    {
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "errorParseCotizacion",
+                            "Swal.fire({icon: 'error', title: 'Error', text: 'Cotización inválida.'});", true);
+                        return;
+                    }
+
+                    gasto.MontoUSD = montoUsd;
+                    gasto.Cotizacion = cotizacion;
+
+                    // Calcular MontoPesos si no calculado aún
+                    gasto.MontoPesos = gasto.MontoUSD * gasto.Cotizacion;
                 }
 
                 GastoNegocio negocio = new GastoNegocio();
@@ -656,11 +719,8 @@ namespace TPFinalIntegrador
                 CargarSaldoMes();
                 CargarMovimientosDelMes();
 
-                ScriptManager.RegisterStartupScript(
-                    this, this.GetType(),
-                    "okGasto",
-                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Gasto guardado correctamente.'});",
-                    true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "okGasto",
+                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Gasto guardado correctamente.'});", true);
             }
             catch (Exception ex)
             {
@@ -681,13 +741,13 @@ namespace TPFinalIntegrador
                 if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
                 {
                     int idHogar = (int)Session["IdHogarActual"];
-                    total = negocio.TotalGastosMesActualHogar(idHogar);
+                    total = negocio.TotalGastosMesActualHogar(idHogar, MesSeleccionado, AnioSeleccionado);
                     lblGastosMesHogar.Text = "$ " + total.ToString("N2");
                 }
                 else
                 {
                     Usuario usuarioLogueado = (Usuario)Session["usuario"];
-                    total = negocio.TotalGastosMesActual(usuarioLogueado.IdUsuario);
+                    total = negocio.TotalGastosMesActual(usuarioLogueado.IdUsuario, MesSeleccionado, AnioSeleccionado);
                     lblGastosMes.Text = "$ " + total.ToString("N2");
                 }
             }
@@ -709,14 +769,14 @@ namespace TPFinalIntegrador
             if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
             {
                 int idHogar = (int)Session["IdHogarActual"];
-                ingresos = ingresoNegocio.ListarPorHogarMesActual(idHogar);
-                gastos = gastoNegocio.ListarPorHogarMesActual(idHogar);
+                ingresos = ingresoNegocio.ListarPorHogarMesActual(idHogar,MesSeleccionado,AnioSeleccionado);
+                gastos = gastoNegocio.ListarPorHogarMesActual(idHogar,MesSeleccionado,AnioSeleccionado);
             }
             else
             {
                 Usuario usuarioLogueado = (Usuario)Session["usuario"];
-                ingresos = ingresoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario);
-                gastos = gastoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario);
+                ingresos = ingresoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario,MesSeleccionado,AnioSeleccionado);
+                gastos = gastoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario,MesSeleccionado,AnioSeleccionado);
             }
 
             foreach (Ingreso ingreso in ingresos)
@@ -767,8 +827,8 @@ namespace TPFinalIntegrador
                 Usuario usuarioLogueado = (Usuario)Session["usuario"];
                 GastoNegocio negocioGasto = new GastoNegocio();
                 IngresoNegocio negocioIngreso = new IngresoNegocio();
-                decimal ingresos = negocioIngreso.TotalIngresosMesActual(usuarioLogueado.IdUsuario);
-                decimal gastos = negocioGasto.TotalGastosMesActual(usuarioLogueado.IdUsuario);
+                decimal ingresos = negocioIngreso.TotalIngresosMesActual(usuarioLogueado.IdUsuario, MesSeleccionado, AnioSeleccionado);
+                decimal gastos = negocioGasto.TotalGastosMesActual(usuarioLogueado.IdUsuario, MesSeleccionado, AnioSeleccionado);
                 //decimal ingresoTotal = 0;
                 //decimal gastoTotal = 0;
 
@@ -810,6 +870,35 @@ namespace TPFinalIntegrador
                 ddlAnioIngresos.Items.Add(new ListItem(y.ToString(), y.ToString()));
                 ddlAnioGastos.Items.Add(new ListItem(y.ToString(), y.ToString()));
             }
+        }
+
+        private bool TryParseDecimalFlexible(string input, CultureInfo preferredCulture, out decimal result)
+        {
+            result = 0m;
+            if (string.IsNullOrWhiteSpace(input))
+                return false;
+
+            input = input.Trim();
+
+            // 1) Intentar con la cultura preferida (ej. es-AR para ARS)
+            if (decimal.TryParse(input, NumberStyles.Number, preferredCulture, out result))
+                return true;
+
+            // 2) Intentar con Invariant (punto decimal)
+            if (decimal.TryParse(input, NumberStyles.Number, CultureInfo.InvariantCulture, out result))
+                return true;
+
+            // 3) Intentar con es-AR si aún no fue la preferida
+            var esAr = new CultureInfo("es-AR");
+            if (!preferredCulture.Equals(esAr) && decimal.TryParse(input, NumberStyles.Number, esAr, out result))
+                return true;
+
+            // 4) Normalizar reemplazando coma por punto y probar Invariant
+            var normalized = input.Replace(',', '.');
+            if (decimal.TryParse(normalized, NumberStyles.Number, CultureInfo.InvariantCulture, out result))
+                return true;
+
+            return false;
         }
 
         private void CargarIngresosPorMes(int mes, int anio)
@@ -933,6 +1022,32 @@ namespace TPFinalIntegrador
                 {
                     if(negocioHogar.AgregarIntegrante((int)Session["IdHogarActual"], user.IdUsuario, "Miembro"))
                     {
+                        /*--------------------------------ENVIO DE MAIL----------------------------------*/
+                        Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                        Hogar hogar = (Hogar)Session["HogarSeleccionado"];
+
+                        string rutaPlantillas = Server.MapPath("~/Template");
+
+                        var reemplazos = new Dictionary<string, string>()
+                        {
+                            { "NOMBRE_USUARIO", user.Nombre },
+                            { "NOMBRE_HOGAR", hogar.Nombre },
+                            { "ADMIN_HOGAR", usuarioLogueado.Nombre }
+                        };
+
+                        EmailService servicio = new EmailService();
+
+                        servicio.armarCorreo(
+                            user.Email,
+                            "Te han agregado a un hogar",
+                            reemplazos,
+                            TipoCorreo.TeAgregaronAHogar,
+                            rutaPlantillas
+                        );
+
+                        servicio.enviarCorreo();
+                        /*--------------------------------------------------------------------------------*/
+
                         ScriptManager.RegisterStartupScript(
                            this, this.GetType(),
                            "categoriaCreada",

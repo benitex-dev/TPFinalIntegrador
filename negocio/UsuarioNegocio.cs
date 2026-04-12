@@ -214,13 +214,14 @@ namespace negocio
             {
                 if (email != "")
                 {
-                    datos.setConsulta("select IdUsuario from usuario where email = @email");
+                    datos.setConsulta("select IdUsuario, Nombre from usuario where email = @email");
                     datos.setParametro("@email", email);
                     datos.ejecutarLectura();
                     if (datos.Lector.Read())
                     {
                         Usuario usuario = new Usuario();    
                         usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+                        usuario.Nombre = datos.Lector["Nombre"].ToString();
                         usuario.Email = email;
                         return usuario;
                     }
