@@ -277,7 +277,7 @@ namespace negocio
             }
         }
 
-        public List<Gasto> ListarPorUsuarioMesActual(int idUsuario)
+        public List<Gasto> ListarPorUsuarioMesActual(int idUsuario,int mes, int anio)
         {
             List<Gasto> lista = new List<Gasto>();
             AccesoDatos datos = new AccesoDatos();
@@ -293,10 +293,12 @@ namespace negocio
                   "INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago " +
                   "WHERE G.IdUsuario = @idUsuario " +
                   "AND G.Estado = 1 " +
-                  "AND MONTH(G.Fecha) = MONTH(GETDATE()) " +
-                  "AND YEAR(G.Fecha) = YEAR(GETDATE())");
+                  "AND MONTH(G.Fecha) = @mes " +
+                  "AND YEAR(G.Fecha) = @anio");
 
                 datos.setParametro("@idUsuario", idUsuario);
+                datos.setParametro("@mes", mes);
+                datos.setParametro("@anio", anio);  
                 datos.ejecutarLectura();
 
                 while (datos.Lector.Read())
@@ -351,7 +353,7 @@ namespace negocio
             }
         }
 
-        public List<Gasto> ListarPorHogarMesActual(int idHogar)
+        public List<Gasto> ListarPorHogarMesActual(int idHogar,int mes,int anio)
         {
             List<Gasto> lista = new List<Gasto>();
             AccesoDatos datos = new AccesoDatos();
@@ -366,10 +368,12 @@ namespace negocio
                                   "INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago " +
                                   "WHERE G.IdHogar = @idHogar " +
                                   "AND G.Estado = 1 " +
-                                  "AND MONTH(G.Fecha) = MONTH(GETDATE()) " +
-                                  "AND YEAR(G.Fecha) = YEAR(GETDATE())");
+                                  "AND MONTH(G.Fecha) = @mes " +
+                                  "AND YEAR(G.Fecha) = @anio");
 
                 datos.setParametro("@idHogar", idHogar);
+                datos.setParametro("@mes", mes);
+                datos.setParametro("@anio", anio);
                 datos.ejecutarLectura();
 
                 while (datos.Lector.Read())
