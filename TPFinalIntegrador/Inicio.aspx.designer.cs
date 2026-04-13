@@ -45,16 +45,6 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl h2Gasto;
 
         /// <summary>
-        /// Control lblBienvenidaHogar.
-        /// rptMovimientos control.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptMovimientos;
-
-        /// <summary>
         /// Control lblGastosMesHogar.
         /// upGraficoTorta control.
         /// </summary>
@@ -125,14 +115,13 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Panel pnlMetasActivas;
 
         /// <summary>
-        /// Control ddlAnioIngresos.
-        /// rptMetasDashboard control.
+        /// Control rptMetasDashboard.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlAnioIngresos;
+        protected global::System.Web.UI.WebControls.Repeater rptMetasDashboard;
 
         /// <summary>
         /// Control btnMostrarIngresos.
@@ -520,5 +509,23 @@ namespace TPFinalIntegrador
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnGuardarGasto;
+
+        /// <summary>
+        /// Control pnlReportes.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlReportes;
+
+        /// <summary>
+        /// Control rptPresupuesto.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptPresupuesto;
     }
 }
