@@ -196,7 +196,57 @@ namespace negocio
             }
         }
 
-        public decimal TotalGastosMesActual(int idUsuario,int mes, int anio)
+        public decimal TotalGastosMesActual(int idUsuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta(@"
+            SELECT ISNULL(SUM(Total), 0) AS TotalGeneral
+            FROM
+            (
+                -- Gastos normales del mes
+                SELECT G.MontoPesos AS Total
+                FROM GASTO G
+                WHERE G.IdUsuario = @idUsuario
+                  AND G.Estado = 1
+                  AND ISNULL(G.EsEnCuotas, 0) = 0
+                  AND MONTH(G.Fecha) = MONTH(GETDATE())
+                            AND YEAR(G.Fecha) = YEAR(GETDATE())
+
+                UNION ALL
+
+                -- Cuotas del mes
+                SELECT C.Monto AS Total
+     FROM CUOTA C
+     LEFT JOIN GASTO G ON G.IdGasto = C.IdGasto
+     WHERE G.IdUsuario = 1
+       AND G.Estado = 1
+       AND ISNULL(G.EsEnCuotas, 0) = 1
+       AND MONTH(C.Vencimiento) = MONTH(GETDATE())
+                 AND YEAR(C.Vencimiento) = YEAR(GETDATE())
+            ) AS Movimientos");
+
+                datos.setParametro("@idUsuario", idUsuario);
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                    return (decimal)datos.Lector["TotalGeneral"];
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        public decimal TotalGastosPorFecha(int idUsuario, int mes, int anio)
         {
             AccesoDatos datos = new AccesoDatos();
 
@@ -230,7 +280,7 @@ namespace negocio
 
                 datos.setParametro("@idUsuario", idUsuario);
                 datos.setParametro("@mes", mes);
-                datos.setParametro("@anio", anio);  
+                datos.setParametro("@anio", anio);
                 datos.ejecutarLectura();
 
                 if (datos.Lector.Read())
@@ -248,7 +298,39 @@ namespace negocio
             }
         }
 
-        public decimal TotalGastosMesActualHogar(int idHogar,int mes,int anio)
+        public decimal TotalGastosMesActualHogar(int idHogar)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta("SELECT ISNULL(SUM(MontoPesos), 0) AS Total " +
+                                  "FROM GASTO " +
+                                  "WHERE IdHogar = @idHogar " +
+                                  "AND Estado = 1 " +
+                                  "AND MONTH(G.Fecha) = MONTH(GETDATE()) " +
+                            "AND YEAR(G.Fecha) = YEAR(GETDATE())");
+
+                datos.setParametro("@idHogar", idHogar);
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                    return (decimal)datos.Lector["Total"];
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+
+        public decimal TotalGastosPorFechaHogar(int idHogar, int mes, int anio)
         {
             AccesoDatos datos = new AccesoDatos();
 
@@ -427,6 +509,70 @@ namespace negocio
         }
 
         public List<Gasto> ListarPorHogarMesActual(int idHogar)
+        {
+            List<Gasto> lista = new List<Gasto>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta(@"SELECT G.IdGasto, G.Fecha, G.MontoPesos, G.Moneda, G.IdCategoria, G.Descripcion, 
+                            G.IdMedioPago, G.IdUsuario, G.IdHogar, G.MontoUSD, G.Cotizacion, G.Estado, 
+                            C.Nombre AS NombreCategoria, MP.Descripcion AS NombreMedioPago 
+                            FROM GASTO G 
+                            INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria 
+                            INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago 
+                            WHERE G.IdHogar = @idHogar
+                            AND G.Estado = 1 
+                            AND MONTH(G.Fecha) = MONTH(GETDATE())
+                            AND YEAR(G.Fecha) = YEAR(GETDATE())");
+
+                datos.setParametro("@idHogar", idHogar);
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Gasto gasto = new Gasto();
+
+                    gasto.IdGasto = (int)datos.Lector["IdGasto"];
+                    gasto.Fecha = (DateTime)datos.Lector["Fecha"];
+                    gasto.MontoPesos = (decimal)datos.Lector["MontoPesos"];
+                    gasto.Moneda = (Moneda)(int)datos.Lector["Moneda"];
+                    gasto.Descripcion = (string)datos.Lector["Descripcion"];
+                    gasto.Estado = (bool)datos.Lector["Estado"];
+
+                    gasto.Hogar = new Hogar();
+                    gasto.Hogar.IdHogar = (int)datos.Lector["IdUsuario"];
+
+                    gasto.Categoria = new Categoria();
+                    gasto.Categoria.IdCategoria = (int)datos.Lector["IdCategoria"];
+                    gasto.Categoria.Nombre = (string)datos.Lector["NombreCategoria"];
+
+                    gasto.MedioDePago = new MedioPago();
+                    gasto.MedioDePago.IdMedioPago = (int)datos.Lector["IdMedioPago"];
+                    gasto.MedioDePago.Descripcion = (string)datos.Lector["NombreMedioPago"];
+
+                    if (datos.Lector["MontoUSD"] != DBNull.Value)
+                        gasto.MontoUSD = (decimal)datos.Lector["MontoUSD"];
+
+                    if (datos.Lector["Cotizacion"] != DBNull.Value)
+                        gasto.Cotizacion = (decimal)datos.Lector["Cotizacion"];
+
+                    lista.Add(gasto);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        public List<Gasto> ListarPorHogarYFecha(int idHogar, int mes, int anio)
         {
             List<Gasto> lista = new List<Gasto>();
             AccesoDatos datos = new AccesoDatos();

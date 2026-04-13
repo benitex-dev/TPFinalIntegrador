@@ -22,7 +22,7 @@ namespace negocio
         {
             conexion = new SqlConnection(
             //CONEXIÒN MERI
-            "server=.\\SQLEXPRESS; database=ADMIN_GASTOS_DB; integrated security=true"
+            //"server=.\\SQLEXPRESS; database=ADMIN_GASTOS_DB; integrated security=true"
 
             //
             //"server=(localdb)\\MSSQLLocalDB; database=ADMIN_GASTOS_DB; integrated security=true"
@@ -34,7 +34,7 @@ namespace negocio
             //"server=localhost; database=ADMIN_GASTOS_DB; Persist Security Info=True; User ID= sa; Password=Contra993!"
 
             //CONEXION JOHAN
-            //"server=localhost; database=ADMIN_GASTOS_DB; Persist Security Info=True; User ID= sa; Password=Johann123"
+            "server=localhost; database=ADMIN_GASTOS_DB; Persist Security Info=True; User ID= sa; Password=Johann123"
             );
             comando = new SqlCommand();
         }
