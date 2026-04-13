@@ -38,6 +38,7 @@ namespace negocio
             foreach (Ingreso ingreso in ingresos)
             {
                 Movimiento mov = new Movimiento();
+                mov.idReferencia = ingreso.IdIngreso;
                 mov.Fecha = ingreso.Fecha;
                 mov.Descripcion = ingreso.Descripcion;
                 mov.Categoria = ingreso.Categoria.Nombre;
@@ -53,6 +54,7 @@ namespace negocio
                 if (!gasto.EsEnCuotas)
                 {
                     Movimiento mov = new Movimiento();
+                    mov.idReferencia = gasto.IdGasto;
                     mov.Fecha = gasto.Fecha;
                     mov.Descripcion = gasto.Descripcion;
                     mov.Categoria = gasto.Categoria.Nombre;
