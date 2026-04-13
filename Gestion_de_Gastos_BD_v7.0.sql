@@ -183,3 +183,15 @@ CREATE TABLE APORTE_META (
     Fecha DATETIME DEFAULT GETDATE() NOT NULL,
     CONSTRAINT FK_AporteMeta_Meta FOREIGN KEY (IdMeta) REFERENCES META_AHORRO(IdMeta)
 );
+
+/* 12. PRESUPUESTO_CATEGORIA */
+CREATE TABLE PRESUPUESTO_CATEGORIA (
+    IdPresupuesto       INT IDENTITY(1,1) PRIMARY KEY,
+    IdCategoria         INT NOT NULL,
+    IdUsuario           INT NOT NULL,
+    Mes                 INT NOT NULL,
+    Anio                INT NOT NULL,
+    MontoPresupuestado  DECIMAL(18,2) NOT NULL,
+    CONSTRAINT FK_Presupuesto_Categoria FOREIGN KEY (IdCategoria) REFERENCES CATEGORIA(IdCategoria),
+    CONSTRAINT FK_Presupuesto_Usuario   FOREIGN KEY (IdUsuario)   REFERENCES USUARIO(IdUsuario)
+);

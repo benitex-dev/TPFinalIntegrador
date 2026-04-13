@@ -308,8 +308,8 @@ namespace negocio
                                   "FROM GASTO " +
                                   "WHERE IdHogar = @idHogar " +
                                   "AND Estado = 1 " +
-                                  "AND MONTH(G.Fecha) = MONTH(GETDATE()) " +
-                            "AND YEAR(G.Fecha) = YEAR(GETDATE())");
+                                  "AND MONTH(Fecha) = MONTH(GETDATE()) " +
+                            "AND YEAR(Fecha) = YEAR(GETDATE())");
 
                 datos.setParametro("@idHogar", idHogar);
                 datos.ejecutarLectura();

@@ -49,7 +49,7 @@ namespace TPFinalIntegrador
 
         private void CargarPresupuesto()
         {
-            return;
+            
             Usuario usuario = (Usuario)Session["usuario"];
             PresupuestoCategoriaNegocio negocio = new PresupuestoCategoriaNegocio();
 
