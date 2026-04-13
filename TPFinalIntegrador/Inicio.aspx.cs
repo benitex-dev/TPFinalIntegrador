@@ -89,6 +89,8 @@ namespace TPFinalIntegrador
                 CargarMovimientosDelMesRecientes();
                 CargarSaldoMes();
                 cargarMetasAhorro();
+                CargarResumenPresupuesto();
+                pnlReportes.Visible = false;
             }
         }
 
@@ -1159,6 +1161,36 @@ namespace TPFinalIntegrador
         protected void limpiarMailIntegrante()
         {
             txtMailIntegrante.Text = "";
+        }
+        private void CargarResumenPresupuesto()
+        {
+            Usuario usuario = (Usuario)Session["usuario"];
+            PresupuestoCategoriaNegocio negocio = new PresupuestoCategoriaNegocio();
+
+            var lista = negocio.ListarPorUsuarioYMes(usuario.IdUsuario, DateTime.Now.Month, DateTime.Now.Year)
+                               .FindAll(p => p.MontoPresupuestado > 0);
+
+            rptPresupuesto.DataSource = lista;
+            rptPresupuesto.DataBind();
+        }
+        protected string ObtenerClaseBarra(object montoPresupuestado, object gastoReal)
+        {
+            decimal presupuesto = (decimal)montoPresupuestado;
+            decimal gasto = (decimal)gastoReal;
+            if (presupuesto <= 0) return "progress-bar bg-secondary";
+            int porcentaje = (int)((gasto / presupuesto) * 100);
+            if (porcentaje >= 100) return "progress-bar bg-danger";
+            if (porcentaje >= 80) return "progress-bar bg-warning";
+            return "progress-bar bg-success";
+        }
+
+        protected string ObtenerAnchoBarra(object montoPresupuestado, object gastoReal)
+        {
+            decimal presupuesto = (decimal)montoPresupuestado;
+            decimal gasto = (decimal)gastoReal;
+            if (presupuesto <= 0) return "width: 0%";
+            int porcentaje = (int)Math.Min((gasto / presupuesto) * 100, 100);
+            return $"width: {porcentaje}%";
         }
 
         private void CargarGraficoDeTorta(List<GastoResumen> gastosMes)

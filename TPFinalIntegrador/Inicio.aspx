@@ -762,13 +762,7 @@
                             </asp:LinkButton>
                         </div>
                     </div>
-
-                    <div class="panel-card">
-                        <h3 class="section-title">Información</h3>
-                        <p class="sidebar-note">
-                            Esta pantalla va a mostrar tu resumen general una vez que comiences a registrar datos en el sistema.
-                        </p>
-                    </div>
+                  
 
                 </div>
             </div>
