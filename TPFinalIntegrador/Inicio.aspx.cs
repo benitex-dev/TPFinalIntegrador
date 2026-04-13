@@ -90,7 +90,7 @@ namespace TPFinalIntegrador
                 CargarSaldoMes();
                 cargarMetasAhorro();
                 CargarResumenPresupuesto();
-                pnlReportes.Visible = false;
+                //pnlReportes.Visible = false;
             }
         }
 
@@ -1164,14 +1164,15 @@ namespace TPFinalIntegrador
         }
         private void CargarResumenPresupuesto()
         {
+            return;
             Usuario usuario = (Usuario)Session["usuario"];
             PresupuestoCategoriaNegocio negocio = new PresupuestoCategoriaNegocio();
 
             var lista = negocio.ListarPorUsuarioYMes(usuario.IdUsuario, DateTime.Now.Month, DateTime.Now.Year)
                                .FindAll(p => p.MontoPresupuestado > 0);
 
-            rptPresupuesto.DataSource = lista;
-            rptPresupuesto.DataBind();
+            //rptPresupuesto.DataSource = lista;
+            //rptPresupuesto.DataBind();
         }
         protected string ObtenerClaseBarra(object montoPresupuestado, object gastoReal)
         {

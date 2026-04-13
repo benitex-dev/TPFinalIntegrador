@@ -79,6 +79,19 @@
             transition: all 0.3s ease;
         }
 
+        .btn-kebab {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: #adb5bd; /* Gris clarito de base (reemplaza a la opacidad baja) */
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+            .btn-kebab:hover {
+                background-color: rgba(0, 0, 0, 0.08);
+                color: #495057 !important; /* Gris oscuro al hacer hover, el renderizado ni se entera */
+            }
+
             .btn-glow-primary:hover {
                 transform: translateY(-2px); /* Se levanta un poquito al pasar el mouse */
                 box-shadow: 0px 12px 28px rgba(13, 110, 253, 0.4);
@@ -213,7 +226,7 @@
                             <a class="text-primary text-decoration-none small fw-bold" href="#">Ver todo</a>
                         </div>
                         <div class="card-body p-0">
-                            <div class="table-responsive">
+                            <div class="table-responsive-xl">
                                 <table class="table table-borderless table-hover align-middle mb-0">
                                     <thead class="bg-light">
                                         <tr>
@@ -221,6 +234,8 @@
                                             <th class="py-3 text-uppercase small text-secondary fw-bold">Fecha</th>
                                             <th class="py-3 text-uppercase small text-secondary fw-bold">Categoría</th>
                                             <th class="pe-4 py-3 text-uppercase small text-secondary fw-bold text-end">Monto</th>
+                                            <th class="pe-1 py-3 text-uppercase small text-secondary fw-bold text-end"></th>
+
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -253,6 +268,32 @@
 
                                                     <td class='<%# Eval("Tipo").ToString() == "Gasto" ? "pe-4 text-end fw-bold text-danger" : "pe-4 text-end fw-bold text-success" %>'>
                                                         <%# Eval("MontoMostrado") %>
+                                                    </td>
+                                                    <td class="pe-4 align-middle text-end" style="width: 50px;">
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-link p-0 text-decoration-none btn-kebab"
+                                                                style="display: inline-flex; align-items: center; justify-content: center;"
+                                                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+                                                                <span class="material-symbols-outlined" style="font-size: 22px; line-height: 1;">more_vert</span>
+                                                            </button>
+
+                                                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                                                                <li>
+                                                                    <asp:LinkButton ID="btnEditar" runat="server" CssClass="dropdown-item small"
+                                                                        CommandName="Editar" CommandArgument='<%# Eval("Tipo") + "|" + Eval("IdReferencia") %>'>
+                                                                        ✏️ Editar
+                                                                    </asp:LinkButton>
+                                                                </li>
+                                                                <li>
+                                                                    <asp:LinkButton ID="btnEliminar" runat="server" CssClass="dropdown-item small text-danger"
+                                                                        CommandName="Eliminar" CommandArgument='<%# Eval("Tipo") + "|" + Eval("IdReferencia") %>'
+                                                                        OnClientClick="return confirm('¿Estás seguro de que querés borrar este movimiento?');">
+                                                                        🗑️ Eliminar
+                                                                    </asp:LinkButton>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             </ItemTemplate>

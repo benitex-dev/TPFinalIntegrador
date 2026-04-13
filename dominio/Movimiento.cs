@@ -9,6 +9,7 @@ namespace dominio
     public class Movimiento
     {
         //Se utiliza como clase intermedia para mostrar el grid principal 
+        public int idReferencia {  get; set; }
         public DateTime Fecha { get; set; }
         public string Descripcion { get; set; }
         public string Categoria { get; set; }
