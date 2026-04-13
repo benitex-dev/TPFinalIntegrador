@@ -605,39 +605,7 @@
                             </asp:LinkButton>
                         </div>
                     </div>
-                   <%-- presupuesto del mes--%>
-                     <div class="panel-card">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-          <h3 class="section-title mb-0">Presupuesto del mes</h3>
-          <a href="Presupuesto.aspx" class="btn btn-sm btn-outline-primary">Editar</a>
-      </div>
-
-      <asp:Repeater ID="rptPresupuesto" runat="server">
-          <ItemTemplate>
-              <div class="mb-3">
-                  <div class="d-flex justify-content-between mb-1">
-                      <span class="fw-semibold small"><%# Eval("Categoria.Nombre") %></span>
-                      <span class="small text-muted">
-                          $ <%# ((decimal)Eval("GastoReal")).ToString("N0") %>
-                          / $ <%# ((decimal)Eval("MontoPresupuestado")).ToString("N0") %>
-                      </span>
-                  </div>
-                  <div class="progress" style="height: .6rem;">
-                      <div class='<%# ObtenerClaseBarra(Eval("MontoPresupuestado"), Eval("GastoReal")) %>'
-                           style='<%# ObtenerAnchoBarra(Eval("MontoPresupuestado"), Eval("GastoReal")) %>'>
-                      </div>
-                  </div>
-                  <%# ((decimal)Eval("GastoReal") > (decimal)Eval("MontoPresupuestado"))
-                      ? "<small class='text-danger'>⚠️ Presupuesto excedido</small>" : "" %>
-              </div>
-          </ItemTemplate>
-          <FooterTemplate>
-              <asp:Label ID="lblSinPresupuesto" runat="server"
-                  Text="<small class='text-muted'>No hay presupuestos cargados para este mes. <a href=\Presupuesto.aspx>Cargá uno</a>.</small>"
-                  Visible='<%# rptPresupuesto.Items.Count == 0 %>' />
-          </FooterTemplate>
-      </asp:Repeater>
-  </div>
+                  
 
                 </div>
             </div>
