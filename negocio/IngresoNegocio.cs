@@ -231,8 +231,8 @@ namespace negocio
                                   "INNER JOIN CATEGORIA C ON I.IdCategoria = C.IdCategoria " +
                                   "WHERE I.IdHogar = @idHogar " +
                                   "AND I.Estado = 1 " +
-                                  "AND MONTH(G.Fecha) = MONTH(GETDATE())" +
-                            "AND YEAR(G.Fecha) = YEAR(GETDATE())");
+                                  "AND MONTH(I.Fecha) = MONTH(GETDATE())" +
+                            "AND YEAR(I.Fecha) = YEAR(GETDATE())");
 
                 datos.setParametro("@idHogar", idHogar);
                 datos.ejecutarLectura();
@@ -395,8 +395,8 @@ namespace negocio
                                   "FROM INGRESO " +
                                   "WHERE IdHogar = @idHogar " +
                                   "AND Estado = 1 " +
-                                  "AND MONTH(G.Fecha) = MONTH(GETDATE())" +
-                            "AND YEAR(G.Fecha) = YEAR(GETDATE())");
+                                  "AND MONTH(Fecha) = MONTH(GETDATE())" +
+                            "AND YEAR(Fecha) = YEAR(GETDATE())");
 
                 datos.setParametro("@idHogar", idHogar); 
                 datos.ejecutarLectura();
