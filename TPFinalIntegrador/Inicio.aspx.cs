@@ -62,6 +62,7 @@ namespace TPFinalIntegrador
                 {
                     Hogar hogarSeleccionado = (Hogar)Session["HogarSeleccionado"];
                     // Lógica de Hogar...
+                    pnlLinkGastosIntegrante.Visible = true;
                 }
                 else
                 {

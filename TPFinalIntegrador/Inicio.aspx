@@ -354,7 +354,7 @@
                             </div>
                         </ContentTemplate>
                     </asp:UpdatePanel>
-                    <!-- Savings Goals -->
+                    <!-- Metas de ahorro -->
                     <div class="card border-0 shadow-sm rounded-4 p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4 class="h5 mb-0 fw-bold">Metas de Ahorro</h4>
@@ -394,6 +394,35 @@
                             </div>
                         </asp:Panel>
                     </div>
+                      <!-- Presupuesto -->
+                      <div class="card border-0 shadow-sm rounded-4 p-4">
+                          <div class="d-flex justify-content-between align-items-center mb-2">
+                              <div>
+                                  <span class="text-uppercase small fw-bold text-secondary" style="font-size:
+  10px;">Mensual</span>
+                                  <h4 class="h5 mt-1 fw-bold mb-0">Presupuesto</h4>
+                              </div>
+                              <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+                          </div>
+                          <p class="text-muted small mb-3">Controlá cuánto querés gastar por categoría cada mes.</p>
+                          <a href="Presupuesto.aspx" class="btn btn-sm btn-outline-primary rounded-pill w-100">Ver
+  presupuesto</a>
+                      </div>
+                    <asp:Panel ID="pnlLinkGastosIntegrante" runat="server" Visible="false">
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <span class="text-uppercase small fw-bold text-secondary" style="font-size: 10px;">Hogar</span>
+                                    <h4 class="h5 mt-1 fw-bold mb-0">Gastos por integrante</h4>
+                                </div>
+                                <span class="material-symbols-outlined text-primary">group</span>
+                            </div>
+                            <p class="text-muted small mb-3">Mirá cuánto gastó cada integrante del hogar por categoría.</p>
+                            <a href="GastoIntegranteHogar.aspx" class="btn btn-sm btn-outline-primary rounded-pill w-100">Ver gastos</a>
+                        </div>
+
+                    </asp:Panel>
+                     
                 </div>
             </div>
         </main>

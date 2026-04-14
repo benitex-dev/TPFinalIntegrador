@@ -15,7 +15,7 @@ namespace TPFinalIntegrador
     {
 
         /// <summary>
-        /// h2Saldo control.
+        /// Control h2Saldo.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
@@ -24,8 +24,7 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl h2Saldo;
 
         /// <summary>
-        /// Control lblBienvenidaPersonal.
-        /// h2Ingresos control.
+        /// Control h2Ingresos.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
@@ -34,8 +33,7 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl h2Ingresos;
 
         /// <summary>
-        /// Control pnlInicioHogar.
-        /// h2Gasto control.
+        /// Control h2Gasto.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
@@ -44,8 +42,7 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl h2Gasto;
 
         /// <summary>
-        /// Control lblGastosMesHogar.
-        /// rptMovimientos control.
+        /// Control rptMovimientos.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
@@ -54,13 +51,7 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Repeater rptMovimientos;
 
         /// <summary>
-        /// <summary>
-        /// Control lblGastosMesHogar.
-        /// <summary>
-        /// Control lblGastosMesHogar.
-        /// <summary>
-        /// Control lblGastosMesHogar.
-        /// upGraficoTorta control.
+        /// Control upGraficoTorta.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
@@ -69,7 +60,7 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.UpdatePanel upGraficoTorta;
 
         /// <summary>
-        /// rptGraficoTorta control.
+        /// Control rptGraficoTorta.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
@@ -78,7 +69,7 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Repeater rptGraficoTorta;
 
         /// <summary>
-        /// litTotalGrafico control.
+        /// Control litTotalGrafico.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
@@ -87,7 +78,7 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Literal litTotalGrafico;
 
         /// <summary>
-        /// rptLeyendaGrafico control.
+        /// Control rptLeyendaGrafico.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
@@ -96,7 +87,7 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Repeater rptLeyendaGrafico;
 
         /// <summary>
-        /// pnlMetasVacias control.
+        /// Control pnlMetasVacias.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
@@ -105,7 +96,7 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Panel pnlMetasVacias;
 
         /// <summary>
-        /// btnCrearMeta control.
+        /// Control btnCrearMeta.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
@@ -114,17 +105,16 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Button btnCrearMeta;
 
         /// <summary>
-        /// pnlMetasActivas control.
+        /// Control pnlMetasActivas.
         /// </summary>
         /// <remarks>
-        /// rptMetasDashboard control.
-        /// Control rptMetasDashboard.
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel pnlMetasActivas;
 
         /// <summary>
-        /// Control ddlAnioIngresos.
-        /// rptMetasDashboard control.
+        /// Control rptMetasDashboard.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
@@ -133,7 +123,16 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Repeater rptMetasDashboard;
 
         /// <summary>
-        /// txtMailIntegrante control.
+        /// Control pnlLinkGastosIntegrante.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlLinkGastosIntegrante;
+
+        /// <summary>
+        /// Control txtMailIntegrante.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
@@ -419,23 +418,5 @@ namespace TPFinalIntegrador
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnGuardarGasto;
-
-        /// <summary>
-        /// Control pnlReportes.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlReportes;
-
-        /// <summary>
-        /// Control rptPresupuesto.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptPresupuesto;
     }
 }
