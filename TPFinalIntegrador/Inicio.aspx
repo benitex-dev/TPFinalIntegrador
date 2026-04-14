@@ -450,11 +450,11 @@
 
                         <div class="d-flex flex-wrap gap-2">
                             <div class="d-flex flex-wrap gap-2">
-                               <%-- CARGAR GASTO --%>
+                               <!-- CARGAR GASTO -->
                                 <button type="button" class="btn btn-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalGasto" onclick="limpiarModalGasto()">
                                     Cargar gasto
                                 </button>
-                               <%-- CARGAR INGRESO --%>
+                               <!-- CARGAR INGRESO -->
                                 <button type="button" class="btn btn-outline-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalIngreso" onclick="limpiarModalIngreso()">
                                     Cargar ingreso
                                 </button>
@@ -509,14 +509,14 @@
                                     Añadir miembro
            
                                 </button>
-                                <%--  AGREGAR GASTO --%>
+                                <!--  AGREGAR GASTO -->
                                 <button type="button" class="btn btn-primary px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalGasto" onclick="limpiarModalGasto()">
                                     Cargar gasto
-           
+
                                 </button>
-                                <%-- gastos por integrante --%>
-                               <%-- <a href="GastoIntegranteHogar.aspx" class="btn btn-outline-primary px-4 fw-semibold">Ver gastos por integrante
-                                </a>--%>
+                                <!-- gastos por integrante -->
+                               <!-- <a href="GastoIntegranteHogar.aspx" class="btn btn-outline-primary px-4 fw-semibold">Ver gastos por integrante
+                                </a>-->
                             </div>
                         </div>
                     </div>
@@ -711,36 +711,6 @@
 
 </div>
 
-<table class="table align-middle mb-0">
-    <thead class="bg-light">
-        <tr>
-            <th class="px-4 py-3">Fecha</th>
-            <th class="px-4 py-3">Descripción</th>
-            <th class="px-4 py-3">Categoría</th>
-            <th class="px-4 py-3">Tipo</th>
-            <th class="px-4 py-3 text-end">Monto</th>
-            <th class="px-4 py-3">Estado</th>
-        </tr>
-    </thead>
-    <tbody>
-    <asp:Repeater ID="rptMovimientos" runat="server">
-        <ItemTemplate>
-            <tr>
-                <td class="px-4 py-3"><%# Eval("Fecha", "{0:dd/MM/yyyy}") %></td>
-                <td class="px-4 py-3"><%# Eval("Descripcion") %></td>
-                <td class="px-4 py-3"><%# Eval("Categoria") %></td>
-                <td class="px-4 py-3"><%# Eval("Tipo") %></td>
-                <td class="px-4 py-3 text-end">
-                 <span class='<%# Eval("Tipo").ToString() == "Gasto" ? "text-danger fw-bold" : "text-success fw-bold" %>'>
-                  <%# Eval("MontoMostrado") %>
-                 </span>
-                    </td>
-                <td class="px-4 py-3"><%# Eval("Estado") %></td>
-            </tr>
-        </ItemTemplate>
-    </asp:Repeater>
-            </tbody>
-</table>
 </tbody>
                         </table>
                     </div>
