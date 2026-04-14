@@ -65,9 +65,7 @@ namespace negocio
 
             try
             {
-                datos.setConsulta("SELECT IdMedioPago, Tipo, Descripcion, IdUsuario, IdHogar, DiaCierre, DiaVencimiento, Estado " +
-                                  "FROM MEDIOPAGO " +
-                                  "WHERE IdHogar = @idHogar AND Estado = 1");
+                datos.setConsulta(" SELECT DISTINCT MP.IdMedioPago, MP.Tipo, MP.Descripcion, MP.IdUsuario, MP.DiaCierre, MP.DiaVencimiento, MP.Estado\r\n  FROM MEDIOPAGO MP\r\n  INNER JOIN HOGAR_USUARIO HU ON MP.IdUsuario = HU.IdUsuario\r\n  WHERE HU.IdHogar = @idHogar AND HU.Estado = 1\r\n    AND MP.Estado = 1");
 
                 datos.setParametro("@idHogar", idHogar);
                 datos.ejecutarLectura();

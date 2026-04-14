@@ -633,7 +633,14 @@ namespace TPFinalIntegrador
                     // Calcular MontoPesos si no calculado aún
                     gasto.MontoPesos = gasto.MontoUSD * gasto.Cotizacion;
                 }
-
+               
+                //agregamos logica para guardar el id del hogar en el gasto
+                if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
+                {
+                    gasto.Hogar = new Hogar();
+                    gasto.Hogar.IdHogar = (int)Session["IdHogarActual"];
+                }
+                
                 GastoNegocio negocio = new GastoNegocio();
 
                 // Obtener el ID
