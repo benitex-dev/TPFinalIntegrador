@@ -295,5 +295,36 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+
+        public void AgregarAporte(AporteMeta aporte)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                if (aporte == null)
+                    throw new Exception("El aporte no puede ser nulo.");
+
+                if (aporte.Meta == null || aporte.Meta.IdMeta <= 0)
+                    throw new Exception("El aporte debe estar asociado a una meta válida.");
+
+                if (aporte.Monto <= 0)
+                    throw new Exception("El monto del aporte debe ser mayor a cero.");
+
+                datos.setConsulta("INSERT INTO APORTE_META (IdMeta, Monto) VALUES (@idMeta, @monto)");
+                datos.setParametro("@idMeta", aporte.Meta.IdMeta);
+                datos.setParametro("@monto", aporte.Monto);
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }
