@@ -578,8 +578,9 @@ namespace TPFinalIntegrador
                         return;
                     }
 
-                    gasto.MontoCuota = montoCuota;
+                    gasto.MontoPesos = montoCuota;
                     gasto.CantidadCuotas = cantidadCuotas;
+                    gasto.MontoCuota = gasto.MontoPesos/gasto.CantidadCuotas; 
 
                     // Calcular total cuota
                     gasto.MontoPesos = gasto.MontoCuota * gasto.CantidadCuotas;

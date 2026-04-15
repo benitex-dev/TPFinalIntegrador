@@ -1059,9 +1059,9 @@
                     <asp:TextBox ID="txtMontoPesosGasto" runat="server" CssClass="form-control"></asp:TextBox>
                 </div>
 
-                <%-- MONTO CUOTA --%>
+                <%-- MONTO TOTAL --%>
                 <div class="col-md-4 mb-3" id="campoMontoCuotaGasto" style="display:none;">
-                    <label class="form-label fw-semibold">Monto por cuota</label>
+                    <label class="form-label fw-semibold">Monto total</label>
                     <asp:TextBox ID="txtMontoCuotaGasto" runat="server" CssClass="form-control"></asp:TextBox>
                 </div>
 
