@@ -92,6 +92,9 @@ namespace TPFinalIntegrador
                 cargarMetasAhorro();
                 CargarResumenPresupuesto();
                 //pnlReportes.Visible = false;
+                modalIngresoLabel.InnerText = "Nuevo Ingreso";
+                btnEditarIngreso.Visible = false;
+                btnGuardarIngreso.Visible = true;
             }
         }
 
@@ -580,7 +583,7 @@ namespace TPFinalIntegrador
 
                     gasto.MontoPesos = montoCuota;
                     gasto.CantidadCuotas = cantidadCuotas;
-                    gasto.MontoCuota = gasto.MontoPesos/gasto.CantidadCuotas; 
+                    gasto.MontoCuota = gasto.MontoPesos / gasto.CantidadCuotas;
 
                     // Calcular total cuota
                     gasto.MontoPesos = gasto.MontoCuota * gasto.CantidadCuotas;
@@ -635,20 +638,20 @@ namespace TPFinalIntegrador
                     // Calcular MontoPesos si no calculado aún
                     gasto.MontoPesos = gasto.MontoUSD * gasto.Cotizacion;
                 }
-               
+
                 //agregamos logica para guardar el id del hogar en el gasto
                 if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
                 {
                     gasto.Hogar = new Hogar();
                     gasto.Hogar.IdHogar = (int)Session["IdHogarActual"];
                 }
-                
+
                 GastoNegocio negocio = new GastoNegocio();
 
                 // Obtener el ID
                 int idGasto = negocio.AgregarGasto(gasto);
-                
-                               
+
+
                 // GENERAR CUOTAS
                 if (gasto.EsEnCuotas)
                 {
@@ -800,8 +803,8 @@ namespace TPFinalIntegrador
             else
             {
                 Usuario usuarioLogueado = (Usuario)Session["usuario"];
-                ingresos = ingresoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario,MesSeleccionado,AnioSeleccionado);
-                gastos = gastoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario,MesSeleccionado,AnioSeleccionado);
+                ingresos = ingresoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario, MesSeleccionado, AnioSeleccionado);
+                gastos = gastoNegocio.ListarPorUsuarioMesActual(usuarioLogueado.IdUsuario, MesSeleccionado, AnioSeleccionado);
             }
 
             foreach (Ingreso ingreso in ingresos)
@@ -863,6 +866,7 @@ namespace TPFinalIntegrador
                 mov.Tipo = "Ingreso";
                 mov.Monto = ingreso.Monto;
                 mov.Estado = ingreso.Estado ? "Activo" : "Eliminado";
+                mov.idReferencia = ingreso.IdIngreso;
 
                 movimientos.Add(mov);
             }
@@ -878,6 +882,7 @@ namespace TPFinalIntegrador
                 mov.Tipo = "Gasto";
                 mov.Monto = gasto.MontoPesos;
                 mov.Estado = gasto.Estado ? "Activo" : "Eliminado";
+                mov.idReferencia = gasto.IdGasto;
 
                 movimientos.Add(mov);
             }
@@ -1012,10 +1017,10 @@ namespace TPFinalIntegrador
             int anio = 0;
 
             //if (!int.TryParse(ddlMesIngresos.SelectedValue, out mes))
-                mes = DateTime.Now.Month;
+            mes = DateTime.Now.Month;
 
             //if (!int.TryParse(ddlAnioIngresos.SelectedValue, out anio))
-                anio = DateTime.Now.Year;
+            anio = DateTime.Now.Year;
 
             CargarIngresosPorMes(mes, anio);
         }
@@ -1054,10 +1059,10 @@ namespace TPFinalIntegrador
             int anio = 0;
 
             //if (!int.TryParse(ddlMesGastos.SelectedValue, out mes))
-                mes = DateTime.Now.Month;
+            mes = DateTime.Now.Month;
 
             //if (!int.TryParse(ddlAnioGastos.SelectedValue, out anio))
-                anio = DateTime.Now.Year;
+            anio = DateTime.Now.Year;
 
             CargarGastosPorMes(mes, anio);
         }
@@ -1103,9 +1108,9 @@ namespace TPFinalIntegrador
 
                 user = negocio.buscarMail(txtMailIntegrante.Text);
 
-                if(user != null)
+                if (user != null)
                 {
-                    if(negocioHogar.AgregarIntegrante((int)Session["IdHogarActual"], user.IdUsuario, "Miembro"))
+                    if (negocioHogar.AgregarIntegrante((int)Session["IdHogarActual"], user.IdUsuario, "Miembro"))
                     {
                         /*--------------------------------ENVIO DE MAIL----------------------------------*/
                         Usuario usuarioLogueado = (Usuario)Session["usuario"];
@@ -1141,11 +1146,11 @@ namespace TPFinalIntegrador
                     }
                     else
                     {
-                            ScriptManager.RegisterStartupScript(
-                        this, this.GetType(),
-                        "errorAlert",
-                        "Swal.fire({icon: 'error', title: 'El usuario ya forma parte del hogar!'});",
-                        true);
+                        ScriptManager.RegisterStartupScript(
+                    this, this.GetType(),
+                    "errorAlert",
+                    "Swal.fire({icon: 'error', title: 'El usuario ya forma parte del hogar!'});",
+                    true);
                     }
                 }
                 else
@@ -1266,7 +1271,7 @@ namespace TPFinalIntegrador
             rptLeyendaGrafico.DataSource = datosGrafico;
             rptLeyendaGrafico.DataBind();
         }
-        
+
         public void cargarMetasAhorro()
         {
             Usuario usuarioLogueado = (Usuario)Session["usuario"];
@@ -1293,6 +1298,190 @@ namespace TPFinalIntegrador
                 rptMetasDashboard.DataBind();
             }
         }
-    }
 
+        protected void rptMovimientos_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            try
+            {
+                string argumento = e.CommandArgument.ToString();
+                string[] datos = argumento.Split('|');
+
+                string tipoMovimiento = datos[0];
+                int idReal = int.Parse(datos[1]);
+
+                // ==========================================
+                // ACCIÓN 1: ELIMINAR
+                // ==========================================
+                if (e.CommandName == "Eliminar")
+                {
+                    if (tipoMovimiento == "Gasto")
+                    {
+                        GastoNegocio negocioGasto = new GastoNegocio();
+                        negocioGasto.EliminarGasto(idReal);
+                    }
+                    else if (tipoMovimiento == "Ingreso")
+                    {
+                        IngresoNegocio negocioIngreso = new IngresoNegocio();
+                        negocioIngreso.EliminarIngreso(idReal);
+                    }
+                }
+
+                // ==========================================
+                // ACCIÓN 2: EDITAR
+                // ==========================================
+                else if (e.CommandName == "Editar")
+                {
+                    if (tipoMovimiento == "Ingreso")
+                    {
+                        btnEditarIngreso.Visible = true;
+                        btnGuardarIngreso.Visible = false;
+
+                        IngresoNegocio negocioIngreso = new IngresoNegocio();
+                        Ingreso objIngreso = negocioIngreso.ListarPorId(idReal);
+
+                        modalIngresoLabel.InnerText = "Editar Ingreso";
+                        hfIdIngresoEdicion.Value = objIngreso.IdIngreso.ToString();
+
+                        txtDescripcionIngreso.Text = objIngreso.Descripcion;
+                        txtMontoIngreso.Text = objIngreso.Monto.ToString("0.00", CultureInfo.InvariantCulture);
+
+                        txtFechaIngreso.Text = objIngreso.Fecha.ToString("yyyy-MM-dd");
+
+                        ddlCategoriaIngreso.SelectedValue = objIngreso.Categoria.IdCategoria.ToString();
+
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "AbrirModalIngreso",
+                        "window.addEventListener('load', function() { " +
+                        "   var myModal = new bootstrap.Modal(document.getElementById('modalIngreso')); " +
+                        "   myModal.show(); " +
+                        "});", true);
+
+
+                    }
+                    else if (tipoMovimiento == "Gasto")
+                    {
+                       
+                    }
+                }
+                CargarMovimientosDelMesRecientes();
+                CargarResumenGastos();
+                CargarSaldoMes();
+                CargarResumenIngresos();
+            }
+            catch (Exception ex)
+            {
+                // Buena práctica: Si algo falla (ej: se cayó la BD), atajamos el error
+                // Podés usar un ScriptManager acá para tirar un alert de JavaScript
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "Error",
+                    $"alert('Ocurrió un error al procesar el movimiento: {ex.Message}');", true);
+            }
+        }
+
+        protected void btnEditarIngreso_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(txtDescripcionIngreso.Text) ||
+                    string.IsNullOrWhiteSpace(txtFechaIngreso.Text) ||
+                    string.IsNullOrWhiteSpace(txtMontoIngreso.Text))
+                {
+                    ScriptManager.RegisterStartupScript(
+                       this, this.GetType(),
+                       "completaCampos",
+                       "Swal.fire({icon: 'error', title: 'Error', text: 'Completá todos los campos obligatorios.'});",
+                       true);
+                    return;
+                }
+
+                if (ddlCategoriaIngreso.SelectedValue == "0")
+                {
+                    ScriptManager.RegisterStartupScript(
+                        this, this.GetType(),
+                        "mostrarModalIngreso",
+                        "Swal.fire({icon: 'error', title: 'Error', text: 'Debés seleccionar una categoría.'});",
+                        true);
+
+                    return;
+                }
+
+                Usuario usuarioLogueado = (Usuario)Session["usuario"];
+
+                // Parsear monto de ingreso usando cultura argentina (es-AR) por defecto
+                var culturaARS = new CultureInfo("es-AR");
+                decimal montoIngreso;
+                if (!TryParseDecimalFlexible(txtMontoIngreso.Text.Trim(), culturaARS, out montoIngreso))
+                {
+                    ScriptManager.RegisterStartupScript(
+                       this, this.GetType(),
+                       "completaCampos",
+                       "Swal.fire({icon: 'error', title: 'Error', text: 'Monto de ingreos inválido.'});",
+                       true);
+                    return;
+                }
+
+                Ingreso ingreso = new Ingreso();
+                ingreso.IdIngreso = int.Parse(hfIdIngresoEdicion.Value);
+                ingreso.Descripcion = txtDescripcionIngreso.Text.Trim();
+                ingreso.Fecha = DateTime.Parse(txtFechaIngreso.Text);
+                ingreso.Monto = decimal.Parse(txtMontoIngreso.Text, CultureInfo.InvariantCulture);
+
+                ingreso.Categoria = new Categoria();
+                ingreso.Categoria.IdCategoria = int.Parse(ddlCategoriaIngreso.SelectedValue);
+
+                ingreso.Usuario = usuarioLogueado;
+                ingreso.Estado = true;
+
+                IngresoNegocio negocio = new IngresoNegocio();
+                negocio.ModificarIngreso(ingreso);
+
+                /*--------------ENVIO DE MAIL----------------------*/
+                string rutaPlantillas = Server.MapPath("~/Template");
+
+                var reemplazos = new Dictionary<string, string>()
+                {
+                    { "NOMBRE_USUARIO", usuarioLogueado.Nombre },
+                    { "DESCRIPCION", ingreso.Descripcion},
+                    { "MONTO", ingreso.Monto.ToString("N2") },
+                    { "FECHA", ingreso.Fecha.ToString("dd/MM/yyyy")}
+                };
+
+                EmailService servicio = new EmailService();
+
+                servicio.armarCorreo(
+                    usuarioLogueado.Email,
+                    "Registro de ingreso modificado con éxito",
+                    reemplazos,
+                    TipoCorreo.RegistroIngreso,
+                    rutaPlantillas
+                );
+
+                servicio.enviarCorreo();
+                /*---------------------------------------------------------------*/
+
+                txtDescripcionIngreso.Text = "";
+                txtFechaIngreso.Text = "";
+                txtMontoIngreso.Text = "";
+                ddlCategoriaIngreso.SelectedIndex = 0;
+
+                ScriptManager.RegisterStartupScript(
+                    this, this.GetType(),
+                    "ingresoCreado",
+                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Ingreso guardado correctamente.'});",
+                    true);
+
+                CargarResumenIngresos(); //refresca los ingresos luego de agregar uno nuevo
+                CargarSaldoMes(); //refresca el saldo al agregar un ingreso nuevo
+
+
+                CargarMovimientosDelMesRecientes();
+            }
+            catch (Exception ex)
+            {
+                ScriptManager.RegisterStartupScript(
+                    this, this.GetType(),
+                    "error",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});",
+                    true);
+            }
+        }
+    }
 }

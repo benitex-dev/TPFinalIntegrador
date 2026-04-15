@@ -235,14 +235,12 @@
                                             <th class="py-3 text-uppercase small text-secondary fw-bold">Categoría</th>
                                             <th class="pe-4 py-3 text-uppercase small text-secondary fw-bold text-end">Monto</th>
                                             <th class="pe-1 py-3 text-uppercase small text-secondary fw-bold text-end"></th>
-
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <asp:Repeater ID="rptMovimientos" runat="server">
+                                        <asp:Repeater ID="rptMovimientos" runat="server" OnItemCommand="rptMovimientos_ItemCommand">
                                             <ItemTemplate>
                                                 <tr class="align-middle border-bottom">
-
                                                     <td class="ps-4 py-3">
                                                         <div class="d-flex align-items-center gap-3">
 
@@ -886,12 +884,12 @@
         <div class="modal-content border-0 rounded-4 shadow">
 
             <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold" id="modalIngresoLabel">Nuevo ingreso</h5>
+                <h5 class="modal-title fw-bold" id="modalIngresoLabel" runat="server">Nuevo ingreso</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body pt-3">
-
+                <asp:HiddenField ID="hfIdIngresoEdicion" runat="server" />
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Descripción</label>
                     <asp:TextBox ID="txtDescripcionIngreso" runat="server" CssClass="form-control"></asp:TextBox>
@@ -919,6 +917,7 @@
             <div class="modal-footer border-0 pt-0">
                 <button type="button" class="btn btn-light border rounded-3" data-bs-dismiss="modal">Cancelar</button>
                 <asp:Button ID="btnGuardarIngreso" runat="server" Text="Guardar" CssClass="btn btn-primary rounded-3 px-4" OnClick="btnGuardarIngreso_Click" />
+                <asp:Button ID="btnEditarIngreso" runat="server" Text="Editar" CssClass="btn btn-primary rounded-3 px-4" Visible="false" OnClick="btnEditarIngreso_Click" />
             </div>
 
         </div>

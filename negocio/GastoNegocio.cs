@@ -453,6 +453,7 @@ namespace negocio
                     G.Descripcion,
                     C.Nombre AS Categoria,
                     MP.Descripcion AS MedioPago,
+                    G.IdGasto,
      
     
                     ISNULL(CU.Monto, G.MontoPesos) AS MontoDelMes, 
@@ -495,6 +496,8 @@ namespace negocio
                     gasto.Categoria.Nombre = (string)datos.Lector["Categoria"];
                     gasto.MedioDePago = new MedioPago();
                     gasto.MedioDePago.Descripcion = (string)datos.Lector["MedioPago"];
+                    gasto.IdGasto = (int)datos.Lector["IdGasto"];
+                    
 
                     if (datos.Lector["NumeroCuota"] != DBNull.Value)
                     {
