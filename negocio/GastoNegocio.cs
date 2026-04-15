@@ -458,7 +458,7 @@ namespace negocio
                     ISNULL(CU.Monto, G.MontoPesos) AS MontoDelMes, 
     
                     CU.NumeroCuota, 
-    
+                    CU.TotalCuotas,
                     ISNULL(CU.Vencimiento, G.Fecha) AS FechaMovimiento 
 
                 FROM GASTO G 
@@ -495,6 +495,13 @@ namespace negocio
                     gasto.Categoria.Nombre = (string)datos.Lector["Categoria"];
                     gasto.MedioDePago = new MedioPago();
                     gasto.MedioDePago.Descripcion = (string)datos.Lector["MedioPago"];
+
+                    if (datos.Lector["NumeroCuota"] != DBNull.Value)
+                    {
+                        gasto.EsEnCuotas = true;
+                        gasto.NumeroCuota = (int)datos.Lector["NumeroCuota"];
+                        gasto.CantidadCuotas = (int)datos.Lector["TotalCuotas"];
+                    }
 
                     lista.Add(gasto);
                 }

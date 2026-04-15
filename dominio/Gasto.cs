@@ -19,6 +19,7 @@ namespace dominio
         public int IdGasto { get; set; }
         public DateTime Fecha { get; set; }
         public decimal MontoPesos { get; set; }
+        public int NumeroCuota { get; set; }
         public Moneda Moneda { get; set; }
         public Categoria Categoria { get; set; }
         public string Descripcion { get; set; }

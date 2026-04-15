@@ -871,7 +871,9 @@ namespace TPFinalIntegrador
             {
                 Movimiento mov = new Movimiento();
                 mov.Fecha = gasto.Fecha;
-                mov.Descripcion = gasto.Descripcion;
+                mov.Descripcion = gasto.EsEnCuotas
+     ? $"{gasto.Descripcion} (cuota {gasto.NumeroCuota}/{gasto.CantidadCuotas})"
+     : gasto.Descripcion;
                 mov.Categoria = gasto.Categoria.Nombre;
                 mov.Tipo = "Gasto";
                 mov.Monto = gasto.MontoPesos;
