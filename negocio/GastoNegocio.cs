@@ -207,29 +207,29 @@ namespace negocio
             {
                 datos.setConsulta(@"
             SELECT ISNULL(SUM(Total), 0) AS TotalGeneral
-            FROM
-            (
-                -- Gastos normales del mes
-                SELECT G.MontoPesos AS Total
-                FROM GASTO G
-                WHERE G.IdUsuario = @idUsuario
-                  AND G.Estado = 1
-                  AND ISNULL(G.EsEnCuotas, 0) = 0
-                  AND MONTH(G.Fecha) = MONTH(GETDATE())
-                            AND YEAR(G.Fecha) = YEAR(GETDATE())
+  FROM
+  (
+      -- Gastos normales del mes
+      SELECT G.MontoPesos AS Total
+      FROM GASTO G
+      WHERE G.IdUsuario = @idUsuario
+        AND G.Estado = 1
+        AND ISNULL(G.EsEnCuotas, 0) = 0
+        AND MONTH(G.Fecha) = MONTH(GETDATE())
+        AND YEAR(G.Fecha) = YEAR(GETDATE())
 
-                UNION ALL
+      UNION ALL
 
-                -- Cuotas del mes
-                SELECT C.Monto AS Total
-     FROM CUOTA C
-     LEFT JOIN GASTO G ON G.IdGasto = C.IdGasto
-     WHERE G.IdUsuario = 1
-       AND G.Estado = 1
-       AND ISNULL(G.EsEnCuotas, 0) = 1
-       AND MONTH(C.Vencimiento) = MONTH(GETDATE())
-                 AND YEAR(C.Vencimiento) = YEAR(GETDATE())
-            ) AS Movimientos");
+      -- Cuotas del mes
+      SELECT C.Monto AS Total
+      FROM CUOTA C
+      INNER JOIN GASTO G ON G.IdGasto = C.IdGasto
+      WHERE G.IdUsuario = @idUsuario
+        AND G.Estado = 1
+        AND ISNULL(G.EsEnCuotas, 0) = 1
+        AND MONTH(C.Vencimiento) = MONTH(GETDATE())
+        AND YEAR(C.Vencimiento) = YEAR(GETDATE())
+  ) AS Movimientos");
 
                 datos.setParametro("@idUsuario", idUsuario);
                 datos.ejecutarLectura();
@@ -465,7 +465,7 @@ namespace negocio
                 INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria
                 INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago
                 LEFT JOIN CUOTA CU ON CU.IdGasto = G.IdGasto
-                WHERE G.IdUsuario = 1
+                WHERE G.IdUsuario = @idUsuario
                   AND G.Estado = 1 
                   AND (
                       (CU.IdGasto IS NULL 
