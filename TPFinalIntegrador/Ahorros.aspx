@@ -60,80 +60,91 @@
         </button>
     </div>
 <%--    REAPEATER PARA MOSTRAR LAS METAS DE AHORRO--%>
-    <asp:Repeater 
-        ID="rptMetas" 
-        runat="server" 
-        OnItemCommand="rptMetas_ItemCommand">
-        <ItemTemplate>
-            <div class="card border-0 shadow-sm rounded-4 p-4 mb-3">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div>
-                        <h5 class="fw-bold mb-1"><%# Eval("Nombre") %></h5>
-                        <span class="text-muted small">
-                            Fecha objetivo: <%# Eval("FechaObjetivo") != null ? ((DateTime)Eval("FechaObjetivo")).ToString("dd/MM/yyyy") : "Sin fecha" %>
-                        </span>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <asp:LinkButton 
-                            runat="server"
-                            CommandName="Editar" 
-                            CommandArgument='<%# Eval("IdMeta") %>'
-                            CssClass="btn btn-sm btn-outline-secondary rounded-pill" 
-                            title="Editar">
-                              <span 
-                                  class="material-symbols-outlined" 
-                                  style="font-size:16px; 
-                                  vertical-align:middle;">
-                                  edit
+    <div class="row">
+          <asp:Repeater 
+      ID="rptMetas" 
+      runat="server" 
+      OnItemCommand="rptMetas_ItemCommand">
+              
+                           <ItemTemplate>
+<div class="col-md-6 col-lg-4 mb-3">
+              <div class="card border-0 shadow-sm rounded-4 p-4 mb-3">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div>
+                      <h5 class="fw-bold mb-1"><%# Eval("Nombre") %></h5>
+                      <span class="text-muted small">
+                          Fecha objetivo: <%# Eval("FechaObjetivo") != null ? ((DateTime)Eval("FechaObjetivo")).ToString("dd/MM/yyyy") : "Sin fecha" %>
+                      </span>
+                  </div>
+                  <div class="d-flex gap-2">
+                      <asp:LinkButton 
+                          runat="server"
+                          CommandName="Editar" 
+                          CommandArgument='<%# Eval("IdMeta") %>'
+                          CssClass="btn btn-sm btn-outline-secondary rounded-pill" 
+                          title="Editar">
+                            <span 
+                                class="material-symbols-outlined" 
+                                style="font-size:16px; 
+                                vertical-align:middle;">
+                                edit
 
-                              </span>
-                        </asp:LinkButton>
-                        <asp:LinkButton 
-                            runat="server"
-                            CommandName="Eliminar" 
-                            CommandArgument='<%# Eval("IdMeta") %>'
-                            CssClass="btn btn-sm btn-outline-danger rounded-pill"
-                            title="Eliminar"
-                            OnClientClick="return confirm('¿Eliminar esta meta?')"
-                            >
-                              <span 
-                                  class="material-symbols-outlined" 
-                                  style="font-size:16px;
-                                  vertical-align:middle;"
-                                  >delete
+                            </span>
+                      </asp:LinkButton>
+                      <asp:LinkButton 
+                          runat="server"
+                          CommandName="Eliminar" 
+                          CommandArgument='<%# Eval("IdMeta") %>'
+                          CssClass="btn btn-sm btn-outline-danger rounded-pill"
+                          title="Eliminar"
+                          OnClientClick="return confirm('¿Eliminar esta meta?')"
+                          >
+                            <span 
+                                class="material-symbols-outlined" 
+                                style="font-size:16px;
+                                vertical-align:middle;"
+                                >delete
 
-                              </span>
-                        </asp:LinkButton>
-                    </div>
-                </div>
+                            </span>
+                      </asp:LinkButton>
+                  </div>
+              </div>
 
-                <div class="progress rounded-pill mb-2" style="height: 10px;">
-                    <div 
-                        class="progress-bar bg-primary"
-                        role="progressbar"
-                        style="width: <%# Math.Min((int)Eval("Porcentaje"), 100) %>%"
-                        >
-                    </div>
-                </div>
+              <div class="progress rounded-pill mb-2" style="height: 10px;">
+                  <div 
+                      class="progress-bar bg-primary"
+                      role="progressbar"
+                      style="width: <%# Math.Min((int)Eval("Porcentaje"), 100) %>%"
+                      >
+                  </div>
+              </div>
 
-                <div class="d-flex justify-content-between mb-3">
-                    <span class="text-muted small">
-                        $ <%# Eval("MontoActual", "{0:N2}") %> ahorrado</span>
-                    <span class="fw-semibold small">
-                        <%# Eval("Porcentaje") %>% — Meta: $ <%# Eval("MontoObjetivo", "{0:N2}") %>
+              <div class="d-flex justify-content-between mb-3">
+                  <span class="text-muted small">
+                      $ <%# Eval("MontoActual", "{0:N2}") %> ahorrado</span>
+                  <span class="fw-semibold small">
+                      <%# Eval("Porcentaje") %>% — Meta: $ <%# Eval("MontoObjetivo", "{0:N2}") %>
 
-                    </span>
-                </div>
+                  </span>
+              </div>
 
-                <button 
-                    type="button"
-                    class="btn btn-sm btn-outline-primary rounded-pill w-100"
-                    onclick="abrirModalAporte('<%# Eval("IdMeta") %>')">
-                    + Registrar aporte
-                </button>
-            </div>
-        </ItemTemplate>
-    </asp:Repeater>
+              <div class="text-start">
+    <button
+        type="button"
+        class="btn btn-sm btn-outline-primary rounded-pill"
+        onclick="abrirModalAporte('<%# Eval("IdMeta") %>')">
+        + Registrar aporte
+    </button>
+</div>
+          </div>
+
+</div>
+      </ItemTemplate>
+                  
+      
+  </asp:Repeater>
+    </div>
+    
    <%-- SIN METAS DE AHORRO ACTIVAS--%>
     <asp:Panel 
         ID="pnlSinMetas" 
