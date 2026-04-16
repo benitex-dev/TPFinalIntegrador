@@ -80,6 +80,53 @@ namespace TPFinalIntegrador
             }
         }
 
+        protected void gvCategorias_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        {
+            try
+            {
+                int idCategoria = (int)gvCategorias.DataKeys[e.RowIndex].Value;
+
+                CategoriaNegocio negocio = new CategoriaNegocio();
+                negocio.EliminarLogico(idCategoria);
+
+                // Recargar la grilla
+                CargarCategorias();
+
+                // Mostrar notificación
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "okEliminarCategoria",
+                    "Swal.fire({icon: 'success', title: 'Eliminado', text: 'Categoría eliminada correctamente.'});",
+                    true);
+            }
+            catch (Exception ex)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "errorEliminarCategoria",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+            }
+        }
+
+        protected void gvMediosPago_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        {
+            try
+            {
+                int idMedioPago = (int)gvMediosPago.DataKeys[e.RowIndex].Value;
+
+                MedioPagoNegocio negocio = new MedioPagoNegocio();
+                negocio.EliminarMedioPago(idMedioPago);
+
+                // Recargar la grilla
+                CargarMediosPago();
+
+                // Notificar con SweetAlert2
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "okEliminarMedio",
+                    "Swal.fire({icon: 'success', title: 'Eliminado', text: 'Medio de pago eliminado correctamente.'});",
+                    true);
+            }
+            catch (Exception ex)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "errorEliminarMedio",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+            }
+        }
         protected void gvMediosPago_RowEditing(object sender, GridViewEditEventArgs e)
         {
             gvMediosPago.EditIndex = e.NewEditIndex;
