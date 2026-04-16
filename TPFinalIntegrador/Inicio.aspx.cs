@@ -1318,11 +1318,21 @@ namespace TPFinalIntegrador
                     {
                         GastoNegocio negocioGasto = new GastoNegocio();
                         negocioGasto.EliminarGasto(idReal);
+                        ScriptManager.RegisterStartupScript(
+                    this, this.GetType(),
+                    "gastoModificado",
+                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'El gasto fue eliminado correctamente!'});",
+                    true);
                     }
                     else if (tipoMovimiento == "Ingreso")
                     {
                         IngresoNegocio negocioIngreso = new IngresoNegocio();
                         negocioIngreso.EliminarIngreso(idReal);
+                        ScriptManager.RegisterStartupScript(
+                    this, this.GetType(),
+                    "ingresoModificado",
+                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'El ingreso fue eliminado correctamente!'});",
+                    true);
                     }
                 }
 
