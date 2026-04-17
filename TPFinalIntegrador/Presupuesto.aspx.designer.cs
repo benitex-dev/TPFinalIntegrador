@@ -42,13 +42,31 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Button btnMesSiguiente;
 
         /// <summary>
-        /// Control gvPresupuesto.
+        /// Control rptPresupuesto.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvPresupuesto;
+        protected global::System.Web.UI.WebControls.Repeater rptPresupuesto;
+
+        /// <summary>
+        /// Control pnlSinPresupuestos.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlSinPresupuestos;
+
+        /// <summary>
+        /// Control rptConfigurar.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptConfigurar;
 
         /// <summary>
         /// Control lblMensaje.
