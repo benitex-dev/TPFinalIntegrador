@@ -155,10 +155,10 @@ namespace TPFinalIntegrador
             try
             {
                 Usuario usuario = (Usuario)Session["usuario"];
-                string nombreDeudor = (string)gvDeudas.DataKeys[e.RowIndex]["NombreDeudor"];
+                int idDeuda = (int)gvDeudas.DataKeys[e.RowIndex].Value;
 
                 DeudaNegocio negocio = new DeudaNegocio();
-                negocio.EliminarLogico(usuario.IdUsuario, nombreDeudor);
+                negocio.EliminarLogico(idDeuda);
 
                 CargarDeudas();
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",

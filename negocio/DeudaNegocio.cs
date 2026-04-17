@@ -69,19 +69,14 @@ namespace negocio
             }
         }
         //BAJA
-        public void EliminarLogico(int idUsuario, string nombreDeudor)
+        public void EliminarLogico(int idDeuda)
         {
             AccesoDatos datos = new AccesoDatos();
 
             try
             {
-                Deuda deuda = ExisteDeuda(idUsuario, nombreDeudor);
-
-                if (deuda == null)
-                    throw new Exception("La deuda no existe o ya fue saldada.");
-
                 datos.setConsulta("UPDATE DEUDA SET Estado = @estado WHERE IdDeuda = @idDeuda");
-                datos.setParametro("@idDeuda", deuda.IdDeuda);
+                datos.setParametro("@idDeuda", idDeuda);
                 datos.setParametro("@estado", (int)EstadoDeuda.Eliminado);
                 datos.ejecutarAccion();
             }
