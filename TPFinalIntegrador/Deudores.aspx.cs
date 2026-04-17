@@ -248,8 +248,7 @@ namespace TPFinalIntegrador
                 txtCuotas.Text = "";
                 txtFecha.Text = "";
 
-                pnlFormulario.Visible = false;
-                btnNuevaDeuda.Visible = true;
+               
                 CargarDeudas();
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
                     "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Deuda agregada correctamente.'});", true);
@@ -262,10 +261,15 @@ namespace TPFinalIntegrador
 
         }
 
-        protected void btnNuevaDeuda_Click(object sender, EventArgs e)
+        protected string GetBadgeEstado(int estado)
         {
-            pnlFormulario.Visible = true;
-            btnNuevaDeuda.Visible = false;
+            switch (estado)
+            {
+                case 0: return "<span class='badge bg-success rounded-pill'>Pago</span>";
+                case 1: return "<span class='badge bg-warning text-dark rounded-pill'>Pendiente</span>";
+                case 2: return "<span class='badge bg-secondary rounded-pill'>Eliminado</span>";
+                default: return estado.ToString();
+            }
         }
 
         protected void gvDeudas_PageIndexChanging(object sender, GridViewPageEventArgs e)

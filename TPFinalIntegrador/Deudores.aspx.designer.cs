@@ -15,22 +15,22 @@ namespace TPFinalIntegrador
     {
 
         /// <summary>
-        /// Control btnNuevaDeuda.
+        /// Control ddlFiltroEstadoDeuda.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnNuevaDeuda;
+        protected global::System.Web.UI.WebControls.DropDownList ddlFiltroEstadoDeuda;
 
         /// <summary>
-        /// Control pnlFormulario.
+        /// Control gvDeudas.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlFormulario;
+        protected global::System.Web.UI.WebControls.GridView gvDeudas;
 
         /// <summary>
         /// Control txtNombre.
@@ -94,23 +94,5 @@ namespace TPFinalIntegrador
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnAgregar;
-
-        /// <summary>
-        /// Control ddlFiltroEstadoDeuda.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlFiltroEstadoDeuda;
-
-        /// <summary>
-        /// Control gvDeudas.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvDeudas;
     }
 }
