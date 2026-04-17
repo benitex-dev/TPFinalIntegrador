@@ -126,9 +126,10 @@ namespace negocio
                     throw new Exception("Debe ingresar una fecha válida.");
 
 
-                datos.setConsulta("UPDATE DEUDA SET EmailDeudor = @emailDeudor, Descripcion = @descripcion, MontoTotal = @montoTotal, Cuotas = @cuotas, FechaInicio = @fechaInicio, Estado = @estado WHERE IdDeuda = @idDeuda");
+                datos.setConsulta("UPDATE DEUDA SET NombreDeudor = @NombreDeudor, EmailDeudor = @emailDeudor, Descripcion = @descripcion, MontoTotal = @montoTotal, Cuotas = @cuotas, FechaInicio = @fechaInicio, Estado = @estado WHERE IdDeuda = @idDeuda");
 
                 datos.setParametro("@idDeuda", deuda.IdDeuda);
+                datos.setParametro("@NombreDeudor", deuda.NombreDeudor);
                 datos.setParametro("@emailDeudor", deuda.EmailDeudor.Trim());
                 datos.setParametro("@descripcion", deuda.Descripcion.Trim());
                 datos.setParametro("@montoTotal", deuda.MontoTotal);

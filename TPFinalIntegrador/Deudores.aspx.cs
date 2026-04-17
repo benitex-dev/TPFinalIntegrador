@@ -75,7 +75,59 @@ namespace TPFinalIntegrador
                 Deuda deuda = negocio.ObtenerPorId(idDeuda);
 
                 deuda.NombreDeudor = nombre;
-                deuda.EmailDeudor = email;
+                if (email != deuda.EmailDeudor)
+                {
+                    deuda.EmailDeudor = email;
+
+                    /*--------------ENVIO DE MAIL AL DEUDOR----------------------*/
+                    string rutaPlantillas = Server.MapPath("~/Template");
+                    var reemplazosDeudor = new Dictionary<string, string>()
+                {
+                    { "NOMBRE_DEUDOR", deuda.NombreDeudor },
+                    { "NOMBRE_USUARIO", usuario.Nombre},
+                    { "DESCRIPCION", descripcion },
+                    { "MONTO_TOTAL", deuda.MontoTotal.ToString("N2") },
+                    { "CUOTAS", deuda.Cuotas.ToString() },
+                    { "MONTO_CUOTA", (deuda.MontoTotal / deuda.Cuotas).Value.ToString("N2") },
+                    { "FECHA", deuda.FechaInicio.ToString("dd/MM/yyyy") }
+                };
+
+                    EmailService servicioDeudor = new EmailService();
+
+                    servicioDeudor.armarCorreo(
+                        deuda.EmailDeudor,
+                        "Aviso de adquisición de deuda",
+                        reemplazosDeudor,
+                        TipoCorreo.RegistroDeudaDeudor,
+                        rutaPlantillas
+                    );
+
+                    servicioDeudor.enviarCorreo();
+                    /*---------------------------------------------------------------*/
+                    /*--------------ENVIO DE MAIL AL ACREEDOR----------------------*/
+                    var reemplazosUsuario = new Dictionary<string, string>()
+                {
+                    { "NOMBRE_DEUDOR", deuda.NombreDeudor },
+                    { "NOMBRE_USUARIO", usuario.Nombre },
+                    { "DESCRIPCION", descripcion },
+                    { "MONTO_TOTAL", deuda.MontoTotal.ToString("N2") },
+                    { "CUOTAS", deuda.Cuotas.ToString() },
+                    { "MONTO_CUOTA", (deuda.MontoTotal / deuda.Cuotas).Value.ToString("N2") },
+                    { "FECHA", deuda.FechaInicio.ToString("dd/MM/yyyy") }
+                };
+                    EmailService servicioUsuario = new EmailService();
+
+                    servicioUsuario.armarCorreo(
+                        usuario.Email,
+                        "Registro de deuda realizado correctamente",
+                        reemplazosUsuario,
+                        TipoCorreo.RegistroDeudaAcreedor,
+                        rutaPlantillas
+                    );
+
+                    servicioUsuario.enviarCorreo();
+                    /*---------------------------------------------------------------*/
+                }
                 deuda.Descripcion = descripcion;
 
                 negocio.ModificarDeuda(deuda);
