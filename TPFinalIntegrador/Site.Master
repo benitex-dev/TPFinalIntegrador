@@ -140,7 +140,8 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarCategorias">
                                     <li>
-                                        <a class="dropdown-item" href="Inicio.aspx?modal=categoria" data-bs-toggle="modal" data-bs-target="#modalCategoria">Agregar categoría
+                                        <a id="lnkAgregarCategoria" runat="server" class="dropdown-item" href="Inicio.aspx?modal=categoria" data-bs-toggle="modal" data-bs-target="#modalCategoria">
+                                            Agregar categoría
                                         </a>
                                     </li>
                                     <li>
@@ -154,7 +155,8 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarMediosPago">
                                     <li>
-                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalMedioPago">Agregar medio de pago
+                                        <a id="lnkAgregarMedio" runat="server" class="dropdown-item" href="Inicio.aspx?modal=mediopago" data-bs-toggle="modal" data-bs-target="#modalMedioPago">
+                                            Agregar medio de pago
                                         </a>
                                     </li>
                                     <li>

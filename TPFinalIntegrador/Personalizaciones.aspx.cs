@@ -80,6 +80,53 @@ namespace TPFinalIntegrador
             }
         }
 
+        protected void gvCategorias_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        {
+            try
+            {
+                int idCategoria = (int)gvCategorias.DataKeys[e.RowIndex].Value;
+
+                CategoriaNegocio negocio = new CategoriaNegocio();
+                negocio.EliminarLogico(idCategoria);
+
+                // Recargar la grilla
+                CargarCategorias();
+
+                // Mostrar notificación
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "okEliminarCategoria",
+                    "Swal.fire({icon: 'success', title: 'Eliminado', text: 'Categoría eliminada correctamente.'});",
+                    true);
+            }
+            catch (Exception ex)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "errorEliminarCategoria",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+            }
+        }
+
+        protected void gvMediosPago_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        {
+            try
+            {
+                int idMedioPago = (int)gvMediosPago.DataKeys[e.RowIndex].Value;
+
+                MedioPagoNegocio negocio = new MedioPagoNegocio();
+                negocio.EliminarMedioPago(idMedioPago);
+
+                // Recargar la grilla
+                CargarMediosPago();
+
+                // Notificar con SweetAlert2
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "okEliminarMedio",
+                    "Swal.fire({icon: 'success', title: 'Eliminado', text: 'Medio de pago eliminado correctamente.'});",
+                    true);
+            }
+            catch (Exception ex)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "errorEliminarMedio",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+            }
+        }
         protected void gvMediosPago_RowEditing(object sender, GridViewEditEventArgs e)
         {
             gvMediosPago.EditIndex = e.NewEditIndex;
@@ -110,13 +157,111 @@ namespace TPFinalIntegrador
                     negocio.ModificarMedioPago(medio);
                     gvMediosPago.EditIndex = -1;
                     CargarMediosPago();
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "okMedioPago", "alert('Medio de pago modificado correctamente.');", true);
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "okMedioPago",
+                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Medio de pago modificado correctamente.'});", true);
                 }
                 catch (Exception ex)
                 {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "errorMedioPago", $"alert('{ex.Message.Replace("'", "\\'")}');", true);
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "errorModificarMedio",
+                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
                 }
             }
+        }
+
+        // --- NUEVOS HANDLERS para los modales ---
+        protected void btnGuardarCategoria_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(txtNombreCategoria.Text))
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "ingresaNombre", "Swal.fire({icon: 'error', title: 'Error', text: 'Ingresá un nombre para la categoría.'});", true);
+                    return;
+                }
+
+                Usuario usuarioLogueado = (Usuario)Session["usuario"];
+                Categoria nueva = new Categoria
+                {
+                    Nombre = txtNombreCategoria.Text.Trim(),
+                    Usuario = usuarioLogueado,
+                    Tipo = (TipoCategoria)int.Parse(ddlTipoCategoria.SelectedValue),
+                    Estado = true
+                };
+
+                CategoriaNegocio negocio = new CategoriaNegocio();
+                negocio.AgregarCategoria(nueva);
+
+                LimpiarModalCategoria();
+                CargarCategorias();
+                CargarMediosPago(); // por si hay dependencia visual
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "categoriaCreada", "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Categoría creada correctamente.'});", true);
+            }
+            catch (Exception ex)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "errorCategoria", $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+            }
+        }
+
+        protected void btnGuardarMedioPago_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ddlTipoMedioPago.SelectedValue == "0" || string.IsNullOrWhiteSpace(txtDescripcionMedioPago.Text))
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "errorMedioCampos", "Swal.fire({icon: 'error', title: 'Error', text: 'Completá los campos obligatorios.'});", true);
+                    return;
+                }
+
+                TipoPago tipo = (TipoPago)int.Parse(ddlTipoMedioPago.SelectedValue);
+                MedioPago medio = new MedioPago
+                {
+                    Tipo = tipo,
+                    Descripcion = txtDescripcionMedioPago.Text.Trim(),
+                    Usuario = (Usuario)Session["usuario"],
+                    Estado = true
+                };
+
+                if (tipo == TipoPago.Credito)
+                {
+                    if (string.IsNullOrWhiteSpace(txtDiaCierre.Text) || string.IsNullOrWhiteSpace(txtDiaVencimiento.Text))
+                    {
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "errorTarjeta", "Swal.fire({icon: 'error', title: 'Error', text: 'Para tarjeta de crédito debés completar día de cierre y vencimiento.'});", true);
+                        return;
+                    }
+                    medio.DiaCierre = int.Parse(txtDiaCierre.Text);
+                    medio.DiaVencimiento = int.Parse(txtDiaVencimiento.Text);
+                }
+
+                MedioPagoNegocio negocio = new MedioPagoNegocio();
+                negocio.AgregarMedioPago(medio);
+
+                LimpiarModalMedioPago();
+                CargarMediosPago();
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "medioCreado", "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Medio de pago guardado correctamente.'});", true);
+            }
+            catch (Exception ex)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "errorMedio", $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+            }
+        }
+
+        // Reutilizo las mismas funciones de limpieza que definimos en JS, pero en servidor también dejo helpers si los necesitas
+        protected void LimpiarModalCategoria()
+        {
+            txtNombreCategoria.Text = "";
+            ddlTipoCategoria.SelectedIndex = 0;
+            lblMensajeCategoria.Text = "";
+            lblMensajeCategoria.CssClass = "";
+        }
+
+        protected void LimpiarModalMedioPago()
+        {
+            ddlTipoMedioPago.SelectedIndex = 0;
+            txtDescripcionMedioPago.Text = "";
+            txtDiaCierre.Text = "";
+            txtDiaVencimiento.Text = "";
+            lblMensajeMedioPago.Text = "";
+            lblMensajeMedioPago.CssClass = "";
         }
     }
 }
