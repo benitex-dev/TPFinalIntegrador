@@ -26,6 +26,16 @@
                   <label class="text-muted">Monto por Cuota</label>
                   <p class="fw-bold"><asp:Label ID="lblMontoCuota" runat="server" /></p>
               </div>
+              <div class="col-md-2">
+                  <label class="text-muted">Pagado</label>
+                  <p class="fw-bold text-success">
+                      <asp:Label ID="lblMontoPagado" runat="server" /></p>
+              </div>
+              <div class="col-md-2">
+                  <label class="text-muted">Saldo Pendiente</label>
+                  <p class="fw-bold text-danger">
+                      <asp:Label ID="lblMontoPendiente" runat="server" /></p>
+              </div>
           </div>
       </div>
   </div>
