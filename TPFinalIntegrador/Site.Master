@@ -81,130 +81,110 @@
             </Scripts>
         </asp:ScriptManager>
 
-        <nav class="navbar navbar-expand-lg border-bottom sticky-top bg-body-tertiary">
-            <div class="container">
-                <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="Default.aspx">
-                    <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
-                    UTN TPIntegrador Final
-                </a>
-                <button class="navbar-toggler" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <div id="divMenuPrincipal" runat="server" class="mx-auto" visible="false">
-                        <ul class="navbar-nav">
-                            <li class="nav-item">
-                                <a class="nav-link" href="Inicio.aspx">Inicio</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="Ahorros.aspx">Ahorros</a>
-                            </li>
-                             <li class="nav-item">
-                                <a class="nav-link" href="Presupuesto.aspx">Presupuesto</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="Deudores.aspx">Deudores</a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle px-3" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Hogar</a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarCategorias">
-                                    <li class="nav-item">
-                                        <a class="dropdown-item" href="CrearHogar.aspx">Crear Hogar</a>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li>
-                                        <h6 class="dropdown-header px-3 text-muted">Cambiar de vista:</h6>
-                                    </li>
-                                    <li>
-                                        <asp:LinkButton ID="btnVistaPersonal" runat="server" CssClass="dropdown-item fw-semibold" OnClick="btnVistaPersonal_Click">
-                        <i class="bi bi-wallet2 me-2"></i>Billetera Personal
-                                        </asp:LinkButton>
-                                    </li>
-                                    <asp:Repeater ID="rptHogares" runat="server" OnItemCommand="rptHogares_ItemCommand" OnItemDataBound="rptHogares_ItemDataBound">
-                                        <ItemTemplate>
-                                            <li>
-                                                <asp:LinkButton ID="btnHogar" runat="server" CssClass="dropdown-item"
-                                                    CommandName="SeleccionarHogar"
-                                                    CommandArgument='<%# Eval("IdHogar") %>'>
-                                <i class="bi bi-house me-2"></i><%# Eval("Nombre") %>
-                                                </asp:LinkButton>
-                                            </li>
-                                        </ItemTemplate>
-                                    </asp:Repeater>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle px-3" href="#" id="navbarCategorias" role="button" data-bs-toggle="dropdown" aria-expanded="false">Categorías
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarCategorias">
-                                    <li>
-                                        <a id="lnkAgregarCategoria" runat="server" class="dropdown-item" href="Inicio.aspx?modal=categoria" data-bs-toggle="modal" data-bs-target="#modalCategoria">
-                                            Agregar categoría
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="Personalizaciones.aspx">Ver
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle px-3" href="Inicio.aspx?modal=mediopago" id="navbarMediosPago" role="button" data-bs-toggle="dropdown" aria-expanded="false">Medios de pago
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarMediosPago">
-                                    <li>
-                                        <a id="lnkAgregarMedio" runat="server" class="dropdown-item" href="Inicio.aspx?modal=mediopago" data-bs-toggle="modal" data-bs-target="#modalMedioPago">
-                                            Agregar medio de pago
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="Personalizaciones.aspx">Ver
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="dropdown" id="divSesionIniciada" runat="Server" visible="false">
-                        <button id="btnSesionIniciada" runat="server" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Mi Cuenta
- 
-                        </button>
-
-                        <asp:Image ID="imgNavbar"
-                            runat="server"
-                            CssClass="rounded-circle"
-                            Style="width: 40px; height: 40px; object-fit: cover;" />
-
-                        <ul class="dropdown-menu">
-                            <li>
-                                <asp:LinkButton ID="btnPerfil" runat="server" CssClass="dropdown-item" OnClick="btnPerfil_Click">
-                                    Mi Perfil
-                                </asp:LinkButton>
-                            </li>
-                            <li>
-                                <asp:LinkButton ID="btnConfiguracion" runat="server" CssClass="dropdown-item">
-                                    Configuración
-                                </asp:LinkButton>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <asp:LinkButton ID="btnCerrarSesion" runat="server" CssClass="dropdown-item text-danger" OnClick="btnCerrarSesion_Click">
-                                    Cerrar Sesión
-                                </asp:LinkButton>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="d-flex align-items-center gap-2 ms-auto" id="divInvitado" runat="server">
-                        <a class="btn btn-link text-decoration-none fw-semibold" href="Login.aspx">Iniciar Sesión</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
+        <nav class="navbar navbar-expand-lg border-bottom sticky-top bg-white shadow-sm">
+      <div class="container">
+          <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="Default.aspx">
+ <img src="/Imagenes/logo.png" alt="GastApp" style="height: 36px; width: auto; border-radius: 50%;" />              GastApp
+          </a>
+          <button class="navbar-toggler" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+              <div id="divMenuPrincipal" runat="server" class="mx-auto" visible="false">
+                  <ul class="navbar-nav">
+                      <li class="nav-item">
+                          <a class="nav-link" href="Inicio.aspx">Inicio</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" href="Ahorros.aspx">Ahorros</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" href="Presupuesto.aspx">Presupuesto</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" href="Deudores.aspx">Dinero prestado</a>
+                      </li>
+                      <li class="nav-item dropdown">
+                          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Hogar</a>
+                          <ul class="dropdown-menu">
+                              <li><a class="dropdown-item" href="CrearHogar.aspx">Crear Hogar</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><h6 class="dropdown-header text-muted">Cambiar de vista:</h6></li>
+                              <li>
+                                  <asp:LinkButton ID="btnVistaPersonal" runat="server" CssClass="dropdown-item" OnClick="btnVistaPersonal_Click">
+                                      <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">wallet</span> Billetera
+   Personal
+                                  </asp:LinkButton>
+                              </li>
+                              <asp:Repeater ID="rptHogares" runat="server" OnItemCommand="rptHogares_ItemCommand"
+  OnItemDataBound="rptHogares_ItemDataBound">
+                                  <ItemTemplate>
+                                      <li>
+                                          <asp:LinkButton ID="btnHogar" runat="server" CssClass="dropdown-item"
+                                              CommandName="SeleccionarHogar"
+                                              CommandArgument='<%# Eval("IdHogar") %>'>
+                                              <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">home</span> <%#
+   Eval("Nombre") %>
+                                          </asp:LinkButton>
+                                      </li>
+                                  </ItemTemplate>
+                              </asp:Repeater>
+                          </ul>
+                      </li>
+                      <li class="nav-item dropdown">
+                          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Configuración</a>
+                          <ul class="dropdown-menu">
+                              <li><h6 class="dropdown-header text-muted">Categorías</h6></li>
+                              <li>
+                                  <a id="lnkAgregarCategoria" runat="server" class="dropdown-item" href="Inicio.aspx?modal=categoria"
+  data-bs-toggle="modal" data-bs-target="#modalCategoria">
+                                      Agregar categoría
+                                  </a>
+                              </li>
+                              <li><a class="dropdown-item" href="Personalizaciones.aspx">Ver categorías</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><h6 class="dropdown-header text-muted">Medios de pago</h6></li>
+                              <li>
+                                  <a id="lnkAgregarMedio" runat="server" class="dropdown-item" href="Inicio.aspx?modal=mediopago"
+  data-bs-toggle="modal" data-bs-target="#modalMedioPago">
+                                      Agregar medio de pago
+                                  </a>
+                              </li>
+                              <li><a class="dropdown-item" href="Personalizaciones.aspx">Ver medios de pago</a></li>
+                          </ul>
+                      </li>
+                  </ul>
+              </div>
+              <div class="dropdown ms-auto" id="divSesionIniciada" runat="Server" visible="false">
+                  <button id="btnSesionIniciada" runat="server" class="btn btn-light border rounded-pill d-flex align-items-center gap-2 px-3"
+  type="button" data-bs-toggle="dropdown">
+                      <asp:Image ID="imgNavbar" runat="server" CssClass="rounded-circle" Style="width:32px; height:32px; object-fit:cover;" />
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                      <li>
+                          <asp:LinkButton ID="btnPerfil" runat="server" CssClass="dropdown-item" OnClick="btnPerfil_Click">
+                              <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">person</span> Mi Perfil
+                          </asp:LinkButton>
+                      </li>
+                      <li>
+                          <asp:LinkButton ID="btnConfiguracion" runat="server" CssClass="dropdown-item">
+                              <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">settings</span> Configuración
+                          </asp:LinkButton>
+                      </li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li>
+                          <asp:LinkButton ID="btnCerrarSesion" runat="server" CssClass="dropdown-item text-danger" OnClick="btnCerrarSesion_Click">
+                              <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">logout</span> Cerrar Sesión
+                          </asp:LinkButton>
+                      </li>
+                  </ul>
+              </div>
+              <div class="d-flex align-items-center gap-2 ms-auto" id="divInvitado" runat="server">
+                  <a class="btn btn-link text-decoration-none fw-semibold" href="Login.aspx">Iniciar Sesión</a>
+              </div>
+          </div>
+      </div>
+  </nav>
         <div class="container-fluid px-4 px-xl-5 body-content">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
