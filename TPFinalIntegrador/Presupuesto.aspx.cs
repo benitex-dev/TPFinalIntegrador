@@ -49,12 +49,20 @@ namespace TPFinalIntegrador
 
         private void CargarPresupuesto()
         {
-            
+
             Usuario usuario = (Usuario)Session["usuario"];
             PresupuestoCategoriaNegocio negocio = new PresupuestoCategoriaNegocio();
 
-            gvPresupuesto.DataSource = negocio.ListarPorUsuarioYMes(usuario.IdUsuario, MesSeleccionado, AnioSeleccionado);
-            gvPresupuesto.DataBind();
+            var lista = negocio.ListarPorUsuarioYMes(usuario.IdUsuario, MesSeleccionado, AnioSeleccionado);
+
+            var conPresupuesto = lista.Where(p => p.MontoPresupuestado > 0).ToList();
+
+            pnlSinPresupuestos.Visible = conPresupuesto.Count == 0;
+            rptPresupuesto.DataSource = conPresupuesto;
+            rptPresupuesto.DataBind();
+
+            rptConfigurar.DataSource = lista;
+            rptConfigurar.DataBind();
 
             lblMesActual.Text = new DateTime(AnioSeleccionado, MesSeleccionado, 1)
                 .ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-AR"));
@@ -72,17 +80,131 @@ namespace TPFinalIntegrador
             if (MesSeleccionado > 12) { MesSeleccionado = 1; AnioSeleccionado++; }
             CargarPresupuesto();
         }
-        protected void gvPresupuesto_RowCommand(object sender, GridViewCommandEventArgs e)
+        //protected void gvPresupuesto_RowCommand(object sender, GridViewCommandEventArgs e)
+        //{
+        //    if (e.CommandName != "GuardarPresupuesto") return;
+
+        //    try
+        //    {
+        //        int index = int.Parse(e.CommandArgument.ToString());
+        //        GridViewRow fila = gvPresupuesto.Rows[index];
+
+        //        TextBox txtMonto = (TextBox)fila.FindControl("txtPresupuesto");
+        //        HiddenField hfId = (HiddenField)fila.FindControl("hfIdCategoria");
+
+        //        if (string.IsNullOrWhiteSpace(txtMonto.Text))
+        //        {
+        //            ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
+        //                "Swal.fire({icon: 'error', title: 'Error', text: 'Ingresá un monto.'});", true);
+        //            return;
+        //        }
+
+        //        decimal monto = decimal.Parse(txtMonto.Text.Trim(), System.Globalization.CultureInfo.InvariantCulture);
+
+        //        if (monto <= 0)
+        //        {
+        //            ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
+        //                "Swal.fire({icon: 'error', title: 'Error', text: 'El monto debe ser mayor a cero.'});", true);
+        //            return;
+        //        }
+
+        //        Usuario usuario = (Usuario)Session["usuario"];
+
+        //        PresupuestoCategoria presupuesto = new PresupuestoCategoria();
+        //        presupuesto.Categoria = new Categoria { IdCategoria = int.Parse(hfId.Value) };
+        //        presupuesto.Usuario = usuario;
+        //        presupuesto.Mes = MesSeleccionado;
+        //        presupuesto.Anio = AnioSeleccionado;
+        //        presupuesto.MontoPresupuestado = monto;
+
+        //        PresupuestoCategoriaNegocio negocio = new PresupuestoCategoriaNegocio();
+        //        negocio.Guardar(presupuesto);
+
+        //        CargarPresupuesto();
+
+        //        ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
+        //            "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Presupuesto guardado.'});", true);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
+        //            $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+        //    }
+        //}
+        protected string GenerarBarra(object montoPresupuestado, object gastoReal)
         {
-            if (e.CommandName != "GuardarPresupuesto") return;
+            decimal presupuesto = (decimal)montoPresupuestado;
+            decimal gasto = (decimal)gastoReal;
+
+            if (presupuesto <= 0)
+                return "<span class='text-muted'>Sin presupuesto</span>";
+
+            int porcentaje = (int)Math.Min((gasto / presupuesto) * 100, 100);
+            string color = porcentaje >= 100 ? "bg-danger" : porcentaje >= 80 ? "bg-warning" : "bg-success";
+            string alerta = gasto > presupuesto ? " <span class='text-danger'>⚠️ Excedido</span>" : "";
+
+            return $@"<div class='progress rounded-pill mb-1' style='height:7px'>
+                <div class='progress-bar {color}' style='width:{porcentaje}%'></div>
+            </div>
+            <div class='text-end' style='font-size:11px'>{porcentaje}% {alerta}</div>";
+        }
+
+        //protected void rptPresupuesto_ItemCommand(object source, RepeaterCommandEventArgs e)
+        //{
+        //    if (e.CommandName != "Guardar") return;
+
+        //    try
+        //    {
+        //        TextBox txtMonto = (TextBox)e.Item.FindControl("txtPresupuesto");
+        //        HiddenField hfId = (HiddenField)e.Item.FindControl("hfIdCategoria");
+
+        //        if (string.IsNullOrWhiteSpace(txtMonto.Text))
+        //        {
+        //            ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
+        //                "Swal.fire({icon: 'error', title: 'Error', text: 'Ingresá un monto.'});", true);
+        //            return;
+        //        }
+
+        //        decimal monto = decimal.Parse(txtMonto.Text.Trim(), System.Globalization.CultureInfo.InvariantCulture);
+
+        //        if (monto <= 0)
+        //        {
+        //            ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
+        //                "Swal.fire({icon: 'error', title: 'Error', text: 'El monto debe ser mayor a cero.'});", true);
+        //            return;
+        //        }
+
+        //        Usuario usuario = (Usuario)Session["usuario"];
+
+        //        PresupuestoCategoria presupuesto = new PresupuestoCategoria();
+        //        presupuesto.Categoria = new Categoria { IdCategoria = int.Parse(hfId.Value) };
+        //        presupuesto.Usuario = usuario;
+        //        presupuesto.Mes = MesSeleccionado;
+        //        presupuesto.Anio = AnioSeleccionado;
+        //        presupuesto.MontoPresupuestado = monto;
+
+        //        PresupuestoCategoriaNegocio negocio = new PresupuestoCategoriaNegocio();
+        //        negocio.Guardar(presupuesto);
+
+        //        CargarPresupuesto();
+        //        ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
+        //            "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Presupuesto guardado.'});", true);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
+        //            $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+        //    }
+        //}
+
+        protected void rptConfigurar_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            if (e.CommandName != "Guardar") return;
 
             try
             {
-                int index = int.Parse(e.CommandArgument.ToString());
-                GridViewRow fila = gvPresupuesto.Rows[index];
-
-                TextBox txtMonto = (TextBox)fila.FindControl("txtPresupuesto");
-                HiddenField hfId = (HiddenField)fila.FindControl("hfIdCategoria");
+                TextBox txtMonto = (TextBox)e.Item.FindControl("txtPresupuesto");
+                HiddenField hfId = (HiddenField)e.Item.FindControl("hfIdCategoria");
 
                 if (string.IsNullOrWhiteSpace(txtMonto.Text))
                 {
@@ -113,7 +235,6 @@ namespace TPFinalIntegrador
                 negocio.Guardar(presupuesto);
 
                 CargarPresupuesto();
-
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
                     "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Presupuesto guardado.'});", true);
             }
@@ -123,23 +244,5 @@ namespace TPFinalIntegrador
                     $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
             }
         }
-        protected string GenerarBarra(object montoPresupuestado, object gastoReal)
-        {
-            decimal presupuesto = (decimal)montoPresupuestado;
-            decimal gasto = (decimal)gastoReal;
-
-            if (presupuesto <= 0)
-                return "<span class='text-muted'>Sin presupuesto</span>";
-
-            int porcentaje = (int)Math.Min((gasto / presupuesto) * 100, 100);
-            string color = porcentaje >= 100 ? "bg-danger" : porcentaje >= 80 ? "bg-warning" : "bg-success";
-            string alerta = gasto > presupuesto ? " <span class='text-danger'>⚠️ Excedido</span>" : "";
-
-            return $@"
-                  <div class='progress' style='min-width:120px'>
-                      <div class='progress-bar {color}' style='width:{porcentaje}%'>{porcentaje}%</div>
-                  </div>{alerta}";
-        }
-
     }
 }
