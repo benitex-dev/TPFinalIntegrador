@@ -63,6 +63,9 @@ namespace TPFinalIntegrador
                     Hogar hogarSeleccionado = (Hogar)Session["HogarSeleccionado"];
                     // Lógica de Hogar...
                     pnlLinkGastosIntegrante.Visible = true;
+                    HogarUsuarioNegocio hogarUsuarioNegocio = new HogarUsuarioNegocio();
+                    rptIntegrantes.DataSource = hogarUsuarioNegocio.ListarPorHogar((int)Session["IdHogarActual"]);
+                    rptIntegrantes.DataBind();
                 }
                 else
                 {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace negocio
 {
-    class HogarUsuarioNegocio
+    public class HogarUsuarioNegocio
     {
         //ALTA
         public void AgregarHogarUsuario(HogarUsuario nuevo)

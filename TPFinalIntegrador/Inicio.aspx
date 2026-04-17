@@ -302,7 +302,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- Right Column: Insights -->
+                <!-- COLUMNA DERECHA: Insights -->
                 <div class="col-lg-4 d-flex flex-column gap-4">
                     <!-- Category Analysis -->
                     <asp:UpdatePanel ID="upGraficoTorta" runat="server" UpdateMode="Conditional">
@@ -406,6 +406,7 @@
                           <a href="Presupuesto.aspx" class="btn btn-sm btn-outline-primary rounded-pill w-100">Ver
   presupuesto</a>
                       </div>
+                    <%--GASTOS POR INTEGRANTE DEL HOGAR--%>
                     <asp:Panel ID="pnlLinkGastosIntegrante" runat="server" Visible="false">
                         <div class="card border-0 shadow-sm rounded-4 p-4">
                             <div class="d-flex justify-content-between align-items-center mb-2">
@@ -415,8 +416,25 @@
                                 </div>
                                 <span class="material-symbols-outlined text-primary">group</span>
                             </div>
-                            <p class="text-muted small mb-3">Mirá cuánto gastó cada integrante del hogar por categoría.</p>
-                            <a href="GastoIntegranteHogar.aspx" class="btn btn-sm btn-outline-primary rounded-pill w-100">Ver gastos</a>
+                            <p class="text-muted small mb-2">Mirá cuánto gastó cada integrante del hogar por categoría.</p>
+
+                            <asp:Repeater ID="rptIntegrantes" runat="server">
+                                <ItemTemplate>
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <span class="material-symbols-outlined text-muted" style="font-size: 16px;">person</span>
+                                        <span class="small"><%# Eval("Usuario.Nombre") %> <%# Eval("Usuario.Apellido") %></span>
+                                    </div>
+                                </ItemTemplate>
+                            </asp:Repeater>
+
+                            <div class="d-flex gap-2 mt-3">
+      <a href="GastoIntegranteHogar.aspx" class="btn btn-sm btn-outline-primary rounded-pill w-50">Ver gastos</a>
+      <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill w-50"
+              data-bs-toggle="modal" data-bs-target="#modalIntegrante"
+              onclick="limpiarModalAgregarIntegrante()">
+          + Agregar integrante
+      </button>
+  </div>
                         </div>
 
                     </asp:Panel>
