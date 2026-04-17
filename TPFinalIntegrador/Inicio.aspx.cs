@@ -82,26 +82,29 @@ namespace TPFinalIntegrador
                 }
 
                 // Carga de combos y tablas
-                CargarCategoriasIngreso();
-                CargarResumenIngresos();
-                CargarResumenGastos();
+                CargarCategoriasIngreso();               
                 CargarCategoriasGasto();
-                CargarMediosPago();
+                CargarMediosPago();            
                 CargarMovimientosDelMesRecientes();
-                CargarSaldoMes();
                 cargarMetasAhorro();
                 CargarResumenPresupuesto();
+                cargarDashboardInfo();
                 //pnlReportes.Visible = false;
-                modalIngresoLabel.InnerText = "Nuevo Ingreso";
-                btnEditarIngreso.Visible = false;
-                btnGuardarIngreso.Visible = true;
             }
+        }
+
+        protected void cargarDashboardInfo()
+        {
+            CargarSaldoMes();
+            CargarResumenIngresos();
+            CargarResumenGastos();
         }
 
         protected void btnGuardarCategoria_Click(object sender, EventArgs e)
         {
             try
             {
+                
                 if (string.IsNullOrWhiteSpace(txtNombreCategoria.Text))
                 {
                     ScriptManager.RegisterStartupScript(
@@ -255,7 +258,16 @@ namespace TPFinalIntegrador
                 ingreso.Estado = true;
 
                 IngresoNegocio negocio = new IngresoNegocio();
-                negocio.AgregarIngreso(ingreso);
+
+                if (!string.IsNullOrEmpty(hfIdIngresoEdicion.Value))
+                {
+                    ingreso.IdIngreso = int.Parse(hfIdIngresoEdicion.Value);
+                    negocio.ModificarIngreso(ingreso);
+                }
+                else
+                {
+                    negocio.AgregarIngreso(ingreso);
+                }
 
                 /*--------------ENVIO DE MAIL----------------------*/
                 string rutaPlantillas = Server.MapPath("~/Template");
@@ -292,8 +304,7 @@ namespace TPFinalIntegrador
                     "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Ingreso guardado correctamente.'});",
                     true);
 
-                CargarResumenIngresos(); //refresca los ingresos luego de agregar uno nuevo
-                CargarSaldoMes(); //refresca el saldo al agregar un ingreso nuevo
+                cargarDashboardInfo();
 
 
                 CargarMovimientosDelMesRecientes();
@@ -420,9 +431,7 @@ namespace TPFinalIntegrador
             }
 
             CargarMovimientosDelMes();
-            CargarResumenIngresos();
-            CargarResumenGastos();
-            CargarSaldoMes();
+            cargarDashboardInfo();
         }
 
         protected void btnMesSiguiente_Click(object sender, EventArgs e)
@@ -436,9 +445,7 @@ namespace TPFinalIntegrador
             }
 
             CargarMovimientosDelMes();
-            CargarResumenIngresos();
-            CargarResumenGastos();
-            CargarSaldoMes();
+            cargarDashboardInfo();
         }
 
         protected void CargarCategoriasGasto()
@@ -649,79 +656,88 @@ namespace TPFinalIntegrador
                 GastoNegocio negocio = new GastoNegocio();
 
                 // Obtener el ID
-                int idGasto = negocio.AgregarGasto(gasto);
+                if (!string.IsNullOrEmpty(hfIdGastoEdicion.Value))
 
-
-                // GENERAR CUOTAS
-                if (gasto.EsEnCuotas)
                 {
-                    CuotaNegocio cuotaNegocio = new CuotaNegocio();
-
-                    for (int i = 1; i <= gasto.CantidadCuotas; i++)
-                    {
-                        Cuota cuota = new Cuota();
-                        cuota.Gasto = new Gasto { IdGasto = idGasto };
-                        cuota.NumeroCuota = i;
-                        cuota.TotalCuotas = gasto.CantidadCuotas;
-                        cuota.Monto = gasto.MontoCuota;
-                        cuota.Vencimiento = gasto.Fecha.AddMonths(i - 1);
-                        cuota.Estado = EstadoCuota.Pendiente;
-
-                        cuotaNegocio.AgregarCuota(cuota);
-
-                    }
-                    /*--------------ENVIO DE MAIL----------------------*/
-                    string rutaPlantillas = Server.MapPath("~/Template");
-
-                    var reemplazos = new Dictionary<string, string>()
-                    {
-                        { "NOMBRE_USUARIO", usuarioLogueado.Nombre },
-                        { "DESCRIPCION", gasto.Descripcion },
-                        { "MONTO_CUOTA", gasto.MontoCuota.ToString("N2") },
-                        { "CANTIDAD_CUOTAS", gasto.CantidadCuotas.ToString() },
-                        { "MONTO_TOTAL", gasto.MontoPesos.ToString("N2") },
-                        { "FECHA", gasto.Fecha.ToString("dd/MM/yyyy") }
-                    };
-
-                    EmailService servicio = new EmailService();
-
-                    servicio.armarCorreo(
-                        usuarioLogueado.Email,
-                        "Nuevo gasto en cuotas registrado",
-                        reemplazos,
-                        TipoCorreo.GastoEnCuotas,
-                        rutaPlantillas
-                    );
-
-                    servicio.enviarCorreo();
-                    /*---------------------------------------------------------------*/
+                    gasto.IdGasto = int.Parse(hfIdGastoEdicion.Value);
+                    negocio.ModificarGasto(gasto);
                 }
                 else
                 {
-                    /*--------------ENVIO DE MAIL----------------------*/
-                    string rutaPlantillas = Server.MapPath("~/Template");
-
-                    var reemplazos = new Dictionary<string, string>()
+                    int idGasto = negocio.AgregarGasto(gasto);
+                    // GENERAR CUOTAS
+                    if (gasto.EsEnCuotas)
                     {
-                        { "NOMBRE_USUARIO", usuarioLogueado.Nombre },
-                        { "DESCRIPCION", gasto.Descripcion },
-                        { "MONTO", gasto.MontoPesos.ToString("N2") },
-                        { "FECHA", gasto.Fecha.ToString("dd/MM/yyyy") }
-                    };
+                        CuotaNegocio cuotaNegocio = new CuotaNegocio();
 
-                    EmailService servicio = new EmailService();
+                        for (int i = 1; i <= gasto.CantidadCuotas; i++)
+                        {
+                            Cuota cuota = new Cuota();
+                            cuota.Gasto = new Gasto { IdGasto = idGasto };
+                            cuota.NumeroCuota = i;
+                            cuota.TotalCuotas = gasto.CantidadCuotas;
+                            cuota.Monto = gasto.MontoCuota;
+                            cuota.Vencimiento = gasto.Fecha.AddMonths(i - 1);
+                            cuota.Estado = EstadoCuota.Pendiente;
 
-                    servicio.armarCorreo(
-                        usuarioLogueado.Email,
-                        "Nuevo gasto registrado",
-                        reemplazos,
-                        TipoCorreo.RegistroGasto,
-                        rutaPlantillas
-                    );
+                            cuotaNegocio.AgregarCuota(cuota);
 
-                    servicio.enviarCorreo();
-                    /*---------------------------------------------------------------*/
+                        }
+                        /*--------------ENVIO DE MAIL----------------------*/
+                        string rutaPlantillas = Server.MapPath("~/Template");
+
+                        var reemplazos = new Dictionary<string, string>()
+                        {
+                            { "NOMBRE_USUARIO", usuarioLogueado.Nombre },
+                            { "DESCRIPCION", gasto.Descripcion },
+                            { "MONTO_CUOTA", gasto.MontoCuota.ToString("N2") },
+                            { "CANTIDAD_CUOTAS", gasto.CantidadCuotas.ToString() },
+                            { "MONTO_TOTAL", gasto.MontoPesos.ToString("N2") },
+                            { "FECHA", gasto.Fecha.ToString("dd/MM/yyyy") }
+                        };
+
+                        EmailService servicio = new EmailService();
+
+                        servicio.armarCorreo(
+                            usuarioLogueado.Email,
+                            "Nuevo gasto en cuotas registrado",
+                            reemplazos,
+                            TipoCorreo.GastoEnCuotas,
+                            rutaPlantillas
+                        );
+
+                        servicio.enviarCorreo();
+                        /*---------------------------------------------------------------*/
+                    }
+                    else
+                    {
+                        /*--------------ENVIO DE MAIL----------------------*/
+                        string rutaPlantillas = Server.MapPath("~/Template");
+
+                        var reemplazos = new Dictionary<string, string>()
+                        {
+                            { "NOMBRE_USUARIO", usuarioLogueado.Nombre },
+                            { "DESCRIPCION", gasto.Descripcion },
+                            { "MONTO", gasto.MontoPesos.ToString("N2") },
+                            { "FECHA", gasto.Fecha.ToString("dd/MM/yyyy") }
+                        };
+
+                        EmailService servicio = new EmailService();
+
+                        servicio.armarCorreo(
+                            usuarioLogueado.Email,
+                            "Nuevo gasto registrado",
+                            reemplazos,
+                            TipoCorreo.RegistroGasto,
+                            rutaPlantillas
+                        );
+
+                        servicio.enviarCorreo();
+                        /*---------------------------------------------------------------*/
+                    }
                 }
+
+
 
                 // LIMPIAR CAMPOS
                 txtDescripcionGasto.Text = "";
@@ -743,8 +759,7 @@ namespace TPFinalIntegrador
                 List<GastoResumen> gastosFrescos = negocioResumen.ObtenerGastosDelMes(usuarioLogueado.IdUsuario);
                 CargarGraficoDeTorta(gastosFrescos);
                 upGraficoTorta.Update();
-                CargarResumenGastos();
-                CargarSaldoMes();
+                cargarDashboardInfo();
                 CargarMovimientosDelMesRecientes();
 
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "okGasto",
@@ -1343,8 +1358,6 @@ namespace TPFinalIntegrador
                 {
                     if (tipoMovimiento == "Ingreso")
                     {
-                        btnEditarIngreso.Visible = true;
-                        btnGuardarIngreso.Visible = false;
 
                         IngresoNegocio negocioIngreso = new IngresoNegocio();
                         Ingreso objIngreso = negocioIngreso.ListarPorId(idReal);
@@ -1369,13 +1382,39 @@ namespace TPFinalIntegrador
                     }
                     else if (tipoMovimiento == "Gasto")
                     {
-                       
+                        
+                        GastoNegocio negocioGasto = new GastoNegocio();
+                        Gasto objGasto = negocioGasto.ListarPorId(idReal);
+
+                        modalGastoLabel.InnerText = "Editar Gasto";
+                        hfIdGastoEdicion.Value = objGasto.IdGasto.ToString();
+                        txtDescripcionGasto.Text = objGasto.Descripcion;
+                        txtFechaGasto.Text = objGasto.Fecha.ToString("yyyy-MM-dd");
+                        ddlCategoriaGasto.SelectedValue = objGasto.Categoria.IdCategoria.ToString();
+                        ddlMedioPagoGasto.SelectedValue = objGasto.MedioDePago.IdMedioPago.ToString();
+                        if (objGasto.EsEnCuotas)
+                        {
+                            rbCuotas.Checked = true;
+                            rbUnPago.Checked = false;
+                            txtMontoCuotaGasto.Text = objGasto.MontoCuota.ToString("0.00", CultureInfo.InvariantCulture);
+                            txtCantidadCuotasGasto.Text = objGasto.CantidadCuotas.ToString();
+                        }
+                        else if (objGasto.MontoUSD != 0) 
+                        {
+;                           txtMontoUSDGasto.Text = objGasto.MontoUSD.ToString("0.00", CultureInfo.InvariantCulture);
+                            txtCotizacionGasto.Text = objGasto.Cotizacion.ToString("0.00", CultureInfo.InvariantCulture);
+                        }
+
+                        txtMontoPesosGasto.Text = objGasto.MontoPesos.ToString("0.00", CultureInfo.InvariantCulture);
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "AbrirModalGasto",
+                            "window.addEventListener('load', function() { " +
+                            "   var myModal = new bootstrap.Modal(document.getElementById('modalGasto')); " +
+                            "   myModal.show(); " +
+                            "});", true);
                     }
                 }
                 CargarMovimientosDelMesRecientes();
-                CargarResumenGastos();
-                CargarSaldoMes();
-                CargarResumenIngresos();
+                cargarDashboardInfo();
             }
             catch (Exception ex)
             {
@@ -1383,114 +1422,6 @@ namespace TPFinalIntegrador
                 // Podés usar un ScriptManager acá para tirar un alert de JavaScript
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "Error",
                     $"alert('Ocurrió un error al procesar el movimiento: {ex.Message}');", true);
-            }
-        }
-
-        protected void btnEditarIngreso_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(txtDescripcionIngreso.Text) ||
-                    string.IsNullOrWhiteSpace(txtFechaIngreso.Text) ||
-                    string.IsNullOrWhiteSpace(txtMontoIngreso.Text))
-                {
-                    ScriptManager.RegisterStartupScript(
-                       this, this.GetType(),
-                       "completaCampos",
-                       "Swal.fire({icon: 'error', title: 'Error', text: 'Completá todos los campos obligatorios.'});",
-                       true);
-                    return;
-                }
-
-                if (ddlCategoriaIngreso.SelectedValue == "0")
-                {
-                    ScriptManager.RegisterStartupScript(
-                        this, this.GetType(),
-                        "mostrarModalIngreso",
-                        "Swal.fire({icon: 'error', title: 'Error', text: 'Debés seleccionar una categoría.'});",
-                        true);
-
-                    return;
-                }
-
-                Usuario usuarioLogueado = (Usuario)Session["usuario"];
-
-                // Parsear monto de ingreso usando cultura argentina (es-AR) por defecto
-                var culturaARS = new CultureInfo("es-AR");
-                decimal montoIngreso;
-                if (!TryParseDecimalFlexible(txtMontoIngreso.Text.Trim(), culturaARS, out montoIngreso))
-                {
-                    ScriptManager.RegisterStartupScript(
-                       this, this.GetType(),
-                       "completaCampos",
-                       "Swal.fire({icon: 'error', title: 'Error', text: 'Monto de ingreos inválido.'});",
-                       true);
-                    return;
-                }
-
-                Ingreso ingreso = new Ingreso();
-                ingreso.IdIngreso = int.Parse(hfIdIngresoEdicion.Value);
-                ingreso.Descripcion = txtDescripcionIngreso.Text.Trim();
-                ingreso.Fecha = DateTime.Parse(txtFechaIngreso.Text);
-                ingreso.Monto = decimal.Parse(txtMontoIngreso.Text, CultureInfo.InvariantCulture);
-
-                ingreso.Categoria = new Categoria();
-                ingreso.Categoria.IdCategoria = int.Parse(ddlCategoriaIngreso.SelectedValue);
-
-                ingreso.Usuario = usuarioLogueado;
-                ingreso.Estado = true;
-
-                IngresoNegocio negocio = new IngresoNegocio();
-                negocio.ModificarIngreso(ingreso);
-
-                /*--------------ENVIO DE MAIL----------------------*/
-                string rutaPlantillas = Server.MapPath("~/Template");
-
-                var reemplazos = new Dictionary<string, string>()
-                {
-                    { "NOMBRE_USUARIO", usuarioLogueado.Nombre },
-                    { "DESCRIPCION", ingreso.Descripcion},
-                    { "MONTO", ingreso.Monto.ToString("N2") },
-                    { "FECHA", ingreso.Fecha.ToString("dd/MM/yyyy")}
-                };
-
-                EmailService servicio = new EmailService();
-
-                servicio.armarCorreo(
-                    usuarioLogueado.Email,
-                    "Registro de ingreso modificado con éxito",
-                    reemplazos,
-                    TipoCorreo.RegistroIngreso,
-                    rutaPlantillas
-                );
-
-                servicio.enviarCorreo();
-                /*---------------------------------------------------------------*/
-
-                txtDescripcionIngreso.Text = "";
-                txtFechaIngreso.Text = "";
-                txtMontoIngreso.Text = "";
-                ddlCategoriaIngreso.SelectedIndex = 0;
-
-                ScriptManager.RegisterStartupScript(
-                    this, this.GetType(),
-                    "ingresoCreado",
-                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Ingreso guardado correctamente.'});",
-                    true);
-
-                CargarResumenIngresos(); //refresca los ingresos luego de agregar uno nuevo
-                CargarSaldoMes(); //refresca el saldo al agregar un ingreso nuevo
-
-
-                CargarMovimientosDelMesRecientes();
-            }
-            catch (Exception ex)
-            {
-                ScriptManager.RegisterStartupScript(
-                    this, this.GetType(),
-                    "error",
-                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});",
-                    true);
             }
         }
     }

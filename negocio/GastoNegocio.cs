@@ -785,6 +785,124 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+
+        public Gasto ListarPorId(int idGasto)
+        {
+            Gasto Gasto = new Gasto();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta(@"SELECT G.IdGasto, G.Fecha, G.MontoPesos, G.Descripcion, G.EsEnCuotas, G.CantidadCuotas, G.MontoCuota, G.IdCategoria, G.IdMedioPago, G.IdUsuario, G.IdHogar, G.MontoUSD, G.Cotizacion 
+                                  FROM Gasto G 
+                                  INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria 
+                                  WHERE G.IdGasto = @idGasto
+								  AND G.Estado = 1");
+
+                datos.setParametro("@idGasto", idGasto);
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+
+                    Gasto.IdGasto = idGasto;
+                    Gasto.Fecha = (DateTime)datos.Lector["Fecha"];
+                    Gasto.MontoPesos = (decimal)datos.Lector["MontoPesos"];
+                    Gasto.Descripcion = (string)datos.Lector["Descripcion"];
+                    Gasto.EsEnCuotas = (bool)datos.Lector["EsEnCuotas"];
+                    if (Gasto.EsEnCuotas)
+                    {
+                        Gasto.CantidadCuotas = (int)datos.Lector["CantidadCuotas"];
+                        Gasto.MontoCuota = (decimal)datos.Lector["MontoCuota"];
+                    }
+                    Gasto.Categoria = new Categoria();
+                    Gasto.Categoria.IdCategoria = (int)datos.Lector["IdCategoria"];
+                    Gasto.MedioDePago = new MedioPago
+                    {
+                        IdMedioPago = (int)datos.Lector["IdMedioPago"]
+                    };
+                    Gasto.Usuario = new Usuario();
+                    Gasto.Usuario.IdUsuario = Convert.ToInt32(datos.Lector["IdUsuario"]);
+
+                    Gasto.Hogar = new Hogar();
+                    if (!(datos.Lector["IdHogar"] is DBNull))
+                    {
+                        Gasto.Hogar.IdHogar = Convert.ToInt32(datos.Lector["IdHogar"]);
+                    }
+                    Gasto.MontoUSD = datos.Lector["MontoUSD"] is DBNull ? 0m : Convert.ToDecimal(datos.Lector["MontoUSD"]);
+                    Gasto.Cotizacion = datos.Lector["Cotizacion"] is DBNull ? 0m : Convert.ToDecimal(datos.Lector["Cotizacion"]);
+
+                }
+
+                return Gasto;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+
+        }
+        public void ModificarGasto(Gasto nuevo)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                if (nuevo == null)
+                    throw new Exception("El Gasto no puede ser nulo.");
+
+                if (string.IsNullOrWhiteSpace(nuevo.Descripcion))
+                    throw new Exception("La descripción del Gasto es obligatoria.");
+
+                if (nuevo.MontoPesos <= 0)
+                    throw new Exception("El monto debe ser mayor a cero.");
+
+                if (nuevo.Categoria == null || nuevo.Categoria.IdCategoria <= 0)
+                    throw new Exception("Debe seleccionar una categoría.");
+
+                if (nuevo.Usuario == null || nuevo.Usuario.IdUsuario <= 0)
+                    throw new Exception("El Gasto debe estar asociado a un usuario.");
+
+                datos.setConsulta(@"UPDATE Gasto 
+                    SET Descripcion = @descripcion, 
+                        Fecha = @fecha, 
+                        MontoPesos = @montoPesos, 
+                        IdCategoria = @idCategoria, 
+                        IdUsuario = @idUsuario, 
+                        Estado = @estado 
+                    WHERE IdGasto = @idGasto");
+
+                datos.setParametro("@idGasto", nuevo.IdGasto);
+                datos.setParametro("@descripcion", nuevo.Descripcion.Trim());
+                datos.setParametro("@fecha", nuevo.Fecha);
+                datos.setParametro("@montoPesos", nuevo.MontoPesos);
+                datos.setParametro("@idCategoria", nuevo.Categoria.IdCategoria);
+                datos.setParametro("@idUsuario", nuevo.Usuario.IdUsuario);
+                datos.setParametro("@estado", nuevo.Estado);
+                if (nuevo.Hogar != null && nuevo.Hogar.IdHogar > 0)
+                {
+                    datos.setParametro("@idHogar", nuevo.Hogar.IdHogar);
+                }
+                else
+                {
+                    datos.setParametro("@idHogar", DBNull.Value);
+                }
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }
 

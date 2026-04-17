@@ -884,7 +884,7 @@
         <div class="modal-content border-0 rounded-4 shadow">
 
             <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold" id="modalIngresoLabel" runat="server">Nuevo ingreso</h5>
+                <h5 class="modal-title fw-bold" id="modalIngresoLabel" runat="server">Ingresos</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -917,7 +917,6 @@
             <div class="modal-footer border-0 pt-0">
                 <button type="button" class="btn btn-light border rounded-3" data-bs-dismiss="modal">Cancelar</button>
                 <asp:Button ID="btnGuardarIngreso" runat="server" Text="Guardar" CssClass="btn btn-primary rounded-3 px-4" OnClick="btnGuardarIngreso_Click" />
-                <asp:Button ID="btnEditarIngreso" runat="server" Text="Editar" CssClass="btn btn-primary rounded-3 px-4" Visible="false" OnClick="btnEditarIngreso_Click" />
             </div>
 
         </div>
@@ -990,12 +989,12 @@
     <div class="modal-content border-0 rounded-4 shadow">
 
         <div class="modal-header border-0 pb-0">
-            <h5 class="modal-title fw-bold" id="modalGastoLabel">Nuevo gasto</h5>
+            <h5 class="modal-title fw-bold" id="modalGastoLabel" runat="server">Gastos</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
         <div class="modal-body pt-3">
-
+            <asp:HiddenField ID="hfIdGastoEdicion" runat="server" />
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label fw-semibold">Descripción</label>
@@ -1096,6 +1095,7 @@
                         CssClass="btn btn-primary rounded-3 px-4"
                         OnClick="btnGuardarGasto_Click" />
         </div>
+</div>
 
     </div>
 </div>

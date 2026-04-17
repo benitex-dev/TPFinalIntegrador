@@ -258,15 +258,6 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Button btnGuardarIngreso;
 
         /// <summary>
-        /// btnEditarIngreso control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnEditarIngreso;
-
-        /// <summary>
         /// ddlTipoMedioPago control.
         /// </summary>
         /// <remarks>
@@ -319,6 +310,24 @@ namespace TPFinalIntegrador
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnGuardarMedioPago;
+
+        /// <summary>
+        /// modalGastoLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl modalGastoLabel;
+
+        /// <summary>
+        /// hfIdGastoEdicion control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfIdGastoEdicion;
 
         /// <summary>
         /// txtDescripcionGasto control.
