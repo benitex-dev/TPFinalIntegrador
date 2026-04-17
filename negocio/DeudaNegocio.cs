@@ -258,16 +258,163 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
-        public List<Deuda> ListarPorUsuario(int idUsuario)
-        {
+        //public List<Deuda> ListarPorUsuario(int idUsuario)
+        //{
 
-            List<Deuda> listaFiltrada = new List<Deuda>();
+        //    List<Deuda> listaFiltrada = new List<Deuda>();
+        //    AccesoDatos datos = new AccesoDatos();
+        //    try
+        //    {
+               
+        //        datos.setConsulta("SELECT IdDeuda, IdUsuario ,NombreDeudor,EmailDeudor,Descripcion,MontoTotal,Cuotas,FechaInicio,Estado FROM DEUDA WHERE IdUsuario = @idUsuario");
+        //        datos.setParametro("@idUsuario", idUsuario);
+        //        datos.ejecutarLectura();
+
+        //        while (datos.Lector.Read())
+        //        {
+        //            Deuda deuda = new Deuda();
+        //            deuda.IdDeuda = (int)datos.Lector["IdDeuda"];
+        //            deuda.Usuario = new Usuario();
+        //            deuda.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+        //            deuda.NombreDeudor = (string)datos.Lector["NombreDeudor"];
+        //            deuda.EmailDeudor = (string)datos.Lector["EmailDeudor"];
+
+        //            deuda.MontoTotal = (decimal)datos.Lector["MontoTotal"];
+
+
+        //            if (!(datos.Lector["Cuotas"] is DBNull))
+        //            {
+        //                deuda.Cuotas = (int)datos.Lector["Cuotas"];
+
+        //            }
+        //            else
+        //            {
+        //                deuda.Cuotas = null;
+        //            }
+        //            if (!(datos.Lector["Descripcion"] is DBNull))
+        //            {
+        //                deuda.Descripcion = (string)datos.Lector["Descripcion"];
+
+        //            }
+        //            else
+        //            {
+        //                deuda.Descripcion = null;
+        //            }
+
+        //            deuda.FechaInicio = (DateTime)datos.Lector["FechaInicio"];
+        //            deuda.Estado = (EstadoDeuda)int.Parse(datos.Lector["Estado"].ToString());
+
+
+
+
+        //            listaFiltrada.Add(deuda);
+        //        }
+
+        //        return listaFiltrada;
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        throw ex;
+        //    }
+        //    finally { datos.cerrarConexion(); }
+        //}
+        //public List<Deuda> FiltrarPorEstado(int estadoDeuda,int idUsuario)
+        //{
+        //    List<Deuda> listaFiltrada = new List<Deuda>();
+        //    AccesoDatos datos = new AccesoDatos();
+        //    try
+        //    {
+        //        if (estadoDeuda == -1)
+        //        {
+        //            datos.setConsulta("SELECT IdDeuda, IdUsuario ,NombreDeudor,EmailDeudor,Descripcion,MontoTotal,Cuotas,FechaInicio,Estado FROM DEUDA WHERE IdUsuario = @idUsuario");
+
+        //        }
+        //        else
+        //        {
+        //            datos.setConsulta("SELECT IdDeuda, IdUsuario ,NombreDeudor,EmailDeudor,Descripcion,MontoTotal,Cuotas,FechaInicio,Estado FROM DEUDA WHERE Estado = @estadoDeuda AND IdUsuario = @idUsuario");
+
+        //        }
+                
+        //        datos.setParametro("@estadoDeuda", estadoDeuda);
+        //        datos.setParametro("@idUsuario", idUsuario);
+        //        datos.ejecutarLectura();
+
+        //        while (datos.Lector.Read())
+        //        {
+        //            Deuda deuda = new Deuda();
+        //            deuda.IdDeuda = (int)datos.Lector["IdDeuda"];
+        //            deuda.Usuario = new Usuario();
+        //            deuda.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];   
+        //            deuda.NombreDeudor = (string)datos.Lector["NombreDeudor"];
+        //            deuda.EmailDeudor = (string)datos.Lector["EmailDeudor"];
+                   
+        //            deuda.MontoTotal = (decimal)datos.Lector["MontoTotal"];
+
+                    
+        //            if (!(datos.Lector["Cuotas"] is DBNull))
+        //            {
+        //                deuda.Cuotas = (int)datos.Lector["Cuotas"];
+
+        //            }
+        //            else {                        
+        //                deuda.Cuotas = null;
+        //            }
+        //            if (!(datos.Lector["Descripcion"] is DBNull))
+        //            {
+        //                deuda.Descripcion = (string)datos.Lector["Descripcion"];
+
+        //            }
+        //            else
+        //            {
+        //                deuda.Descripcion = null;
+        //            }
+
+        //            deuda.FechaInicio = (DateTime)datos.Lector["FechaInicio"];
+        //            deuda.Estado = (EstadoDeuda)int.Parse(datos.Lector["Estado"].ToString());
+                  
+
+                   
+
+        //            listaFiltrada.Add(deuda);
+        //        }
+
+        //        return listaFiltrada;
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        throw ex;
+        //    }
+        //    finally {                 datos.cerrarConexion(); }
+        //}
+        public List<Deuda> ListarPorUsuario(int idUsuario, int estado = -1)
+        {
+            List<Deuda> lista = new List<Deuda>();
             AccesoDatos datos = new AccesoDatos();
+
             try
             {
-               
-                datos.setConsulta("SELECT IdDeuda, IdUsuario ,NombreDeudor,EmailDeudor,Descripcion,MontoTotal,Cuotas,FechaInicio,Estado FROM DEUDA WHERE IdUsuario = @idUsuario");
+                string consulta = @"
+              SELECT D.IdDeuda, D.IdUsuario, D.NombreDeudor, D.EmailDeudor, D.Descripcion,
+                     D.MontoTotal, D.Cuotas, D.FechaInicio, D.Estado,
+                     ISNULL(SUM(CD.Monto), 0) AS MontoPendiente
+              FROM DEUDA D
+              LEFT JOIN CUOTA_DEUDA CD ON CD.IdDeuda = D.IdDeuda AND CD.Estado = 1
+              WHERE D.IdUsuario = @idUsuario";
+
+                if (estado != -1)
+                    consulta += " AND D.Estado = @estado";
+
+                consulta += @" GROUP BY D.IdDeuda, D.IdUsuario, D.NombreDeudor, D.EmailDeudor, D.Descripcion,
+                                 D.MontoTotal, D.Cuotas, D.FechaInicio, D.Estado";
+
+                datos.setConsulta(consulta);
                 datos.setParametro("@idUsuario", idUsuario);
+
+                if (estado != -1)
+                    datos.setParametro("@estado", estado);
+
                 datos.ejecutarLectura();
 
                 while (datos.Lector.Read())
@@ -278,116 +425,28 @@ namespace negocio
                     deuda.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
                     deuda.NombreDeudor = (string)datos.Lector["NombreDeudor"];
                     deuda.EmailDeudor = (string)datos.Lector["EmailDeudor"];
-
+                    deuda.Descripcion = datos.Lector["Descripcion"] is DBNull ? null : (string)datos.Lector["Descripcion"];
                     deuda.MontoTotal = (decimal)datos.Lector["MontoTotal"];
-
-
-                    if (!(datos.Lector["Cuotas"] is DBNull))
-                    {
-                        deuda.Cuotas = (int)datos.Lector["Cuotas"];
-
-                    }
-                    else
-                    {
-                        deuda.Cuotas = null;
-                    }
-                    if (!(datos.Lector["Descripcion"] is DBNull))
-                    {
-                        deuda.Descripcion = (string)datos.Lector["Descripcion"];
-
-                    }
-                    else
-                    {
-                        deuda.Descripcion = null;
-                    }
-
+                    deuda.Cuotas = datos.Lector["Cuotas"] is DBNull ? (int?)null : (int)datos.Lector["Cuotas"];
                     deuda.FechaInicio = (DateTime)datos.Lector["FechaInicio"];
                     deuda.Estado = (EstadoDeuda)int.Parse(datos.Lector["Estado"].ToString());
+                    deuda.MontoPendiente = (decimal)datos.Lector["MontoPendiente"];
 
-
-
-
-                    listaFiltrada.Add(deuda);
+                    lista.Add(deuda);
                 }
 
-                return listaFiltrada;
+                return lista;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
-            finally { datos.cerrarConexion(); }
-        }
-        public List<Deuda> FiltrarPorEstado(int estadoDeuda,int idUsuario)
-        {
-            List<Deuda> listaFiltrada = new List<Deuda>();
-            AccesoDatos datos = new AccesoDatos();
-            try
+            finally
             {
-                if (estadoDeuda == -1)
-                {
-                    datos.setConsulta("SELECT IdDeuda, IdUsuario ,NombreDeudor,EmailDeudor,Descripcion,MontoTotal,Cuotas,FechaInicio,Estado FROM DEUDA WHERE IdUsuario = @idUsuario");
-
-                }
-                else
-                {
-                    datos.setConsulta("SELECT IdDeuda, IdUsuario ,NombreDeudor,EmailDeudor,Descripcion,MontoTotal,Cuotas,FechaInicio,Estado FROM DEUDA WHERE Estado = @estadoDeuda AND IdUsuario = @idUsuario");
-
-                }
-                
-                datos.setParametro("@estadoDeuda", estadoDeuda);
-                datos.setParametro("@idUsuario", idUsuario);
-                datos.ejecutarLectura();
-
-                while (datos.Lector.Read())
-                {
-                    Deuda deuda = new Deuda();
-                    deuda.IdDeuda = (int)datos.Lector["IdDeuda"];
-                    deuda.Usuario = new Usuario();
-                    deuda.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];   
-                    deuda.NombreDeudor = (string)datos.Lector["NombreDeudor"];
-                    deuda.EmailDeudor = (string)datos.Lector["EmailDeudor"];
-                   
-                    deuda.MontoTotal = (decimal)datos.Lector["MontoTotal"];
-
-                    
-                    if (!(datos.Lector["Cuotas"] is DBNull))
-                    {
-                        deuda.Cuotas = (int)datos.Lector["Cuotas"];
-
-                    }
-                    else {                        
-                        deuda.Cuotas = null;
-                    }
-                    if (!(datos.Lector["Descripcion"] is DBNull))
-                    {
-                        deuda.Descripcion = (string)datos.Lector["Descripcion"];
-
-                    }
-                    else
-                    {
-                        deuda.Descripcion = null;
-                    }
-
-                    deuda.FechaInicio = (DateTime)datos.Lector["FechaInicio"];
-                    deuda.Estado = (EstadoDeuda)int.Parse(datos.Lector["Estado"].ToString());
-                  
-
-                   
-
-                    listaFiltrada.Add(deuda);
-                }
-
-                return listaFiltrada;
+                datos.cerrarConexion();
             }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-            finally {                 datos.cerrarConexion(); }
         }
+
         public void MarcarPagada(int idDeuda)
         {
             AccesoDatos datos = new AccesoDatos();

@@ -31,11 +31,26 @@ namespace TPFinalIntegrador
             DeudaNegocio negocio = new DeudaNegocio();
             Deuda deuda = negocio.ObtenerPorId(idDeuda);
 
+            CuotaDeudaNegocio cuotaNegocio = new CuotaDeudaNegocio();
+            List<CuotaDeuda> cuotas = cuotaNegocio.ListarPorDeuda(idDeuda);
+
+            decimal montoPagado = cuotas
+         .Where(c => c.Estado == EstadoCuota.Pagada)
+         .Sum(c => c.Monto);
+
+            decimal montoPendiente = cuotas
+                .Where(c => c.Estado == EstadoCuota.Pendiente)
+                .Sum(c => c.Monto);
+
+
             lblNombre.Text = deuda.NombreDeudor;
             lblDescripcion.Text = deuda.Descripcion;
             lblMontoTotal.Text = deuda.MontoTotal.ToString("C");
             lblCuotas.Text = deuda.Cuotas.Value.ToString();
             lblMontoCuota.Text = (deuda.MontoTotal / deuda.Cuotas.Value).ToString("C");
+            lblMontoPagado.Text = montoPagado.ToString("C");
+            lblMontoPendiente.Text = montoPendiente.ToString("C");
+
 
             Session["deudaActual"] = deuda;
         }
@@ -80,6 +95,7 @@ namespace TPFinalIntegrador
                     ingresoNegocio.AgregarIngreso(ingreso);
 
                     CargarCuotas(deuda.IdDeuda);
+                    CargarDetalle(deuda.IdDeuda);
                     VerificarDeudaSaldada(cuotaNegocio, deuda);
                 }
                 catch (Exception ex)

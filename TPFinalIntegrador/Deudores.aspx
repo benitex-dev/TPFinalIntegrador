@@ -111,7 +111,18 @@
               Text='<%# Eval("Descripcion") %>' />
       </EditItemTemplate>
   </asp:TemplateField>
-          <asp:BoundField DataField="MontoTotal" HeaderText="Monto Total" DataFormatString="{0:C}" HtmlEncode="False"  ReadOnly="True"/>
+          <asp:BoundField 
+              DataField="MontoTotal" 
+              HeaderText="Monto Total" 
+              DataFormatString="{0:C}" 
+              HtmlEncode="False"  
+              ReadOnly="True"/>
+          <asp:BoundField 
+              DataField="MontoPendiente" 
+              HeaderText="Saldo Pendiente" 
+              DataFormatString="{0:C}" 
+              HtmlEncode="False"
+              ReadOnly="True" />
           <asp:BoundField DataField="Cuotas" HeaderText="Cuotas" ReadOnly="True" />
           <asp:BoundField DataField="FechaInicio" ReadOnly="True" HeaderText="Fecha Inicio" DataFormatString="{0:dd/MM/yyyy}" HtmlEncode="False" />
           <asp:BoundField DataField="Estado" ReadOnly="True" HeaderText="Estado" />

@@ -94,41 +94,8 @@ namespace TPFinalIntegrador
 
         protected void gvDeudas_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
         {
-            try
-            {
-                int idDeuda = (int)gvDeudas.DataKeys[e.RowIndex]["IdDeuda"];
-                string email = ((TextBox)gvDeudas.Rows[e.RowIndex].Cells[1].Controls[0]).Text;
-                string descripcion = ((TextBox)gvDeudas.Rows[e.RowIndex].Cells[2].Controls[0]).Text;
-                string monto = ((TextBox)gvDeudas.Rows[e.RowIndex].Cells[3].Controls[0]).Text;
-                string cuotas = ((TextBox)gvDeudas.Rows[e.RowIndex].Cells[4].Controls[0]).Text;
-                string fecha = ((TextBox)gvDeudas.Rows[e.RowIndex].Cells[5].Controls[0]).Text;
-
-                Usuario usuario = (Usuario)Session["usuario"];
-
-                Deuda deuda = new Deuda();
-                deuda.IdDeuda = idDeuda;
-                deuda.Usuario = usuario;
-                deuda.NombreDeudor = (string)gvDeudas.DataKeys[e.RowIndex]["NombreDeudor"];
-                deuda.EmailDeudor = email;
-                deuda.Descripcion = descripcion;
-                deuda.MontoTotal = decimal.Parse(monto);
-                deuda.Cuotas = int.Parse(cuotas);
-                deuda.FechaInicio = DateTime.Parse(fecha);
-                deuda.Estado = EstadoDeuda.Pendiente;
-
-                DeudaNegocio negocio = new DeudaNegocio();
-                negocio.ModificarDeuda(deuda);
-
-                gvDeudas.EditIndex = -1;
-                CargarDeudas();
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
-                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Deuda modificada correctamente.'});", true);
-            }
-            catch (Exception ex)
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
-                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
-            }
+            gvDeudas.EditIndex = -1;
+            CargarDeudas();
         }
 
         protected void gvDeudas_RowDeleting(object sender, GridViewDeleteEventArgs e)
@@ -276,11 +243,11 @@ namespace TPFinalIntegrador
 
             if (estadoDeuda>= 0 && estadoDeuda <=3)
             {
-                deudasFiltradas = negocio.FiltrarPorEstado(estadoDeuda,idUsuario);
+                deudasFiltradas = negocio.ListarPorUsuario(idUsuario, estadoDeuda);
             }
             else if(estadoDeuda == -1)
             {
-                deudasFiltradas = negocio.FiltrarPorEstado(estadoDeuda, idUsuario);
+                deudasFiltradas = negocio.ListarPorUsuario(idUsuario, estadoDeuda);
             }
 
             if(deudasFiltradas.Count == 0)

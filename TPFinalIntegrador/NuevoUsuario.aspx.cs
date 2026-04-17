@@ -79,8 +79,14 @@ namespace TPFinalIntegrador
 
                 servicio.enviarCorreo();
                 /*---------------------------------------------------------------*/
+                // Auto-login
+                Usuario creado = negocioUsuario.buscarMail(nuevo.Email);
+                Session["usuario"] = creado;
 
-                Response.Redirect("Login.aspx", false);
+                ScriptManager
+                    .RegisterStartupScript(this, this.GetType(), "ok","Swal.fire({icon: 'success', title: '¡Bienvenido!', text: 'Tu cuenta fue creada correctamente.'}).then(() => { window.location.href = 'Inicio.aspx';}); ", true);
+
+
             }
             catch (Exception)
             {

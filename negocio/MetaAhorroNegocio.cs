@@ -295,5 +295,76 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+
+        public void AgregarAporte(AporteMeta aporte)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                if (aporte == null)
+                    throw new Exception("El aporte no puede ser nulo.");
+
+                if (aporte.Meta == null || aporte.Meta.IdMeta <= 0)
+                    throw new Exception("El aporte debe estar asociado a una meta válida.");
+
+                if (aporte.Monto <= 0)
+                    throw new Exception("El monto del aporte debe ser mayor a cero.");
+
+                datos.setConsulta("INSERT INTO APORTE_META (IdMeta, Monto) VALUES (@idMeta, @monto)");
+                datos.setParametro("@idMeta", aporte.Meta.IdMeta);
+                datos.setParametro("@monto", aporte.Monto);
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+        public MetaAhorro ObtenerPorId(int idMeta)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.setConsulta("SELECT IdMeta, Nombre, MontoObjetivo, FechaObjetivo, IdUsuario, IdHogar, Estado FROM META_AHORRO WHERE IdMeta = @idMeta");
+      
+                datos.setParametro("@idMeta", idMeta);
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    MetaAhorro aux = new MetaAhorro();
+                    aux.IdMeta = (int)datos.Lector["IdMeta"];
+                    aux.Nombre = (string)datos.Lector["Nombre"];
+                    aux.MontoObjetivo = (decimal)datos.Lector["MontoObjetivo"];
+                    aux.Estado = (EstadoMetaAhorro)Convert.ToInt32(datos.Lector["Estado"]);
+
+                    if (!(datos.Lector["FechaObjetivo"] is DBNull))
+                        aux.FechaObjetivo = Convert.ToDateTime(datos.Lector["FechaObjetivo"]);
+
+                    if (!(datos.Lector["IdUsuario"] is DBNull))
+                    {
+                        aux.Usuario = new Usuario();
+                        aux.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+                    }
+
+                    if (!(datos.Lector["IdHogar"] is DBNull))
+                    {
+                        aux.Hogar = new Hogar();
+                        aux.Hogar.IdHogar = (int)datos.Lector["IdHogar"];
+                    }
+
+                    return aux;
+                }
+                return null;
+            }
+            catch (Exception ex) { throw ex; }
+            finally { datos.cerrarConexion(); }
+        }
     }
 }

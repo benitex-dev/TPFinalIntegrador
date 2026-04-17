@@ -1,11 +1,12 @@
-﻿using System;
+﻿using dominio;
+using negocio;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using dominio;
-using negocio;
 
 namespace TPFinalIntegrador
 {
@@ -30,20 +31,16 @@ namespace TPFinalIntegrador
                 divSesionIniciada.Visible = true;
                 divInvitado.Visible = false;
                 divMenuPrincipal.Visible = true;
+
+                Usuario usuarioIniciado = (Usuario)Session["usuario"];
+                imgNavbar.ImageUrl = "~/Imagenes/" + usuarioIniciado.ImagenURL + "?v=" + DateTime.Now.Ticks;
+                btnSesionIniciada.InnerText = usuarioIniciado.Nombre + " " + usuarioIniciado.Apellido;
             }
             else
             {
                 divSesionIniciada.Visible = false;
                 divInvitado.Visible = true;
                 divMenuPrincipal.Visible = false;
-            }
-
-            UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
-            if (Session["usuario"] != null)
-            {
-                Usuario usuarioIniciado = (Usuario)Session["usuario"];
-                imgNavbar.ImageUrl = "~/Imagenes/" + ((Usuario)Session["usuario"]).ImagenURL + "?v=" + DateTime.Now.Ticks;
-                btnSesionIniciada.InnerText = usuarioIniciado.Nombre + " " + usuarioIniciado.Apellido;
             }
 
             if (!IsPostBack)
@@ -53,7 +50,25 @@ namespace TPFinalIntegrador
                     CargarHogaresDelUsuario();
                 }
             }
+            // Llamar siempre para que la visibilidad de los links se ajuste según la página actual
+            SetNavButtonsVisibility();
+        }
 
+        private void SetNavButtonsVisibility()
+        {
+            // Obtener el nombre de archivo (puede venir con o sin extensión según la ruta)
+            string rawFileName = VirtualPathUtility.GetFileName(Request.Path ?? string.Empty) ?? string.Empty;
+            string fileNameNoExt = Path.GetFileNameWithoutExtension(rawFileName);
+
+            // Comparación case-insensitive contra los nombres de página sin extensión
+            bool mostrarAgregar = fileNameNoExt.Equals("Inicio", StringComparison.OrdinalIgnoreCase)
+                               || fileNameNoExt.Equals("Personalizaciones", StringComparison.OrdinalIgnoreCase);
+
+            if (lnkAgregarCategoria != null)
+                lnkAgregarCategoria.Visible = mostrarAgregar;
+
+            if (lnkAgregarMedio != null)
+                lnkAgregarMedio.Visible = mostrarAgregar;
         }
 
         protected void btnCerrarSesion_Click(object sender, EventArgs e)

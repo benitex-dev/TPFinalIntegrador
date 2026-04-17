@@ -21,6 +21,7 @@ namespace dominio
         public string EmailDeudor { get; set; }
         public string Descripcion { get; set; }
         public decimal MontoTotal { get; set; }
+        public decimal MontoPendiente { get; set; }
         public int? Cuotas { get; set; }
         public DateTime FechaInicio { get; set; }
         public EstadoDeuda Estado { get; set; }
