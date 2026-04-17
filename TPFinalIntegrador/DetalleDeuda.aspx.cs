@@ -46,8 +46,15 @@ namespace TPFinalIntegrador
             lblNombre.Text = deuda.NombreDeudor;
             lblDescripcion.Text = deuda.Descripcion;
             lblMontoTotal.Text = deuda.MontoTotal.ToString("C");
-            lblCuotas.Text = deuda.Cuotas.Value.ToString();
-            lblMontoCuota.Text = (deuda.MontoTotal / deuda.Cuotas.Value).ToString("C");
+            lblCuotas.Text = deuda.Cuotas.HasValue ? deuda.Cuotas.Value.ToString() : "0";
+            if (deuda.Cuotas.HasValue && deuda.Cuotas.Value > 0)
+            {
+                lblMontoCuota.Text = (deuda.MontoTotal / deuda.Cuotas.Value).ToString("C");
+            }
+            else
+            {
+                lblMontoCuota.Text = "$ 0,00";
+            }
             lblMontoPagado.Text = montoPagado.ToString("C");
             lblMontoPendiente.Text = montoPendiente.ToString("C");
 
