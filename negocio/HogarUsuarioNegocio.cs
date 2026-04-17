@@ -99,5 +99,48 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+        public List<HogarUsuario> ListarPorHogar(int idHogar)
+        {
+            List<HogarUsuario> lista = new List<HogarUsuario>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta(@"
+              SELECT HU.IdMiembro, HU.Rol, HU.Estado,
+                     U.IdUsuario, U.Nombre, U.Apellido
+              FROM HOGAR_USUARIO HU
+              INNER JOIN USUARIO U ON U.IdUsuario = HU.IdUsuario
+              WHERE HU.IdHogar = @idHogar AND HU.Estado = 1");
+
+                datos.setParametro("@idHogar", idHogar);
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    HogarUsuario hu = new HogarUsuario();
+                    hu.IdMiembro = (int)datos.Lector["IdMiembro"];
+                    hu.Rol = (Rol)Enum.Parse(typeof(Rol), (string)datos.Lector["Rol"]);
+                    hu.Estado = (bool)datos.Lector["Estado"];
+
+                    hu.Usuario = new Usuario();
+                    hu.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+                    hu.Usuario.Nombre = (string)datos.Lector["Nombre"];
+                    hu.Usuario.Apellido = datos.Lector["Apellido"] is DBNull ? "" : (string)datos.Lector["Apellido"];
+
+                    lista.Add(hu);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }
