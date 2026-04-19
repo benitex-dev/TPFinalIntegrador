@@ -2,7 +2,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
       <div class="d-flex justify-content-between align-items-center mb-4">
-          <h4 class="fw-bold mb-0">Deudores</h4>
+          <h4 class="fw-bold mb-0">Dinero Prestado</h4>
           <div class="d-flex align-items-center gap-2">
               <asp:DropDownList ID="ddlFiltroEstadoDeuda" runat="server" CssClass="form-select form-select-sm rounded-pill"
                   AutoPostBack="true" OnSelectedIndexChanged="ddlFiltroEstadoDeuda_SelectedIndexChanged" style="max-width:160px" />
