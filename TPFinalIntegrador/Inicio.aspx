@@ -223,7 +223,7 @@
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
                         <div class="card-header bg-white border-bottom p-4 d-flex justify-content-between align-items-center">
                             <h3 class="h5 mb-0 fw-bold">Movimientos Recientes</h3>
-                            <a class="text-primary text-decoration-none small fw-bold" href="#">Ver todo</a>
+                            <a class="text-primary text-decoration-none small fw-bold" href="Movimientos.aspx">Ver todo</a>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive-xl">
@@ -1117,7 +1117,7 @@
 
     </div>
 </div>
-</div>
+
 
      <%-- Se ocultan campos FECHA cuando no es crèdito el tipo de medio de pago  --%>
     <script> 

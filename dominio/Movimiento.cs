@@ -16,6 +16,7 @@ namespace dominio
         public string Tipo { get; set; }   // Ingreso o Gasto
         public decimal Monto { get; set; }
         public string Estado { get; set; }
+        public string MedioPago { get; set; }
 
         public string MontoMostrado
         {
