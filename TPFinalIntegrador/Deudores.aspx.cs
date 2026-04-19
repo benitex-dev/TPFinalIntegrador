@@ -183,7 +183,7 @@ namespace TPFinalIntegrador
                 nueva.NombreDeudor = txtNombre.Text;
                 nueva.EmailDeudor = txtEmail.Text;
                 nueva.Descripcion = txtDescripcion.Text;
-                nueva.MontoTotal = decimal.Parse(txtMonto.Text);
+                nueva.MontoTotal = ParseDecimal(txtMonto.Text);
                 nueva.Cuotas = int.Parse(txtCuotas.Text);
                 nueva.FechaInicio = DateTime.Parse(txtFecha.Text);
                 nueva.Estado = EstadoDeuda.Pendiente;
@@ -330,6 +330,10 @@ namespace TPFinalIntegrador
 
                 cuotaNegocio.AgregarCuota(cuota);
             }
+        }
+        private decimal ParseDecimal(string texto)
+        {
+            return decimal.Parse(texto.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
         }
     }
 }

@@ -182,12 +182,12 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Monto Objetivo ($)</label>
-                        <asp:TextBox 
-                            ID="txtMonto" 
+                        <asp:TextBox
+                            ID="txtMonto"
                             runat="server"
-                            CssClass="form-control rounded-3" 
-                            TextMode="Number"
-                            placeholder="0" />
+                            CssClass="form-control rounded-3"
+                            TextMode="SingleLine"
+                            placeholder="0.00" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Fecha Objetivo</label>
@@ -225,7 +225,7 @@
                     <div class="mb-3">
                         <label class="form-label">Monto ($)</label>
                         <asp:TextBox ID="txtMontoAporte" runat="server" CssClass="form-control rounded-3"
-                            TextMode="Number" placeholder="0" />
+                            TextMode="SingleLine" placeholder="0.00" />
                     </div>
                 </div>
                 <div class="modal-footer border-0 pt-0">
@@ -261,11 +261,11 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Monto Objetivo ($)</label>
-                        <asp:TextBox 
-                            ID="txtMontoEditar" 
-                            runat="server" 
-                            CssClass="form-control rounded-3"
-                            TextMode="Number" />
+                       <asp:TextBox
+      ID="txtMontoEditar"
+      runat="server"
+      CssClass="form-control rounded-3"
+      TextMode="SingleLine" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Fecha Objetivo</label>

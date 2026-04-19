@@ -213,8 +213,7 @@ namespace TPFinalIntegrador
                     return;
                 }
 
-                decimal monto = decimal.Parse(txtMonto.Text.Trim(), System.Globalization.CultureInfo.InvariantCulture);
-
+                decimal monto = ParseDecimal(txtMonto.Text.Trim());
                 if (monto <= 0)
                 {
                     ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
@@ -243,6 +242,10 @@ namespace TPFinalIntegrador
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
                     $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
             }
+        }
+        private decimal ParseDecimal(string texto)
+        {
+            return decimal.Parse(texto.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
         }
     }
 }

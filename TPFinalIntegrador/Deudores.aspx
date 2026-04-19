@@ -132,8 +132,8 @@
                           </div>
                           <div class="col-md-4">
                               <label class="form-label">Monto Total ($)</label>
-                              <asp:TextBox ID="txtMonto" runat="server" CssClass="form-control rounded-3" TextMode="Number" placeholder="0" />
-                          </div>
+  <asp:TextBox ID="txtMonto" runat="server" CssClass="form-control rounded-3" TextMode="SingleLine" placeholder="0.00"
+  />                          </div>
                           <div class="col-md-4">
                               <label class="form-label">Cantidad de Cuotas</label>
                               <asp:TextBox ID="txtCuotas" runat="server" CssClass="form-control rounded-3" TextMode="Number" placeholder="1" />

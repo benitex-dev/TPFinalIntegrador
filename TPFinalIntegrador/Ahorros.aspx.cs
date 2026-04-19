@@ -43,7 +43,7 @@ namespace TPFinalIntegrador
 
                 MetaAhorro nueva = new MetaAhorro();
                 nueva.Nombre = txtNombre.Text;
-                nueva.MontoObjetivo = decimal.Parse(txtMonto.Text);
+                nueva.MontoObjetivo = ParseDecimal(txtMonto.Text);
                 nueva.FechaObjetivo = DateTime.Parse(txtFecha.Text);
                 nueva.Usuario = usuario;
                 nueva.Estado = EstadoMetaAhorro.Activa;
@@ -138,8 +138,7 @@ namespace TPFinalIntegrador
                 AporteMeta aporte = new AporteMeta();
                 aporte.Meta = new MetaAhorro();
                 aporte.Meta.IdMeta = int.Parse(hfIdMetaAporte.Value);
-                aporte.Monto = decimal.Parse(txtMontoAporte.Text);
-
+                aporte.Monto = ParseDecimal(txtMontoAporte.Text);
                 MetaAhorroNegocio negocio = new MetaAhorroNegocio();
                 negocio.AgregarAporte(aporte);
 
@@ -165,8 +164,7 @@ true);
                 MetaAhorro meta = new MetaAhorro();
                 meta.IdMeta = int.Parse(hfIdMetaEditar.Value);
                 meta.Nombre = txtNombreEditar.Text;
-                meta.MontoObjetivo = decimal.Parse(txtMontoEditar.Text);
-                meta.FechaObjetivo = DateTime.Parse(txtFechaEditar.Text);
+                meta.MontoObjetivo = ParseDecimal(txtMontoEditar.Text);
                 meta.Usuario = usuario;
                 meta.Estado = EstadoMetaAhorro.Activa;
 
@@ -219,6 +217,10 @@ true);
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "abrirEditar",
                     "new bootstrap.Modal(document.getElementById('modalEditar')).show();", true);
             }
+        }
+        private decimal ParseDecimal(string texto)
+        {
+            return decimal.Parse(texto.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
         }
     }
 }
