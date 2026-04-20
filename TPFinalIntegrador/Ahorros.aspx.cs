@@ -27,7 +27,9 @@ namespace TPFinalIntegrador
             Usuario usuario = (Usuario)Session["usuario"];
            // MetaAhorroNegocio negocio = new MetaAhorroNegocio();
             MetaResumenNegocio negocio = new MetaResumenNegocio();
-            var lista = negocio.obtenerMetasPorUsuario(usuario.IdUsuario);
+            var lista = negocio.obtenerMetasPorUsuario(usuario.IdUsuario)
+                .OrderBy(x => x.FechaObjetivo ?? DateTime.MaxValue)
+                .ToList(); ;
             // gvMetas.DataSource = negocio.Listar(idUsuario: usuario.IdUsuario, estado: EstadoMetaAhorro.Activa);
             //gvMetas.DataBind();
             pnlSinMetas.Visible = lista.Count == 0;
