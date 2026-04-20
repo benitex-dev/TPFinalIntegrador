@@ -1156,11 +1156,15 @@ namespace TPFinalIntegrador
                         servicio.enviarCorreo();
                         /*--------------------------------------------------------------------------------*/
 
+                        // limpiar campo antes de recarga
+                        limpiarMailIntegrante();
+
+                        // Mostrar SweetAlert y recargar la página para actualizar el listado
                         ScriptManager.RegisterStartupScript(
-                           this, this.GetType(),
-                           "categoriaCreada",
-                           "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Integrante agergado con exito!.'});",
-                           true);
+                       this, this.GetType(),
+                       "integranteCreado",
+                       "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Integrante agregado con éxito.'}).then(function(){ window.location.href = 'Inicio.aspx'; });",
+                       true);
                     }
                     else
                     {
@@ -1179,7 +1183,6 @@ namespace TPFinalIntegrador
                    "Swal.fire({icon: 'error', title: 'No se encontro un usuario con ese Mail.'});",
                    true);
                 }
-                limpiarMailIntegrante();
 
             }
             catch (Exception ex)
