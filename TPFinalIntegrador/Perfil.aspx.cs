@@ -64,7 +64,7 @@ namespace TPFinalIntegrador
 
         protected void btnCancelar_Click(object sender, EventArgs e)
         {
-            Response.Redirect("Default.aspx",false);
+            Response.Redirect("Inicio.aspx", false);
         }
 
         protected void btnGuardar_Click(object sender, EventArgs e)
