@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -39,12 +40,20 @@ namespace TPFinalIntegrador
         {
             DateTime fechaActual = Convert.ToDateTime(fechaObj);
 
+            // Si cambiamos de día, imprimimos la franja gris con la fecha
             if (fechaActual.Date != FechaGrupoAnterior.Date)
             {
                 FechaGrupoAnterior = fechaActual.Date;
-                // Devuelve el HTML exacto de la IA para los títulos de fechas
-                string fechaFormateada = fechaActual.ToString("dd 'de' MMMM", new System.Globalization.CultureInfo("es-AR"));
-                return $"<h3 class=\"text-uppercase text-secondary-emphasis fw-bold mt-4 mb-3 opacity-50 px-2\" style=\"font-size: 0.75rem; letter-spacing: 0.1em;\">{fechaFormateada}</h3>";
+
+                string tituloFecha = "";
+                if (fechaActual.Date == DateTime.Today)
+                    tituloFecha = "HOY";
+                else if (fechaActual.Date == DateTime.Today.AddDays(-1))
+                    tituloFecha = "AYER";
+                else
+                    tituloFecha = fechaActual.ToString("dd 'DE' MMMM", new System.Globalization.CultureInfo("es-AR")).ToUpper();
+
+                return $"<div class=\"cabeceraMovimientos py-1 px-3 bg-light text-muted fw-bold\" style=\"font-size: 0.75rem; letter-spacing: 0.05em;\">{tituloFecha}</div>";
             }
 
             return string.Empty;

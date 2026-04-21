@@ -85,12 +85,20 @@
         background-color: var(--surface-container-lowest);
         border-radius: 1.5rem;
         padding: 2rem;
-        box-shadow: 0 12px 32px rgba(0, 87, 206, 0.06);
+        /*box-shadow: 0 12px 32px rgba(0, 87, 206, 0.06);*/
+    }
+
+    .cabeceraMovimientos{
+        border-radius: 1rem;
+        background-color:#F0F1F2;
+        height:2.3rem;
+        align-content:center;
+        margin
     }
 
     .movement-item {
         padding: 1.25rem;
-        border-radius: 1.5rem;
+        /*border-radius: 1.5rem;*/
         transition: all 0.2s;
         cursor: pointer;
         text-decoration: none;
@@ -100,6 +108,14 @@
         .movement-item:hover {
             background-color: #f3f4f5;
         }
+
+    .movement-card .movement-item:last-child {
+    border-bottom: none !important;
+}
+
+.movement-item:has(+ .cabeceraMovimientos) {
+    border-bottom: none !important;
+}
 
     .icon-box {
         width: 3.5rem;
@@ -126,6 +142,8 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
     }
+
+
 </style>
 
     <div class="bg-light">
@@ -187,9 +205,10 @@
                 <asp:Repeater ID="rptMovimientos" runat="server" OnItemCommand="rptMovimientos_ItemCommand">
                     <ItemTemplate>
 
-                        <%# ObtenerCabeceraFecha(Eval("Fecha")) %>
+                        <asp:Literal ID="cabeceraMovimientos" runat="server" Text='<%# ObtenerCabeceraFecha(Eval("Fecha")) %>'></asp:Literal>
+                        <%--<div class="cabeceraMovimientos"><%# if(ObtenerCabeceraFecha(Eval("Fecha")) != FechaGrupoAnterior) %></div>--%>
 
-                        <div class="movement-item d-flex align-items-center justify-content-between mb-3 px-2 border-bottom pb-2">
+                        <div class="movement-item d-flex align-items-center border-bottom justify-content-between mb-0 px-2 pb-2">
 
                             <div class="d-flex align-items-center gap-3">
 
@@ -203,20 +222,19 @@
                                 <div>
                                     <h4 class="h6 mb-0 fw-bold"><%# Eval("Descripcion") %></h4>
                                     <p class="mb-0 text-muted small"><%# Eval("Categoria") %></p>
-                                    <p class="mb-0 text-secondary-emphasis opacity-50 fw-medium" style="font-size: 0.7rem;">
-                                        Dinero en cuenta
-                   
-                                    </p>
+                                    <%--<p class="mb-0 text-secondary-emphasis opacity-50 fw-medium" style="font-size: 0.7rem;">
+                                        <%# Eval("Tipo").ToString() == "Gasto" ? Eval("MedioPago") : null %>
+                                    </p>--%>
                                 </div>
                             </div>
 
                             <div class="d-flex align-items-center gap-3">
 
                                 <div class="text-end">
-                                    <p class='<%# Eval("Tipo").ToString() == "Gasto" ? "mb-0 fw-bold font-headline h5 text-danger" : "mb-0 fw-bold font-headline h5 text-success" %>'>
+                                    <p class='<%# Eval("Tipo").ToString() == "Gasto" ? "mb-0 fw-bold font-headline h6 text-danger" : "mb-0 fw-bold font-headline h6 text-success" %>'>
                                         <%# Eval("MontoMostrado") %>
                                     </p>
-                                    <p class="mb-0 text-muted small"><%# Eval("Fecha", "{0:HH:mm} hs") %></p>
+                                    <%--<p class="mb-0 text-muted small"><%# Eval("Fecha", "{0:HH:mm} hs") %></p>--%>
                                 </div>
 
                                 <div class="dropdown">
