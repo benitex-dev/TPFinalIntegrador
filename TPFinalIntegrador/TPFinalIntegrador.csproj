@@ -128,6 +128,7 @@
     <Content Include="Inicio.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="ModificarContrasenia.aspx" />
+    <Content Include="Movimientos.aspx" />
     <Content Include="NuevoUsuario.aspx" />
     <Content Include="Perfil.aspx" />
     <Content Include="Personalizaciones.aspx" />
@@ -299,6 +300,13 @@
     </Compile>
     <Compile Include="ModificarContrasenia.aspx.designer.cs">
       <DependentUpon>ModificarContrasenia.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Movimientos.aspx.cs">
+      <DependentUpon>Movimientos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Movimientos.aspx.designer.cs">
+      <DependentUpon>Movimientos.aspx</DependentUpon>
     </Compile>
     <Compile Include="NuevoUsuario.aspx.cs">
       <DependentUpon>NuevoUsuario.aspx</DependentUpon>

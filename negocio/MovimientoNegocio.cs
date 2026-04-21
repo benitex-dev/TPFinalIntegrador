@@ -18,22 +18,37 @@ namespace negocio
         // rptMovimientos.DataBind();
         //}
 
-        public List<Movimiento> ListarMovimientosDelMes(int idUsuario)
+        public List<Movimiento> ListarMovimientosDelMes(bool esModoHogar,int idReferencia)
         {
-            return ListarMovimientosPorMes(idUsuario, DateTime.Now.Month, DateTime.Now.Year);
+            return ListarMovimientos(esModoHogar,idReferencia, DateTime.Now.Month, DateTime.Now.Year);
         }
 
-        public List<Movimiento> ListarMovimientosPorMes(int idUsuario, int mes, int anio)
+        public List<Movimiento> ListarMovimientos(bool esModoHogar, int idReferencia, int mes, int anio)
         {
             List<Movimiento> movimientos = new List<Movimiento>();
 
             IngresoNegocio ingresoNegocio = new IngresoNegocio();
             GastoNegocio gastoNegocio = new GastoNegocio();
-            CuotaNegocio cuotaNegocio = new CuotaNegocio();
+            CuotaNegocio cuotaNegocio = new CuotaNegocio(); // Agregamos el negocio de cuotas
 
-            List<Ingreso> ingresos = ingresoNegocio.ListarPorUsuarioPorMes(idUsuario, mes, anio);
-            List<Gasto> gastos = gastoNegocio.ListarPorUsuarioPorMes(idUsuario, mes, anio);
-            List<Cuota> cuotas = cuotaNegocio.ListarPorUsuarioPorMes(idUsuario, mes, anio);
+            List<Ingreso> ingresos;
+            List<Gasto> gastos;
+            List<Cuota> cuotas;
+
+            if (esModoHogar)
+            {
+                ingresos = ingresoNegocio.ListarPorHogarMesActual(idReferencia);
+                gastos = gastoNegocio.ListarPorHogarMesActual(idReferencia);
+                // Nota: Asegurate de tener este método creado en tu CuotaNegocio
+                //cuotas = cuotaNegocio.ListarPorHogarMesActual(idReferencia);
+            }
+            else
+            {
+                ingresos = ingresoNegocio.ListarPorUsuarioPorMes(idReferencia, mes, anio);
+                gastos = gastoNegocio.ListarPorUsuarioPorMes(idReferencia, mes, anio);
+            }
+                cuotas = cuotaNegocio.ListarPorUsuarioPorMes(idReferencia, mes, anio);
+            //CAMBIAR
 
             foreach (Ingreso ingreso in ingresos)
             {
@@ -60,17 +75,20 @@ namespace negocio
                     mov.Categoria = gasto.Categoria.Nombre;
                     mov.Tipo = "Gasto";
                     mov.Monto = gasto.MontoPesos;
+                    mov.MedioPago = gasto.MedioDePago.Descripcion;
                     mov.Estado = gasto.Estado ? "Activo" : "Eliminado";
 
                     movimientos.Add(mov);
                 }
             }
 
+            // 4. MAPEO DE CUOTAS
             foreach (Cuota cuota in cuotas)
             {
                 Movimiento mov = new Movimiento();
+                mov.idReferencia = cuota.Gasto.IdGasto;
                 mov.Fecha = cuota.Vencimiento;
-                mov.Descripcion = cuota.Gasto.Descripcion + " - Cuota " + cuota.NumeroCuota + "/" + cuota.TotalCuotas;
+                mov.Descripcion = cuota.Gasto.Descripcion + " (cuota " + cuota.NumeroCuota + "/" + cuota.TotalCuotas + ")";
                 mov.Categoria = cuota.Gasto.Categoria.Nombre;
                 mov.Tipo = "Gasto";
                 mov.Monto = cuota.Monto;
@@ -79,6 +97,7 @@ namespace negocio
                 movimientos.Add(mov);
             }
 
+            // 5. DEVOLVER ORDENADO
             return movimientos.OrderByDescending(x => x.Fecha).ToList();
         }
     }
