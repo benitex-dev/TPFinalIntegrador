@@ -87,6 +87,15 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Image imgNavbar;
 
         /// <summary>
+        /// Control lblNombreNavbar.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblNombreNavbar;
+
+        /// <summary>
         /// Control btnPerfil.
         /// </summary>
         /// <remarks>
