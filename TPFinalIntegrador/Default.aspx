@@ -2,144 +2,194 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
-    <main>
-<!-- Hero Section -->
-<section class="py-5">
-<div class="container py-lg-5">
-<div class="row align-items-center g-5">
-<div class="col-lg-6">
-<div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-primary bg-opacity-10 border border-primary border-opacity-25 text-primary small fw-bold mb-4">
-<span class="bg-primary rounded-circle" style="width: 6px; height: 6px;"></span>
-                        NUEVO: SISTEMA DE ADMINISTRACIÓN DE GASTOS
-                    </div>
-<h1 class="display-3 fw-bold mb-4">
-                        Domina tus Finanzas con <span class="text-primary">Inteligencia</span>
-</h1>
-<p class="lead text-secondary mb-5">
-                        Reemplaza tus hojas de cálculo con un sistema automatizado de seguimiento mensual. Toma el control total de tu dinero hoy mismo sin complicaciones manuales.
-                    </p>
-<div class="d-flex flex-wrap gap-3 mb-5">
+      <main>
+          <!-- Hero Section -->
+          <section class="py-5">
+              <div class="container py-lg-5">
+                  <div class="row align-items-center g-5">
+                      <div class="col-lg-6">
+                          <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-primary
+  bg-opacity-10 border border-primary border-opacity-25 text-primary small fw-bold mb-4">
+                              <span class="bg-primary rounded-circle" style="width: 6px; height: 6px;"></span>
+                              GESTIÓN DE FINANZAS PERSONALES Y GRUPALES
+                          </div>
+                          <h1 class="display-3 fw-bold mb-4">
+                              Tomá el control de tus <span class="text-primary">finanzas</span>
+                          </h1>
+                          <p class="lead text-secondary mb-5">
+                              Registrá tus gastos e ingresos, definí presupuestos, creá metas de ahorro y gestioná
+  dinero prestado, todo en un solo lugar.
+                          </p>
+                          <div class="d-flex flex-wrap gap-3 mb-5">
+                              <a href="Login.aspx" class="btn btn-primary btn-lg rounded-pill px-4">Iniciar Sesión</a>
+                              <a href="NuevoUsuario.aspx" class="btn btn-outline-primary btn-lg rounded-pill
+  px-4">Registrarse</a>
+                          </div>
+                          <div class="d-flex align-items-center gap-3">
+                              <div class="avatar-group d-flex">
+                                  <div class="avatar rounded-circle bg-primary text-white d-flex align-items-center
+  justify-content-center fw-bold" style="font-size:13px;">JP</div>
+                                  <div class="avatar rounded-circle bg-success text-white d-flex align-items-center
+  justify-content-center fw-bold" style="font-size:13px;">ML</div>
+                                  <div class="avatar rounded-circle bg-warning text-white d-flex align-items-center
+  justify-content-center fw-bold" style="font-size:13px;">AR</div>
+                              </div>
+                              <p class="small text-secondary m-0">
+                                  Usada por estudiantes y familias para organizar sus finanzas.
+                              </p>
+                          </div>
+                      </div>
+                      <div class="col-lg-6">
+                          <div class="card shadow-lg border-secondary border-opacity-25 overflow-hidden">
+                              <div class="card-header bg-dark py-2 px-3 d-flex gap-1">
+                                  <div class="rounded-circle bg-danger" style="width: 10px; height: 10px;"></div>
+                                  <div class="rounded-circle bg-warning" style="width: 10px; height: 10px;"></div>
+                                  <div class="rounded-circle bg-success" style="width: 10px; height: 10px;"></div>
+                              </div>
+                              <div class="card-body bg-body-tertiary p-4">
+                                  <div class="mb-3">
+                                      <div class="d-flex justify-content-between mb-1">
+                                          <span class="small fw-semibold">Alimentación</span>
+                                          <span class="small text-muted">75%</span>
+                                      </div>
+                                      <div class="progress rounded-pill" style="height:8px">
+                                          <div class="progress-bar bg-warning" style="width:75%"></div>
+                                      </div>
+                                  </div>
+                                  <div class="mb-3">
+                                      <div class="d-flex justify-content-between mb-1">
+                                          <span class="small fw-semibold">Transporte</span>
+                                          <span class="small text-muted">40%</span>
+                                      </div>
+                                      <div class="progress rounded-pill" style="height:8px">
+                                          <div class="progress-bar bg-success" style="width:40%"></div>
+                                      </div>
+                                  </div>
+                                  <div class="mb-3">
+                                      <div class="d-flex justify-content-between mb-1">
+                                          <span class="small fw-semibold">Entretenimiento</span>
+                                          <span class="small text-danger">105%</span>
+                                      </div>
+                                      <div class="progress rounded-pill" style="height:8px">
+                                          <div class="progress-bar bg-danger" style="width:100%"></div>
+                                      </div>
+                                  </div>
+                                  <div class="mt-4 p-3 bg-primary bg-opacity-10 rounded-3 d-flex justify-content-between
+   align-items-center">
+                                      <span class="small fw-semibold text-primary">Meta de ahorro — Vacaciones</span>
+                                      <span class="badge bg-primary rounded-pill">62%</span>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </section>
 
-</div>
-<div class="d-flex align-items-center gap-3">
-<div class="avatar-group d-flex">
-<img alt="User" class="avatar rounded-circle bg-secondary" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfIf0N6sxYVYiWJVRcPMcVlXf2eTF-WtyDOXxWb18JSV_aWKOtM6lrFDPwiPfLrRx0nm9WH4anDLbM7AIo2mtpld5l5sBe64sL4Q-jUy3s88u6e17eJlAPR-B_jlH7PzU-67FbUxVW-3vH0svOxZcb6Nqr0WTxItIqdfBRajhiTC2p7ysRb5QrnMWjIv50xJFmoXZt7u1PtTZyL1jXPoalJJrQEpmBMy_IBUTXQvTGGEtSEW9VEV5N2zO4CbbdPhuLUK_pW5wAXYQ"/>
-<img alt="User" class="avatar rounded-circle bg-secondary" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARB893e5Yt9L7nGOJj7_qlpUzDE_o8tpvoni_fHFuZB5i2qVXnzC4vVL1cUKPsfgiNutOWT1nmcKGLFk782JjhNWTjbkESH4BDTL_0gXJBIIAQRkmx_i79QPtbSiR67E6gQGfKZHhUA7SrJE0zulNs_1irdLlrz5mVuNuRNNWYWAPMvcWf6dGRTBebas4AU0A8Sz4JHGaHdP1H4xZkR5Rx9Mw9lHSJo0XKfh7jQfXTXRhHmd-MwDt_tpziPRaZ1-Sc7q9RySL9Nk4"/>
-<img alt="User" class="avatar rounded-circle bg-secondary" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaS6e6oOuQIsCe-rIizV8YDM7H4U4PFbK276uYcuW9ZX3go-SlARy4eF0AXxCJuG5ACvMTA-PVj7LemOyE7q4lOglm0bklhwHrOyML60Fq9pibDzslZkKCf5Nd49WVwib8DTN3_Q8bUbmojYXJ5mm_Q7OcyAxirXTrHboHxTJR9Ez47_RLNstZPnRLruD9nEhiG2GtFVjETG0Qc17Ok3X2DvjiviHuiZM8l9gSyDtPU2rYHpIadS3CHDgxyH1sQW-QJirjgTaSmV8"/>
-</div>
-<p class="small text-secondary m-0">
-<span class="text-white fw-bold">+10k usuarios</span> ya confían en nosotros.
-                        </p>
-</div>
-</div>
-<div class="col-lg-6">
-<div class="card shadow-lg border-secondary border-opacity-25 overflow-hidden">
-<div class="card-header bg-dark py-2 px-3 d-flex gap-1">
-<div class="rounded-circle bg-danger" style="width: 10px; height: 10px;"></div>
-<div class="rounded-circle bg-warning" style="width: 10px; height: 10px;"></div>
-<div class="rounded-circle bg-success" style="width: 10px; height: 10px;"></div>
-</div>
-<div class="card-body bg-body-tertiary p-0">
-<img alt="Dashboard Preview" class="img-fluid" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4oKAj-KW6RcLvTtqraoBMxLbhFFeKBBHOUbYOly8fgbRZK-86kxRCxJn_Q2xotRLDF4-LuA_PyArKW19ZSt9UGQ24IMbmU1g0Hrmcw8fGlryI0rtQkXW99p_lWD_C5PHjp3-okCL5EL1oyqrKht9ECGDJ0FFtFunq92xzAgj7KYwZ0C_82RvngI8rzUf5rCMl8s0tQf3feQ_GoCxT_Odudm8429z-nY8wjI0N6j_pxelAKPtElw4cWuIj3xDrJwSG82tWKvLiPIQ"/>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- Features Section -->
-<section class="py-5 bg-body-secondary bg-opacity-50" id="features">
-<div class="container py-5">
-<div class="text-center mb-5">
-<h6 class="text-primary fw-bold text-uppercase ls-wide mb-3">Características Elite</h6>
-<h2 class="display-5 fw-bold mb-3">Gestión financiera de nivel superior</h2>
-<p class="text-secondary mx-auto lead" style="max-width: 700px;">
-                    Herramientas diseñadas para darte claridad y libertad financiera absoluta, eliminando el error humano.
-                </p>
-</div>
-<div class="row g-4">
-<div class="col-md-6 col-lg-3">
-<div class="card h-100 border-0 bg-body shadow-sm">
-<div class="card-body p-4 text-center text-lg-start">
-<div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded p-3 mb-4">
-<span class="material-symbols-outlined fs-3">payments</span>
-</div>
-<h4 class="h5 fw-bold mb-3">Control Total</h4>
-<p class="text-secondary small mb-0">Gestión integral de gastos fijos y variables con categorización inteligente por IA.</p>
-</div>
-</div>
-</div>
-<div class="col-md-6 col-lg-3">
-<div class="card h-100 border-0 bg-body shadow-sm">
-<div class="card-body p-4 text-center text-lg-start">
-<div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded p-3 mb-4">
-<span class="material-symbols-outlined fs-3">savings</span>
-</div>
-<h4 class="h5 fw-bold mb-3">Ahorro Inteligente</h4>
-<p class="text-secondary small mb-0">Establece y alcanza metas de ahorro basadas en porcentajes personalizados.</p>
-</div>
-</div>
-</div>
-<div class="col-md-6 col-lg-3">
-<div class="card h-100 border-0 bg-body shadow-sm">
-<div class="card-body p-4 text-center text-lg-start">
-<div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded p-3 mb-4">
-<span class="material-symbols-outlined fs-3">bolt</span>
-</div>
-<h4 class="h5 fw-bold mb-3">Automatización</h4>
-<p class="text-secondary small mb-0">Cálculos financieros complejos en tiempo real sin ningún esfuerzo manual.</p>
-</div>
-</div>
-</div>
-<div class="col-md-6 col-lg-3">
-<div class="card h-100 border-0 bg-body shadow-sm">
-<div class="card-body p-4 text-center text-lg-start">
-<div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded p-3 mb-4">
-<span class="material-symbols-outlined fs-3">calendar_today</span>
-</div>
-<h4 class="h5 fw-bold mb-3">Cuotas y Pagos</h4>
-<p class="text-secondary small mb-0">Monitoreo detallado de estados de pago para evitar recargos y moras.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- Trust Section -->
-<section class="py-5 border-top border-bottom bg-body" id="trust">
-<div class="container py-4">
-<div class="row row-cols-1 row-cols-md-3 g-4 align-items-center text-center">
-<div class="col">
-<div class="d-flex align-items-center justify-content-center gap-3">
-<span class="material-symbols-outlined text-primary fs-2">lock</span>
-<div class="text-start">
-<div class="fw-bold text-white small">Encriptación 256-bit</div>
-<div class="small text-secondary text-uppercase fw-bold ls-1" style="font-size: 0.7rem;">Seguridad Bancaria</div>
-</div>
-</div>
-</div>
-<div class="col border-start border-end border-secondary border-opacity-10">
-<div class="d-flex align-items-center justify-content-center gap-3">
-<span class="material-symbols-outlined text-primary fs-2">verified_user</span>
-<div class="text-start">
-<div class="fw-bold text-white small">Protección GDPR</div>
-<div class="small text-secondary text-uppercase fw-bold ls-1" style="font-size: 0.7rem;">Privacidad Total</div>
-</div>
-</div>
-</div>
-<div class="col">
-<div class="d-flex align-items-center justify-content-center gap-3">
-<span class="material-symbols-outlined text-primary fs-2">monitoring</span>
-<div class="text-start">
-<div class="fw-bold text-white small">+10,000 Usuarios</div>
-<div class="small text-secondary text-uppercase fw-bold ls-1" style="font-size: 0.7rem;">Confianza Global</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
+          <!-- Features Section -->
+          <section class="py-5 bg-body-secondary bg-opacity-50" id="features">
+              <div class="container py-5">
+                  <div class="text-center mb-5">
+                      <h6 class="text-primary fw-bold text-uppercase mb-3">Funcionalidades</h6>
+                      <h2 class="display-5 fw-bold mb-3">Todo lo que necesitás para organizar tu dinero</h2>
+                      <p class="text-secondary mx-auto lead" style="max-width: 700px;">
+                          Herramientas simples y efectivas para llevar el control de tus finanzas personales y grupales.
+                      </p>
+                  </div>
+                  <div class="row g-4">
+                      <div class="col-md-6 col-lg-3">
+                          <div class="card h-100 border-0 bg-body shadow-sm">
+                              <div class="card-body p-4 text-center text-lg-start">
+                                  <div class="d-inline-flex align-items-center justify-content-center bg-primary
+  bg-opacity-10 text-primary rounded p-3 mb-4">
+                                      <span class="material-symbols-outlined fs-3">payments</span>
+                                  </div>
+                                  <h4 class="h5 fw-bold mb-3">Gastos e Ingresos</h4>
+                                  <p class="text-secondary small mb-0">Registrá tus movimientos con categoría, medio de
+  pago y fecha. Soporte para cuotas y moneda extranjera.</p>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-md-6 col-lg-3">
+                          <div class="card h-100 border-0 bg-body shadow-sm">
+                              <div class="card-body p-4 text-center text-lg-start">
+                                  <div class="d-inline-flex align-items-center justify-content-center bg-primary
+  bg-opacity-10 text-primary rounded p-3 mb-4">
+                                      <span class="material-symbols-outlined fs-3">savings</span>
+                                  </div>
+                                  <h4 class="h5 fw-bold mb-3">Metas de Ahorro</h4>
+                                  <p class="text-secondary small mb-0">Creá metas con un objetivo y fecha límite.
+  Registrá aportes y seguí tu progreso con una barra visual.</p>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-md-6 col-lg-3">
+                          <div class="card h-100 border-0 bg-body shadow-sm">
+                              <div class="card-body p-4 text-center text-lg-start">
+                                  <div class="d-inline-flex align-items-center justify-content-center bg-primary
+  bg-opacity-10 text-primary rounded p-3 mb-4">
+                                      <span class="material-symbols-outlined fs-3">bar_chart</span>
+                                  </div>
+                                  <h4 class="h5 fw-bold mb-3">Presupuestos</h4>
+                                  <p class="text-secondary small mb-0">Asigná un presupuesto mensual por categoría y
+  visualizá cuánto llevás gastado en tiempo real.</p>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-md-6 col-lg-3">
+                          <div class="card h-100 border-0 bg-body shadow-sm">
+                              <div class="card-body p-4 text-center text-lg-start">
+                                  <div class="d-inline-flex align-items-center justify-content-center bg-primary
+  bg-opacity-10 text-primary rounded p-3 mb-4">
+                                      <span class="material-symbols-outlined fs-3">handshake</span>
+                                  </div>
+                                  <h4 class="h5 fw-bold mb-3">Dinero Prestado</h4>
+                                  <p class="text-secondary small mb-0">Registrá préstamos a otras personas, controlá
+  cuotas y llevá el saldo pendiente actualizado.</p>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </section>
 
-</main>
+          <!-- Trust Section -->
+          <section class="py-5 border-top border-bottom bg-body" id="trust">
+              <div class="container py-4">
+                  <div class="row row-cols-1 row-cols-md-3 g-4 align-items-center text-center">
+                      <div class="col">
+                          <div class="d-flex align-items-center justify-content-center gap-3">
+                              <span class="material-symbols-outlined text-primary fs-2">group</span>
+                              <div class="text-start">
+                                  <div class="fw-bold small">Vista Hogar</div>
+                                  <div class="small text-secondary text-uppercase fw-bold" style="font-size:
+  0.7rem;">Finanzas compartidas</div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col border-start border-end border-secondary border-opacity-10">
+                          <div class="d-flex align-items-center justify-content-center gap-3">
+                              <span class="material-symbols-outlined text-primary fs-2">tune</span>
+                              <div class="text-start">
+                                  <div class="fw-bold small">Personalizable</div>
+                                  <div class="small text-secondary text-uppercase fw-bold" style="font-size:
+  0.7rem;">Categorías y medios de pago</div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col">
+                          <div class="d-flex align-items-center justify-content-center gap-3">
+                              <span class="material-symbols-outlined text-primary fs-2">monitoring</span>
+                              <div class="text-start">
+                                  <div class="fw-bold small">Reportes visuales</div>
+                                  <div class="small text-secondary text-uppercase fw-bold" style="font-size:
+  0.7rem;">Gráficos por categoría</div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </section>
+      </main>
 
-</asp:Content>
+  </asp:Content>

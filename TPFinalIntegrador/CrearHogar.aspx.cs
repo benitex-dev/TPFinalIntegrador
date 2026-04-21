@@ -1,8 +1,10 @@
 ﻿using dominio;
 using negocio;
 using System;
-using System.Web.UI;
 using System.Collections.Generic;
+using System.IO;
+using System.Web;
+using System.Web.UI;
 
 namespace TPFinalIntegrador
 {
@@ -100,13 +102,18 @@ namespace TPFinalIntegrador
                 txtNombre.Text = "";
                
                 chkEstado.Checked = true;
-                // Redirigir a Inicio.aspx (seguir el mismo patrón que en CargarUsuario)
-                Response.Redirect("Inicio.aspx", false);
+
+                // Mostrar SweetAlert y luego redirigir a Inicio.aspx
+                string script = "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Hogar creado correctamente.'}).then(function(){ window.location = 'Inicio.aspx'; });";
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "hogarCreado", script, true);
             }
             catch (Exception ex)
             {
                 lblMensaje.Text = "No se pudo crear el hogar: " + ex.Message;
                 lblMensaje.CssClass = "text-danger";
+
+                string errScript = $"Swal.fire({{icon: 'error', title: 'Error', text: '{HttpUtility.JavaScriptStringEncode(ex.Message)}'}});";
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "errorHogar", errScript, true);
             }
         }
     }

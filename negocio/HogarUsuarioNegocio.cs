@@ -120,7 +120,36 @@ namespace negocio
                 {
                     HogarUsuario hu = new HogarUsuario();
                     hu.IdMiembro = (int)datos.Lector["IdMiembro"];
-                    hu.Rol = (Rol)Enum.Parse(typeof(Rol), (string)datos.Lector["Rol"]);
+
+                    // Lectura segura de Rol (soporta strings con distinto case y valores numéricos)
+                    hu.Rol = default(Rol); // valor por defecto si no se puede parsear
+                    object rolObj = datos.Lector["Rol"];
+                    if (rolObj != DBNull.Value && rolObj != null)
+                    {
+                        string rolStr = rolObj.ToString();
+
+                        // Intentar parsear como nombre (ignore case) usando variable local
+                        Rol rolParseado;
+                        if (Enum.TryParse<Rol>(rolStr, true, out rolParseado))
+                        {
+                            hu.Rol = rolParseado;
+                        }
+                        else
+                        {
+                            // Si falla, intentar parsear como entero
+                            if (int.TryParse(rolStr, out int rolInt) && Enum.IsDefined(typeof(Rol), rolInt))
+                            {
+                                hu.Rol = (Rol)rolInt;
+                            }
+                            else
+                            {
+                                // No se pudo mapear: dejar valor por defecto y registrar advertencia
+                                System.Diagnostics.Trace.TraceWarning($"HogarUsuarioNegocio: Rol no reconocido para IdMiembro={hu.IdMiembro}: '{rolStr}'");
+                                hu.Rol = default(Rol);
+                            }
+                        }
+                    }
+
                     hu.Estado = (bool)datos.Lector["Estado"];
 
                     hu.Usuario = new Usuario();
