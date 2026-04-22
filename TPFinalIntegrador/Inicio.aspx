@@ -112,6 +112,10 @@
                 border-color: #cbd5e1;
                 color: #0056b3;
             }
+        .ocultar-pagado-por td:nth-child(4),
+        .ocultar-pagado-por th:nth-child(4) {
+            display: none;
+        }
     </style>
 
     <div class="bg-light">
@@ -260,14 +264,13 @@
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive-xl">
-                                <table class="table table-borderless table-hover align-middle mb-0">
+                                <table class="table table-borderless table-hover align-middle mb-0 ocultar-pagado-por" id="tablaMovimientos"  >
                                     <thead class="bg-light">
                                         <tr>
                                             <th class="ps-4 py-3 text-uppercase small text-secondary fw-bold">Concepto</th>
   <th class="py-3 text-uppercase small text-secondary fw-bold">Fecha</th>
   <th class="py-3 text-uppercase small text-secondary fw-bold">Categoría</th>
-  <th class="py-3 text-uppercase small text-secondary fw-bold" id="thPagadoPor" runat="server" visible="false">Pagado
-  Por</th>
+   <th class="py-3 text-uppercase small text-secondary fw-bold">Pagado Por</th>
   <th class="py-3 text-uppercase small text-secondary fw-bold text-end pe-4">Monto</th>                                            <th class="pe-1 py-3 text-uppercase small text-secondary fw-bold text-end"></th>
                                         </tr>
                                     </thead>

@@ -74,11 +74,14 @@ namespace TPFinalIntegrador
                     btnCargarIngreso.Visible = false;
                     divCardGastos.Visible = false;
 
-                    thPagadoPor.Visible = true;
-
+                    //thPagadoPor.Visible = true;
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "mostrarPagadoPor",
+      "document.getElementById('tablaMovimientos').classList.remove('ocultar-pagado-por');", true);
                     // Mostrar cards de hogar
                     divCardGastoHogar.Visible = true;
                     divCardAporte.Visible = true;
+
+                  //  tablaMovimientos.Attributes["class"] = "table table-borderless table-hover align-middle mb-0";
 
                     GastoNegocio gastoNegocio = new GastoNegocio();
                     var gastosHogar = gastoNegocio.ListarPorHogarMesActual((int)Session["IdHogarActual"]);
@@ -92,6 +95,7 @@ namespace TPFinalIntegrador
                     rptIntegrantes.DataSource = hogarUsuarioNegocio.ListarPorHogar((int)Session["IdHogarActual"]);
                     rptIntegrantes.DataBind();
                     CargarCardsHogar();
+
                 }
                 else
                 {   //modo personal
@@ -104,7 +108,8 @@ namespace TPFinalIntegrador
                         divCardGastoHogar.Visible = false;
                         divCardGastos.Visible = true;
                         divCardAporte.Visible = false;
-                        thPagadoPor.Visible = false;
+                       // thPagadoPor.Visible = false;
+                      //  tablaMovimientos.Attributes["class"] = "table table-borderless table-hover align-middle ocultar-pagado-por mb-0";
                         GastoResumenNegocio negocio = new GastoResumenNegocio();
                         List<GastoResumen> gastos = negocio.ObtenerGastosDelMes(usuarioLogueado.IdUsuario);
                         CargarGraficoDeTorta(gastos);
