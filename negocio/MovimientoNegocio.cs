@@ -56,6 +56,7 @@ namespace negocio
                 mov.idReferencia = ingreso.IdIngreso;
                 mov.Fecha = ingreso.Fecha;
                 mov.Descripcion = ingreso.Descripcion;
+
                 mov.Categoria = ingreso.Categoria.Nombre;
                 mov.Tipo = "Ingreso";
                 mov.Monto = ingreso.Monto;
@@ -72,6 +73,7 @@ namespace negocio
                     mov.idReferencia = gasto.IdGasto;
                     mov.Fecha = gasto.Fecha;
                     mov.Descripcion = gasto.Descripcion;
+                    mov.NombreUsuario = gasto.Usuario != null ? gasto.Usuario.Nombre + " " + gasto.Usuario.Apellido : "";
                     mov.Categoria = gasto.Categoria.Nombre;
                     mov.Tipo = "Gasto";
                     mov.Monto = gasto.MontoPesos;

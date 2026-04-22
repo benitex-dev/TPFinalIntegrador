@@ -73,6 +73,9 @@ namespace TPFinalIntegrador
                     divCardIngresos.Visible = false;
                     btnCargarIngreso.Visible = false;
                     divCardGastos.Visible = false;
+
+                    thPagadoPor.Visible = true;
+
                     // Mostrar cards de hogar
                     divCardGastoHogar.Visible = true;
                     divCardAporte.Visible = true;
@@ -101,6 +104,7 @@ namespace TPFinalIntegrador
                         divCardGastoHogar.Visible = false;
                         divCardGastos.Visible = true;
                         divCardAporte.Visible = false;
+                        thPagadoPor.Visible = false;
                         GastoResumenNegocio negocio = new GastoResumenNegocio();
                         List<GastoResumen> gastos = negocio.ObtenerGastosDelMes(usuarioLogueado.IdUsuario);
                         CargarGraficoDeTorta(gastos);
@@ -931,6 +935,7 @@ namespace TPFinalIntegrador
                 mov.Monto = gasto.MontoPesos;
                 mov.Estado = gasto.Estado ? "Activo" : "Eliminado";
                 mov.idReferencia = gasto.IdGasto;
+                mov.NombreUsuario = gasto.Usuario != null ? gasto.Usuario.Nombre + " " + gasto.Usuario.Apellido : "";
 
                 movimientos.Add(mov);
             }

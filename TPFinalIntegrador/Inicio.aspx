@@ -264,10 +264,11 @@
                                     <thead class="bg-light">
                                         <tr>
                                             <th class="ps-4 py-3 text-uppercase small text-secondary fw-bold">Concepto</th>
-                                            <th class="py-3 text-uppercase small text-secondary fw-bold">Fecha</th>
-                                            <th class="py-3 text-uppercase small text-secondary fw-bold">Categoría</th>
-                                            <th class="pe-4 py-3 text-uppercase small text-secondary fw-bold text-end">Monto</th>
-                                            <th class="pe-1 py-3 text-uppercase small text-secondary fw-bold text-end"></th>
+  <th class="py-3 text-uppercase small text-secondary fw-bold">Fecha</th>
+  <th class="py-3 text-uppercase small text-secondary fw-bold">Categoría</th>
+  <th class="py-3 text-uppercase small text-secondary fw-bold" id="thPagadoPor" runat="server" visible="false">Pagado
+  Por</th>
+  <th class="py-3 text-uppercase small text-secondary fw-bold text-end pe-4">Monto</th>                                            <th class="pe-1 py-3 text-uppercase small text-secondary fw-bold text-end"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -296,10 +297,13 @@
                                                             <%# Eval("Categoria") %>
                                                         </span>
                                                     </td>
+                                                    <td class="text-secondary small">
+      <%# Eval("NombreUsuario") %>
+  </td>
 
-                                                    <td class='<%# Eval("Tipo").ToString() == "Gasto" ? "pe-4 text-end fw-bold text-danger" : "pe-4 text-end fw-bold text-success" %>'>
-                                                        <%# Eval("MontoMostrado") %>
-                                                    </td>
+                                                    <td class='<%# Eval("Tipo").ToString() == "Gasto" ? "pe-4 text-end fw-bold text-danger" : "pe-4 text-end fw-bold text-success" %>' style="white-space: nowrap;">
+      <%# Eval("MontoMostrado") %>
+  </td>
                                                     <td class="pe-4 align-middle text-end" style="width: 50px;">
                                                         <div class="dropdown">
                                                             <button class="btn btn-link p-0 text-decoration-none btn-kebab"

@@ -132,6 +132,15 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl h2AporteUsuario;
 
         /// <summary>
+        /// Control thPagadoPor.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell thPagadoPor;
+
+        /// <summary>
         /// Control rptMovimientos.
         /// </summary>
         /// <remarks>
