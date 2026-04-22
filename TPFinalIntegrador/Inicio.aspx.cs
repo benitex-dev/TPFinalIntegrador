@@ -1029,22 +1029,25 @@ namespace TPFinalIntegrador
 
             input = input.Trim();
 
-            // 1) Intentar con la cultura preferida (ej. es-AR para ARS)
+            // Si tiene punto seguido de dígitos al final, normalizar a InvariantCulture
+            if (System.Text.RegularExpressions.Regex.IsMatch(input, @"\.\d+$"))
+            {
+                var normalized = input.Replace(",", "");
+                if (decimal.TryParse(normalized, NumberStyles.Number, CultureInfo.InvariantCulture, out result))
+                    return true;
+            }
+
+            // Intentar con la cultura preferida
             if (decimal.TryParse(input, NumberStyles.Number, preferredCulture, out result))
                 return true;
 
-            // 2) Intentar con Invariant (punto decimal)
+            // Intentar con Invariant
             if (decimal.TryParse(input, NumberStyles.Number, CultureInfo.InvariantCulture, out result))
                 return true;
 
-            // 3) Intentar con es-AR si aún no fue la preferida
-            var esAr = new CultureInfo("es-AR");
-            if (!preferredCulture.Equals(esAr) && decimal.TryParse(input, NumberStyles.Number, esAr, out result))
-                return true;
-
-            // 4) Normalizar reemplazando coma por punto y probar Invariant
-            var normalized = input.Replace(',', '.');
-            if (decimal.TryParse(normalized, NumberStyles.Number, CultureInfo.InvariantCulture, out result))
+            // Normalizar coma por punto
+            var norm = input.Replace(',', '.');
+            if (decimal.TryParse(norm, NumberStyles.Number, CultureInfo.InvariantCulture, out result))
                 return true;
 
             return false;
