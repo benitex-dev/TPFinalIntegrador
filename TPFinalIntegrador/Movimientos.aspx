@@ -85,15 +85,19 @@
         background-color: var(--surface-container-lowest);
         border-radius: 1.5rem;
         padding: 2rem;
+        box-shadow: 0px 1px 11px 1px rgba(0,0,0,0.13);
+-webkit-box-shadow: 0px 1px 11px 1px rgba(0,0,0,0.13);
+-moz-box-shadow: 0px 1px 11px 1px rgba(0,0,0,0.13);
         /*box-shadow: 0 12px 32px rgba(0, 87, 206, 0.06);*/
     }
 
     .cabeceraMovimientos{
-        border-radius: 1rem;
-        background-color:#F0F1F2;
+        border-radius: .5rem;
+        background-color:#F2F2F2;
         height:2.3rem;
         align-content:center;
-        margin
+        margin-top:.5rem;
+        margin-bottom:.5rem;
     }
 
     .movement-item {
@@ -143,6 +147,30 @@
         scrollbar-width: none;
     }
 
+    .btn-kebab {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    color: #adb5bd; 
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+    .btn-kebab:hover {
+        background-color: rgba(0, 0, 0, 0.08);
+        color: #495057 !important;
+    }
+
+        .filter-card {
+            background-color: var(--surface-container-lowest);
+            border-radius: 1.5rem;
+            padding: .8rem;
+            margin-bottom: 1rem;
+            box-shadow: 0px 1px 11px 1px rgba(0,0,0,0.13);
+            -webkit-box-shadow: 0px 1px 11px 1px rgba(0,0,0,0.13);
+            -moz-box-shadow: 0px 1px 11px 1px rgba(0,0,0,0.13);
+            /*box-shadow: 0 12px 32px rgba(0, 87, 206, 0.06);*/
+        }
+
 
 </style>
 
@@ -166,107 +194,120 @@
                     </button>
                 </div>--%>
             <!-- Page Title & Search -->
-            <div class="row align-items-end mb-4">
-                <div class="col-md-8">
-                    <h1 class="display-6 mb-1">Historial de Movimientos</h1>
-                    <div class="search-container">
-                        <span class="material-symbols-outlined">search</span>
-                        <input class="search-input" placeholder="Buscar por comercio o categoría..." type="text" />
-                    </div>
-                </div>
-                <div class="col-md-4 text-md-end mt-4 mt-md-0">
-                    <button class="btn btn-link text-primary fw-bold text-decoration-none d-inline-flex align-items-center gap-2">
-                        <span class="material-symbols-outlined">download</span>
-                        Exportar Resumen
-                    </button>
-                </div>
-            </div>
-            <!-- Filter Bar -->
-            <div class="d-flex flex-wrap align-items-center gap-2 mb-5 no-scrollbar overflow-x-auto pb-2">
-                <button class="btn-filter d-inline-flex align-items-center gap-2">
-                    Período <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
-                </button>
-                <button class="btn-filter d-inline-flex align-items-center gap-2">
-                    Tipo de Operación <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
-                </button>
-                <button class="btn-filter d-inline-flex align-items-center gap-2">
-                    Categoría <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
-                </button>
-                <button class="btn-filter d-inline-flex align-items-center gap-2">
-                    Medios de pago <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
-                </button>
-                <button class="btn btn-link text-primary small fw-bold text-decoration-none ms-md-auto p-0 border-0">
-                    Borrar filtros
-                </button>
-            </div>
-            <!-- Movements List -->
-            <div class="movement-card">
-                <!-- Group 1 -->
-                <asp:Repeater ID="rptMovimientos" runat="server" OnItemCommand="rptMovimientos_ItemCommand">
-                    <ItemTemplate>
+            <div class="row justify-content-center mx-0">
+                <div class="col-lg-10 col-xl-8">
+                    <div class="row align-items-end mb-4">
+                        <div class="col-md-6">
+                            <h1 class="display-6 mt-2 mb-3">Historial de Movimientos</h1>
+                            <%--<div class="search-container">
+                                <span class="material-symbols-outlined">search</span>
+                                <input class="search-input" placeholder="Buscar por comercio o categoría..." type="text" />
+                            </div>--%>
 
-                        <asp:Literal ID="cabeceraMovimientos" runat="server" Text='<%# ObtenerCabeceraFecha(Eval("Fecha")) %>'></asp:Literal>
-                        <%--<div class="cabeceraMovimientos"><%# if(ObtenerCabeceraFecha(Eval("Fecha")) != FechaGrupoAnterior) %></div>--%>
+                            <div class="d-flex align-items-center bg-white border rounded-pill shadow-sm px-3 py-1 w-100" style="transition: all 0.2s ease-in-out;">
+                                <span class="material-symbols-outlined text-muted fs-5">search</span>
 
-                        <div class="movement-item d-flex align-items-center border-bottom justify-content-between mb-0 px-2 pb-2">
-
-                            <div class="d-flex align-items-center gap-3">
-
-                                <div class='<%# Eval("Tipo").ToString() == "Gasto" ? "icon-box bg-danger-light text-danger rounded-circle d-flex align-items-center justify-content-center" : "icon-box bg-success-light text-success rounded-circle d-flex align-items-center justify-content-center" %>'
-                                    style="width: 45px; height: 45px;">
-                                    <span class="material-symbols-outlined fs-5">
-                                        <%# Eval("Tipo").ToString() == "Gasto" ? "shopping_bag" : "payments" %>
-                    </span>
-                                </div>
-
-                                <div>
-                                    <h4 class="h6 mb-0 fw-bold"><%# Eval("Descripcion") %></h4>
-                                    <p class="mb-0 text-muted small"><%# Eval("Categoria") %></p>
-                                    <%--<p class="mb-0 text-secondary-emphasis opacity-50 fw-medium" style="font-size: 0.7rem;">
-                                        <%# Eval("Tipo").ToString() == "Gasto" ? Eval("MedioPago") : null %>
-                                    </p>--%>
-                                </div>
-                            </div>
-
-                            <div class="d-flex align-items-center gap-3">
-
-                                <div class="text-end">
-                                    <p class='<%# Eval("Tipo").ToString() == "Gasto" ? "mb-0 fw-bold font-headline h6 text-danger" : "mb-0 fw-bold font-headline h6 text-success" %>'>
-                                        <%# Eval("MontoMostrado") %>
-                                    </p>
-                                    <%--<p class="mb-0 text-muted small"><%# Eval("Fecha", "{0:HH:mm} hs") %></p>--%>
-                                </div>
-
-                                <div class="dropdown">
-                                    <button class="btn btn-link p-0 text-decoration-none text-secondary" style="display: inline-flex; align-items: center; justify-content: center;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span class="material-symbols-outlined" style="font-size: 22px; line-height: 1;">more_vert</span>
-                                    </button>
-
-                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
-                                        <li>
-                                            <asp:LinkButton ID="btnEditar" runat="server" CssClass="dropdown-item small"
-                                                CommandName="Editar" CommandArgument='<%# Eval("Tipo") + "|" + Eval("idReferencia") %>'>
-                                ✏️ Editar
-                            </asp:LinkButton>
-                                        </li>
-                                        <li>
-                                            <asp:LinkButton ID="btnEliminar" runat="server" CssClass="dropdown-item small text-danger"
-                                                CommandName="Eliminar" CommandArgument='<%# Eval("Tipo") + "|" + Eval("idReferencia") %>'
-                                                OnClientClick="return confirm('¿Estás seguro de que querés borrar este movimiento?');">
-                                🗑️ Eliminar
-                            </asp:LinkButton>
-                                        </li>
-                                    </ul>
-                                </div>
+                                <input class="form-control border-0 shadow-none bg-transparent w-100 ms-2"
+                                    placeholder="Buscar por comercio o categoría..."
+                                    type="text"
+                                    style="outline: none;" />
                             </div>
                         </div>
-                    </ItemTemplate>
-                </asp:Repeater>
+                        <div class="col-md-6 text-md-end mt-4 mt-md-0">
+                            <button class="btn btn-link text-primary fw-bold text-decoration-none d-inline-flex align-items-center gap-2">
+                                <span class="material-symbols-outlined">refresh</span>
+                                Actualizar listado
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Filter Bar -->
+                    <div class="filter-card">
+                        <div class="d-flex flex-wrap align-items-center gap-2 no-scrollbar overflow-x-auto">
+                            <button class="btn-filter d-inline-flex align-items-center gap-2">
+                                Período <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
+                            </button>
+                            <button class="btn-filter d-inline-flex align-items-center gap-2">
+                                Tipo de Operación <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
+                            </button>
+                            <button class="btn-filter d-inline-flex align-items-center gap-2">
+                                Categoría <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
+                            </button>
+                            <button class="btn-filter d-inline-flex align-items-center gap-2">
+                                Medios de pago <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
+                            </button>
+                            <button class="btn btn-link text-primary small fw-bold text-decoration-none ms-md-auto border-0">
+                                <small>Borrar filtros</small>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Movements List -->
+                    <div class="movement-card">
+                        <!-- Group 1 -->
+                        <asp:Repeater ID="rptMovimientos" runat="server" OnItemCommand="rptMovimientos_ItemCommand">
+                            <ItemTemplate>
+
+                                <asp:Literal ID="cabeceraMovimientos" runat="server" Text='<%# ObtenerCabeceraFecha(Eval("Fecha")) %>'></asp:Literal>
+                                <%--<div class="cabeceraMovimientos"><%# if(ObtenerCabeceraFecha(Eval("Fecha")) != FechaGrupoAnterior) %></div>--%>
+
+                                <div class="movement-item d-flex align-items-center border-bottom justify-content-between mb-0 px-2 pb-2">
+
+                                    <div class="d-flex align-items-center gap-3">
+
+                                        <div class='<%# Eval("Tipo").ToString() == "Gasto" ? "icon-box bg-danger-light text-danger rounded-circle d-flex align-items-center justify-content-center" : "icon-box bg-success-light text-success rounded-circle d-flex align-items-center justify-content-center" %>'
+                                            style="width: 45px; height: 45px;">
+                                            <span class="material-symbols-outlined fs-5">
+                                                <%# Eval("Tipo").ToString() == "Gasto" ? "shopping_bag" : "payments" %>
+                                            </span>
+                                        </div>
+
+                                        <div>
+                                            <h4 class="h6 mb-0 fw-bold"><%# Eval("Descripcion") %></h4>
+                                            <p class="mb-0 text-muted small"><%# Eval("Categoria") %></p>
+                                            <%--<p class="mb-0 text-secondary-emphasis opacity-50 fw-medium" style="font-size: 0.7rem;">
+                                        <%# Eval("Tipo").ToString() == "Gasto" ? Eval("MedioPago") : null %>
+                                    </p>--%>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex align-items-center gap-3">
+
+                                        <div class="text-end">
+                                            <p class='<%# Eval("Tipo").ToString() == "Gasto" ? "mb-0 fw-bold font-headline h6 text-danger" : "mb-0 fw-bold font-headline h6 text-success" %>'>
+                                                <%# Eval("MontoMostrado") %>
+                                            </p>
+                                            <%--<p class="mb-0 text-muted small"><%# Eval("Fecha", "{0:HH:mm} hs") %></p>--%>
+                                        </div>
+
+                                        <div class="dropdown">
+                                            <button class="btn btn-link p-0 text-decoration-none text-secondary btn-kebab" style="display: inline-flex; align-items: center; justify-content: center;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <span class="material-symbols-outlined" style="font-size: 22px; line-height: 1;">more_vert</span>
+                                            </button>
+
+                                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                                                <li>
+                                                    <asp:LinkButton ID="btnEditar" runat="server" CssClass="dropdown-item small"
+                                                        CommandName="Editar" CommandArgument='<%# Eval("Tipo") + "|" + Eval("idReferencia") %>'>
+                                ✏️ Editar
+                                                    </asp:LinkButton>
+                                                </li>
+                                                <li>
+                                                    <asp:LinkButton ID="btnEliminar" runat="server" CssClass="dropdown-item small text-danger"
+                                                        CommandName="Eliminar" CommandArgument='<%# Eval("Tipo") + "|" + Eval("idReferencia") %>'
+                                                        OnClientClick="return confirm('¿Estás seguro de que querés borrar este movimiento?');">
+                                🗑️ Eliminar
+                                                    </asp:LinkButton>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ItemTemplate>
+                        </asp:Repeater>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ModalsContent" runat="server">
         <%--MODAL INGRESO--%>

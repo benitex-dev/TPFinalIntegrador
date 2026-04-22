@@ -17,12 +17,18 @@ namespace TPFinalIntegrador
         {
             if (!IsPostBack)
             {
+                if (Session["usuario"] == null)
+                {
+                    Response.Redirect("Login.aspx", false);
+                    return;
+                }
                 CargarMovimientos();
             }
         }
 
         protected void CargarMovimientos()
         {
+
 
             Usuario usuarioLogueado = (Usuario)Session["usuario"];
             MovimientoNegocio negocio = new MovimientoNegocio();

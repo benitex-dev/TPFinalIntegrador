@@ -83,27 +83,27 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            color: #adb5bd; /* Gris clarito de base (reemplaza a la opacidad baja) */
+            color: #adb5bd; 
             transition: background-color 0.2s ease, color 0.2s ease;
         }
 
             .btn-kebab:hover {
                 background-color: rgba(0, 0, 0, 0.08);
-                color: #495057 !important; /* Gris oscuro al hacer hover, el renderizado ni se entera */
+                color: #495057 !important;
             }
 
             .btn-glow-primary:hover {
-                transform: translateY(-2px); /* Se levanta un poquito al pasar el mouse */
+                transform: translateY(-2px);
                 box-shadow: 0px 12px 28px rgba(13, 110, 253, 0.4);
                 color: #ffffff;
             }
 
-        /* Magia para el botón blanco: Borde suavecito en lugar de azul fuerte */
+        
         .btn-outline-subtle {
             background-color: #ffffff;
             color: #0d6efd;
-            border: 1px solid #e2e8f0; /* Un gris muy clarito y elegante */
-            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.02); /* Sombrita imperceptible */
+            border: 1px solid #e2e8f0;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.02);
             transition: all 0.3s ease;
         }
 
