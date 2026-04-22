@@ -528,16 +528,18 @@ namespace negocio
 
             try
             {
-                datos.setConsulta(@"SELECT G.IdGasto, G.Fecha, G.MontoPesos, G.Moneda, G.IdCategoria, G.Descripcion, 
-                            G.IdMedioPago, G.IdUsuario, G.IdHogar, G.MontoUSD, G.Cotizacion, G.Estado, 
-                            C.Nombre AS NombreCategoria, MP.Descripcion AS NombreMedioPago 
-                            FROM GASTO G 
-                            INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria 
-                            INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago 
-                            WHERE G.IdHogar = @idHogar
-                            AND G.Estado = 1 
-                            AND MONTH(G.Fecha) = MONTH(GETDATE())
-                            AND YEAR(G.Fecha) = YEAR(GETDATE())");
+                datos.setConsulta(@" SELECT G.IdGasto, G.Fecha, G.MontoPesos, G.Moneda, G.IdCategoria, G.Descripcion,
+      G.IdMedioPago, G.IdUsuario, G.IdHogar, G.MontoUSD, G.Cotizacion, G.Estado,
+      C.Nombre AS NombreCategoria, MP.Descripcion AS NombreMedioPago,
+      U.Nombre AS NombreUsuario, U.Apellido AS ApellidoUsuario
+  FROM GASTO G
+  INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria
+  INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago
+  INNER JOIN USUARIO U ON G.IdUsuario = U.IdUsuario
+  WHERE G.IdHogar = @idHogar
+  AND G.Estado = 1
+  AND MONTH(G.Fecha) = MONTH(GETDATE())
+  AND YEAR(G.Fecha) = YEAR(GETDATE())");
 
                 datos.setParametro("@idHogar", idHogar);
                 datos.ejecutarLectura();
@@ -563,7 +565,12 @@ namespace negocio
                     gasto.MedioDePago = new MedioPago();
                     gasto.MedioDePago.IdMedioPago = (int)datos.Lector["IdMedioPago"];
                     gasto.MedioDePago.Descripcion = (string)datos.Lector["NombreMedioPago"];
-
+                   
+                    gasto.Usuario = new Usuario();
+                    gasto.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+                    gasto.Usuario.Nombre = (string)datos.Lector["NombreUsuario"];
+                    gasto.Usuario.Apellido = (string)datos.Lector["ApellidoUsuario"];
+                    
                     if (datos.Lector["MontoUSD"] != DBNull.Value)
                         gasto.MontoUSD = (decimal)datos.Lector["MontoUSD"];
 

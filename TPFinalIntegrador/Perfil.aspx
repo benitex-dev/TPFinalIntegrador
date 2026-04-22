@@ -125,7 +125,8 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="form-label">Imagen de Perfil</label>
-                        <input type="file" id="txtImagen" runat="server" class="form-control" />
+                         <input type="file" id="txtImagen" runat="server" class="form-control" accept="image/*"
+  onchange="previsualizarImagen(this)" />
                     </div>
                     <asp:Image ID="imagenNuevoPerfil"
                         CssClass="img-thumbnail mb-3"
@@ -169,4 +170,15 @@
    
 
 </main>
+     <script>
+      function previsualizarImagen(input) {
+          if (input.files && input.files[0]) {
+              var reader = new FileReader();
+              reader.onload = function (e) {
+                  document.getElementById('<%= imagenNuevoPerfil.ClientID %>').src = e.target.result;
+              };
+              reader.readAsDataURL(input.files[0]);
+          }
+      }
+     </script>
 </asp:Content>

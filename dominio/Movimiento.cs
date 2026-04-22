@@ -11,6 +11,7 @@ namespace dominio
         //Se utiliza como clase intermedia para mostrar el grid principal 
         public int idReferencia {  get; set; }
         public DateTime Fecha { get; set; }
+        public string NombreUsuario { get; set; }
         public string Descripcion { get; set; }
         public string Categoria { get; set; }
         public string Tipo { get; set; }   // Ingreso o Gasto

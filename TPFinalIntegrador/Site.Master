@@ -156,10 +156,13 @@
                   </ul>
               </div>
               <div class="dropdown ms-auto" id="divSesionIniciada" runat="Server" visible="false">
-                  <button id="btnSesionIniciada" runat="server" class="btn btn-light border rounded-pill d-flex align-items-center gap-2 px-3"
-  type="button" data-bs-toggle="dropdown">
-                      <asp:Image ID="imgNavbar" runat="server" CssClass="rounded-circle" Style="width:32px; height:32px; object-fit:cover;" />
-                  </button>
+                   <button id="btnSesionIniciada" runat="server" class="btn btn-light border rounded-pill d-flex align-items-center gap-2
+   px-3"
+      type="button" data-bs-toggle="dropdown">
+      <asp:Image ID="imgNavbar" runat="server" CssClass="rounded-circle" Style="width:32px; height:32px;
+  object-fit:cover;" />
+      <asp:Label ID="lblNombreNavbar" runat="server" />
+  </button>
                   <ul class="dropdown-menu dropdown-menu-end">
                       <li>
                           <asp:LinkButton ID="btnPerfil" runat="server" CssClass="dropdown-item" OnClick="btnPerfil_Click">
@@ -189,9 +192,43 @@
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
             <hr />
-            <footer>
-                <p>&copy; <%: DateTime.Now.Year %> - Mi aplicación ASP.NET</p>
-            </footer>
+          <footer class="bg-body-secondary border-top mt-5 py-5">
+      <div class="container">
+          <div class="row g-4">
+              <div class="col-md-4">
+                  <h5 class="fw-bold mb-2">GastApp</h5>
+                  <p class="text-secondary small mb-1">Aplicación de gestión de finanzas personales y grupales.</p>
+                  <p class="text-secondary small">Proyecto Integrador Final — Técnico Universitario en Programación</p>
+                  <p class="text-secondary small fw-semibold">Universidad Tecnológica Nacional (UTN)</p>
+              </div>
+              <div class="col-md-4">
+                  <h6 class="fw-bold mb-3">Navegación</h6>
+                  <ul class="list-unstyled small">
+                      <li class="mb-1"><a href="Inicio.aspx" class="text-secondary text-decoration-none">Inicio</a></li>
+                      <li class="mb-1"><a href="Ahorros.aspx" class="text-secondary
+  text-decoration-none">Ahorros</a></li>
+                      <li class="mb-1"><a href="Presupuesto.aspx" class="text-secondary
+  text-decoration-none">Presupuesto</a></li>
+                      <li class="mb-1"><a href="Deudores.aspx" class="text-secondary text-decoration-none">Dinero
+  Prestado</a></li>
+                  </ul>
+              </div>
+              <div class="col-md-4">
+                  <h6 class="fw-bold mb-3">Equipo de desarrollo</h6>
+                  <ul class="list-unstyled small text-secondary">
+                      <li class="mb-1">Ailin Miño</li>
+                      <li class="mb-1">Johannes Kalksma</li>
+                      <li class="mb-1">Marina Celeste Pinti</li>
+                      <li class="mb-1">Joaquin Leonel Sanchez</li>
+                      <li class="mb-1">Jorge Ezequiel Benitez</li>
+                  </ul>
+              </div>
+          </div>
+          <hr class="mt-4" />
+          <p class="text-center text-secondary small mb-0">&copy; <%: DateTime.Now.Year %> GastApp — Todos los derechos
+  reservados.</p>
+      </div>
+  </footer>
         </div>
         <asp:ContentPlaceHolder ID="ModalsContent" runat="server">
         </asp:ContentPlaceHolder>

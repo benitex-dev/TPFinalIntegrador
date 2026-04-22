@@ -112,6 +112,10 @@
                 border-color: #cbd5e1;
                 color: #0056b3;
             }
+        .ocultar-pagado-por td:nth-child(4),
+        .ocultar-pagado-por th:nth-child(4) {
+            display: none;
+        }
     </style>
 
     <div class="bg-light">
@@ -146,8 +150,9 @@
             <!-- Hero Section -->
             <section class="row align-items-center mb-4 g-3">
                 <div class="col-lg-7">
-                    <h1 class="display-6 mb-1">Tu Resumen Personal</h1>
-                    <p class="text-secondary fw-medium">Gestiona tu patrimonio con precisión editorial.</p>
+                    <h1 class="display-6 mb-1"><asp:Label ID="lblTituloDashboard" runat="server" Text="Tu Resumen Personal" /></h1>
+  <p class="text-secondary fw-medium"><asp:Label ID="lblSubtituloDashboard" runat="server" Text="Gestiona tu patrimonio
+  con precisión editorial." /></p>
                 </div>
                 <div class="col-lg-5 d-flex gap-2 justify-content-lg-end">
                     <button type="button" class="btn btn-glow-primary rounded-pill d-flex align-items-center gap-2 px-4 py-2 fw-bold" data-bs-toggle="modal" data-bs-target="#modalGasto" onclick="limpiarModalGasto()">
@@ -156,7 +161,9 @@
    
                     </button>
 
-                    <button type="button" class="btn btn-outline-subtle rounded-pill d-flex align-items-center gap-2 px-4 py-2 fw-bold" data-bs-toggle="modal" data-bs-target="#modalIngreso" onclick="limpiarModalIngreso()">
+                    <button id="btnCargarIngreso" runat="server" type="button" class="btn btn-outline-subtle rounded-pill d-flex
+  align-items-center gap-2 px-4 py-2 fw-bold" data-bs-toggle="modal" data-bs-target="#modalIngreso"
+  onclick="limpiarModalIngreso()">
                         <span class="material-symbols-outlined fs-5">payments</span>
                         Cargar ingreso
    
@@ -166,7 +173,7 @@
             <!-- Metrics Grid (Bento) -->
             <section class="row g-3 mb-4">
                 <!-- Saldo -->
-                <div class="col-md-4">
+                <div class="col-md-4" id="divCardSaldo" runat="server">
                     <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
                         <div class="d-flex justify-content-between align-items-start mb-4">
                             <span class="text-uppercase small fw-bold text-secondary tracking-wider">Saldo Disponible</span>
@@ -181,7 +188,7 @@
                     </div>
                 </div>
                 <!-- Ingresos -->
-                <div class="col-md-4">
+                <div class="col-md-4"  id="divCardIngresos" runat="server">
                     <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
                         <div class="d-flex justify-content-between align-items-start mb-4">
                             <span class="text-uppercase small fw-bold text-secondary tracking-wider">Ingresos del mes</span>
@@ -199,7 +206,7 @@
                     </div>
                 </div>
                 <!-- Gastos -->
-                <div class="col-md-4">
+                <div class="col-md-4"  id="divCardGastos" runat="server">
                     <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
                         <div class="d-flex justify-content-between align-items-start mb-4">
                             <span class="text-uppercase small fw-bold text-secondary tracking-wider">Gastos del mes</span>
@@ -216,6 +223,36 @@
                         </div>
                     </div>
                 </div>
+                 <%-- Card Gasto Total Hogar --%>
+  <div class="col-md-4" id="divCardGastoHogar" runat="server" visible="false">
+      <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+          <div class="d-flex justify-content-between align-items-start mb-4">
+              <span class="text-uppercase small fw-bold text-secondary tracking-wider">Gasto Total del Hogar</span>
+              <div class="icon-box bg-danger-light">
+                  <span class="material-symbols-outlined">trending_down</span>
+              </div>
+          </div>
+          <div>
+              <h2 class="balance-text text-danger mb-1" runat="server" id="h2GastoHogar">$ --</h2>
+              <span class="text-secondary small fw-medium">Total consumido por todos</span>
+          </div>
+      </div>
+  </div>
+  <%-- Card Tu Aporte --%>
+  <div class="col-md-4" id="divCardAporte" runat="server" visible="false">
+      <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+          <div class="d-flex justify-content-between align-items-start mb-4">
+              <span class="text-uppercase small fw-bold text-secondary tracking-wider">Tu Aporte</span>
+              <div class="icon-box bg-success-light">
+                  <span class="material-symbols-outlined">payments</span>
+              </div>
+          </div>
+          <div>
+              <h2 class="balance-text text-success mb-1" runat="server" id="h2AporteUsuario">$ --</h2>
+              <span class="text-secondary small fw-medium">Aportado a la fecha</span>
+          </div>
+      </div>
+  </div>
             </section>
             <div class="row g-4">
                 <!-- Left Column: Transactions -->
@@ -227,14 +264,14 @@
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive-xl">
-                                <table class="table table-borderless table-hover align-middle mb-0">
+                                <table class="table table-borderless table-hover align-middle mb-0 ocultar-pagado-por" id="tablaMovimientos"  >
                                     <thead class="bg-light">
                                         <tr>
                                             <th class="ps-4 py-3 text-uppercase small text-secondary fw-bold">Concepto</th>
-                                            <th class="py-3 text-uppercase small text-secondary fw-bold">Fecha</th>
-                                            <th class="py-3 text-uppercase small text-secondary fw-bold">Categoría</th>
-                                            <th class="pe-4 py-3 text-uppercase small text-secondary fw-bold text-end">Monto</th>
-                                            <th class="pe-1 py-3 text-uppercase small text-secondary fw-bold text-end"></th>
+  <th class="py-3 text-uppercase small text-secondary fw-bold">Fecha</th>
+  <th class="py-3 text-uppercase small text-secondary fw-bold">Categoría</th>
+   <th class="py-3 text-uppercase small text-secondary fw-bold">Pagado Por</th>
+  <th class="py-3 text-uppercase small text-secondary fw-bold text-end pe-4">Monto</th>                                            <th class="pe-1 py-3 text-uppercase small text-secondary fw-bold text-end"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -263,10 +300,13 @@
                                                             <%# Eval("Categoria") %>
                                                         </span>
                                                     </td>
+                                                    <td class="text-secondary small">
+      <%# Eval("NombreUsuario") %>
+  </td>
 
-                                                    <td class='<%# Eval("Tipo").ToString() == "Gasto" ? "pe-4 text-end fw-bold text-danger" : "pe-4 text-end fw-bold text-success" %>'>
-                                                        <%# Eval("MontoMostrado") %>
-                                                    </td>
+                                                    <td class='<%# Eval("Tipo").ToString() == "Gasto" ? "pe-4 text-end fw-bold text-danger" : "pe-4 text-end fw-bold text-success" %>' style="white-space: nowrap;">
+      <%# Eval("MontoMostrado") %>
+  </td>
                                                     <td class="pe-4 align-middle text-end" style="width: 50px;">
                                                         <div class="dropdown">
                                                             <button class="btn btn-link p-0 text-decoration-none btn-kebab"

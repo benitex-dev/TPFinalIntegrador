@@ -59,20 +59,57 @@ namespace TPFinalIntegrador
 
                 // ¿Estamos en la vista de Hogar?
                 if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
-                {
+                {   //modo hogar
+                    Usuario usuario = (Usuario)Session["usuario"];
                     Hogar hogarSeleccionado = (Hogar)Session["HogarSeleccionado"];
                     // Lógica de Hogar...
+
+                    lblTituloDashboard.Text = "Hogar: " + hogarSeleccionado.Nombre;
+                    lblSubtituloDashboard.Text = "Estás viendo los movimientos del hogar.";
                     pnlLinkGastosIntegrante.Visible = true;
+
+                    // Ocultar cards personales
+                    divCardSaldo.Visible = false;
+                    divCardIngresos.Visible = false;
+                    btnCargarIngreso.Visible = false;
+                    divCardGastos.Visible = false;
+
+                    //thPagadoPor.Visible = true;
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "mostrarPagadoPor",
+      "document.getElementById('tablaMovimientos').classList.remove('ocultar-pagado-por');", true);
+                    // Mostrar cards de hogar
+                    divCardGastoHogar.Visible = true;
+                    divCardAporte.Visible = true;
+
+                  //  tablaMovimientos.Attributes["class"] = "table table-borderless table-hover align-middle mb-0";
+
+                    GastoNegocio gastoNegocio = new GastoNegocio();
+                    var gastosHogar = gastoNegocio.ListarPorHogarMesActual((int)Session["IdHogarActual"]);
+                    decimal totalHogar = gastosHogar.Sum(g => g.MontoPesos);
+                    decimal tuAporte = gastosHogar.Where(g => g.Usuario.IdUsuario == usuario.IdUsuario).Sum(g => g.MontoPesos);
+
+                    h2GastoHogar.InnerText = "$ " + totalHogar.ToString("N2");
+                    h2AporteUsuario.InnerText = "$ " + tuAporte.ToString("N2");
+
                     HogarUsuarioNegocio hogarUsuarioNegocio = new HogarUsuarioNegocio();
                     rptIntegrantes.DataSource = hogarUsuarioNegocio.ListarPorHogar((int)Session["IdHogarActual"]);
                     rptIntegrantes.DataBind();
+                    CargarCardsHogar();
+
                 }
                 else
-                {
+                {   //modo personal
                     if (Session["usuario"] != null)
                     {
                         Usuario usuarioLogueado = (Usuario)Session["usuario"];
-
+                        divCardSaldo.Visible = true;
+                        divCardIngresos.Visible = true;
+                        btnCargarIngreso.Visible = true;
+                        divCardGastoHogar.Visible = false;
+                        divCardGastos.Visible = true;
+                        divCardAporte.Visible = false;
+                       // thPagadoPor.Visible = false;
+                      //  tablaMovimientos.Attributes["class"] = "table table-borderless table-hover align-middle ocultar-pagado-por mb-0";
                         GastoResumenNegocio negocio = new GastoResumenNegocio();
                         List<GastoResumen> gastos = negocio.ObtenerGastosDelMes(usuarioLogueado.IdUsuario);
                         CargarGraficoDeTorta(gastos);
@@ -89,6 +126,7 @@ namespace TPFinalIntegrador
                 CargarCategoriasGasto();
                 CargarMediosPago();            
                 CargarMovimientosDelMesRecientes();
+
                 cargarMetasAhorro();
                 CargarResumenPresupuesto();
                 cargarDashboardInfo();
@@ -764,6 +802,7 @@ namespace TPFinalIntegrador
                 upGraficoTorta.Update();
                 cargarDashboardInfo();
                 CargarMovimientosDelMesRecientes();
+                CargarCardsHogar();
 
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "okGasto",
                     "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Gasto guardado correctamente.'});", true);
@@ -901,6 +940,7 @@ namespace TPFinalIntegrador
                 mov.Monto = gasto.MontoPesos;
                 mov.Estado = gasto.Estado ? "Activo" : "Eliminado";
                 mov.idReferencia = gasto.IdGasto;
+                mov.NombreUsuario = gasto.Usuario != null ? gasto.Usuario.Nombre + " " + gasto.Usuario.Apellido : "";
 
                 movimientos.Add(mov);
             }
@@ -1319,7 +1359,22 @@ namespace TPFinalIntegrador
                 rptMetasDashboard.DataBind();
             }
         }
+        private void CargarCardsHogar()
+        {
+            if (Session["ModoVista"] == null || Session["ModoVista"].ToString() != "Hogar" || Session["IdHogarActual"] ==
+        null)
+                return;
 
+            Usuario usuario = (Usuario)Session["usuario"];
+            GastoNegocio gastoNegocio = new GastoNegocio();
+            var gastosHogar = gastoNegocio.ListarPorHogarMesActual((int)Session["IdHogarActual"]);
+
+            decimal totalHogar = gastosHogar.Sum(g => g.MontoPesos);
+            decimal tuAporte = gastosHogar.Where(g => g.Usuario.IdUsuario == usuario.IdUsuario).Sum(g => g.MontoPesos);
+
+            h2GastoHogar.InnerText = "$ " + totalHogar.ToString("N2");
+            h2AporteUsuario.InnerText = "$ " + tuAporte.ToString("N2");
+        }
         protected void rptMovimientos_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             try

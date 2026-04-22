@@ -33,8 +33,11 @@ namespace TPFinalIntegrador
                 divMenuPrincipal.Visible = true;
 
                 Usuario usuarioIniciado = (Usuario)Session["usuario"];
-                imgNavbar.ImageUrl = "~/Imagenes/" + usuarioIniciado.ImagenURL + "?v=" + DateTime.Now.Ticks;
-                btnSesionIniciada.InnerText = usuarioIniciado.Nombre + " " + usuarioIniciado.Apellido;
+                if (!string.IsNullOrEmpty(usuarioIniciado.ImagenURL))
+                    imgNavbar.ImageUrl = "~/Imagenes/" + usuarioIniciado.ImagenURL + "?v=" + DateTime.Now.Ticks;
+                else
+                    imgNavbar.ImageUrl = "~/Imagenes/default-avatar.png";
+                lblNombreNavbar.Text = usuarioIniciado.Nombre + " " + usuarioIniciado.Apellido;
             }
             else
             {
