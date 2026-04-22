@@ -563,7 +563,8 @@ namespace negocio
                     gasto.MedioDePago = new MedioPago();
                     gasto.MedioDePago.IdMedioPago = (int)datos.Lector["IdMedioPago"];
                     gasto.MedioDePago.Descripcion = (string)datos.Lector["NombreMedioPago"];
-
+                    gasto.Usuario = new Usuario();
+                    gasto.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
                     if (datos.Lector["MontoUSD"] != DBNull.Value)
                         gasto.MontoUSD = (decimal)datos.Lector["MontoUSD"];
 

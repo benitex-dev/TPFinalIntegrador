@@ -59,20 +59,48 @@ namespace TPFinalIntegrador
 
                 // ¿Estamos en la vista de Hogar?
                 if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
-                {
+                {   //modo hogar
+                    Usuario usuario = (Usuario)Session["usuario"];
                     Hogar hogarSeleccionado = (Hogar)Session["HogarSeleccionado"];
                     // Lógica de Hogar...
+
+                    lblTituloDashboard.Text = "Hogar: " + hogarSeleccionado.Nombre;
+                    lblSubtituloDashboard.Text = "Estás viendo los movimientos del hogar.";
                     pnlLinkGastosIntegrante.Visible = true;
+
+                    // Ocultar cards personales
+                    divCardSaldo.Visible = false;
+                    divCardIngresos.Visible = false;
+                    btnCargarIngreso.Visible = false;
+                    divCardGastos.Visible = false;
+                    // Mostrar cards de hogar
+                    divCardGastoHogar.Visible = true;
+                    divCardAporte.Visible = true;
+
+                    GastoNegocio gastoNegocio = new GastoNegocio();
+                    var gastosHogar = gastoNegocio.ListarPorHogarMesActual((int)Session["IdHogarActual"]);
+                    decimal totalHogar = gastosHogar.Sum(g => g.MontoPesos);
+                    decimal tuAporte = gastosHogar.Where(g => g.Usuario.IdUsuario == usuario.IdUsuario).Sum(g => g.MontoPesos);
+
+                    h2GastoHogar.InnerText = "$ " + totalHogar.ToString("N2");
+                    h2AporteUsuario.InnerText = "$ " + tuAporte.ToString("N2");
+
                     HogarUsuarioNegocio hogarUsuarioNegocio = new HogarUsuarioNegocio();
                     rptIntegrantes.DataSource = hogarUsuarioNegocio.ListarPorHogar((int)Session["IdHogarActual"]);
                     rptIntegrantes.DataBind();
+                    CargarCardsHogar();
                 }
                 else
-                {
+                {   //modo personal
                     if (Session["usuario"] != null)
                     {
                         Usuario usuarioLogueado = (Usuario)Session["usuario"];
-
+                        divCardSaldo.Visible = true;
+                        divCardIngresos.Visible = true;
+                        btnCargarIngreso.Visible = true;
+                        divCardGastoHogar.Visible = false;
+                        divCardGastos.Visible = true;
+                        divCardAporte.Visible = false;
                         GastoResumenNegocio negocio = new GastoResumenNegocio();
                         List<GastoResumen> gastos = negocio.ObtenerGastosDelMes(usuarioLogueado.IdUsuario);
                         CargarGraficoDeTorta(gastos);
@@ -89,6 +117,7 @@ namespace TPFinalIntegrador
                 CargarCategoriasGasto();
                 CargarMediosPago();            
                 CargarMovimientosDelMesRecientes();
+
                 cargarMetasAhorro();
                 CargarResumenPresupuesto();
                 cargarDashboardInfo();
@@ -764,6 +793,7 @@ namespace TPFinalIntegrador
                 upGraficoTorta.Update();
                 cargarDashboardInfo();
                 CargarMovimientosDelMesRecientes();
+                CargarCardsHogar();
 
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "okGasto",
                     "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Gasto guardado correctamente.'});", true);
@@ -1319,7 +1349,22 @@ namespace TPFinalIntegrador
                 rptMetasDashboard.DataBind();
             }
         }
+        private void CargarCardsHogar()
+        {
+            if (Session["ModoVista"] == null || Session["ModoVista"].ToString() != "Hogar" || Session["IdHogarActual"] ==
+        null)
+                return;
 
+            Usuario usuario = (Usuario)Session["usuario"];
+            GastoNegocio gastoNegocio = new GastoNegocio();
+            var gastosHogar = gastoNegocio.ListarPorHogarMesActual((int)Session["IdHogarActual"]);
+
+            decimal totalHogar = gastosHogar.Sum(g => g.MontoPesos);
+            decimal tuAporte = gastosHogar.Where(g => g.Usuario.IdUsuario == usuario.IdUsuario).Sum(g => g.MontoPesos);
+
+            h2GastoHogar.InnerText = "$ " + totalHogar.ToString("N2");
+            h2AporteUsuario.InnerText = "$ " + tuAporte.ToString("N2");
+        }
         protected void rptMovimientos_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             try
