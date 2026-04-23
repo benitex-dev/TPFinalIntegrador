@@ -31,6 +31,31 @@ namespace TPFinalIntegrador
                 CargarCuotas(idDeuda);
             }
         }
+        protected string GetBadgeCuota(EstadoCuota estado)
+        {
+            switch (estado)
+            {
+                case EstadoCuota.Pagada:
+                    return "<span class='badge rounded-pill' style = 'background:rgba(25,135,84,0.12);color:#198754;' > Cobrada </ span > ";
+                case EstadoCuota.Pendiente:
+                    return "<span class='badge rounded-pill'style = 'background:rgba(255,193,7,0.15);color:#856404;' > Pendiente </ span > ";
+                default:
+                    return estado.ToString();
+            }
+        }
+        protected string GetBadgeEstado(int estado)
+        {
+            switch (estado)
+            {
+                case 0:
+                    return "<span class='badge-estado' style = 'background:rgba(25,135,84,0.12);color:#198754;' > Cobrado </ span > ";
+                case 1:
+                    return "<span class='badge-estado' style = 'background:rgba(255,193,7,0.15);color:#856404;' > Pendiente </ span > ";
+                case 2:
+                    return "<span class='badge-estado' style = 'background:rgba(108,117,125,0.15);color:#495057;' > Eliminado </ span > ";
+                default: return estado.ToString();
+            }
+        }
         private void CargarDetalle(int idDeuda)
         {
             DeudaNegocio negocio = new DeudaNegocio();
@@ -51,17 +76,32 @@ namespace TPFinalIntegrador
             lblNombre.Text = deuda.NombreDeudor;
             lblDescripcion.Text = deuda.Descripcion;
             lblMontoTotal.Text = deuda.MontoTotal.ToString("C");
-            lblCuotas.Text = deuda.Cuotas.HasValue ? deuda.Cuotas.Value.ToString() : "0";
+           // lblCuotas.Text = deuda.Cuotas.HasValue ? deuda.Cuotas.Value.ToString() : "0";
             if (deuda.Cuotas.HasValue && deuda.Cuotas.Value > 0)
             {
-                lblMontoCuota.Text = (deuda.MontoTotal / deuda.Cuotas.Value).ToString("C");
+               // lblMontoCuota.Text = (deuda.MontoTotal / deuda.Cuotas.Value).ToString("C");
             }
             else
             {
-                lblMontoCuota.Text = "$ 0,00";
+              //  lblMontoCuota.Text = "$ 0,00";
             }
             lblMontoPagado.Text = montoPagado.ToString("C");
             lblMontoPendiente.Text = montoPendiente.ToString("C");
+            // Iniciales del deudor
+            string[] partes = (deuda.NombreDeudor ?? "?").Trim().Split(' ');
+            lblIniciales.Text = partes.Length >= 2
+                ? (partes[0][0].ToString() + partes[1][0].ToString()).ToUpper()
+                : partes[0].Substring(0, Math.Min(2, partes[0].Length)).ToUpper();
+
+            // Badge de estado
+            lblEstadoBadge.Text = GetBadgeEstado((int)deuda.Estado);
+
+            // Fecha inicio
+            lblFechaInicio.Text = "Desde " + deuda.FechaInicio.ToString("dd/MM/yyyy");
+
+          
+
+           
 
 
             Session["deudaActual"] = deuda;
