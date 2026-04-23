@@ -21,9 +21,14 @@ namespace TPFinalIntegrador
 
             if (!IsPostBack)
             {
-                int idDeuda = int.Parse(Request.QueryString["id"]);
+                int idDeuda;
+                if (!int.TryParse(Request.QueryString["id"], out idDeuda) || idDeuda <= 0)
+                {
+                    Response.Redirect("Deudores.aspx", false);
+                    return;
+                }
                 CargarDetalle(idDeuda);
-                CargarCuotas(idDeuda);  
+                CargarCuotas(idDeuda);
             }
         }
         private void CargarDetalle(int idDeuda)
@@ -82,7 +87,12 @@ namespace TPFinalIntegrador
 
                     // Obtener datos de la cuota
                     CuotaDeuda cuota = cuotaNegocio.ObtenerPorId(idCuotaDeuda);
-                    Deuda deuda = (Deuda)Session["deudaActual"];
+                    Deuda deuda = Session["deudaActual"] as Deuda;
+                    if (deuda == null)
+                    {
+                        Response.Redirect("Deudores.aspx", false);
+                        return;
+                    }
                     Usuario usuario = (Usuario)Session["usuario"];
 
                     // Obtener o crear categoría "Cobro de deuda"
