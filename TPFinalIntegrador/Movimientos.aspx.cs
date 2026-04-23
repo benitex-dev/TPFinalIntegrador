@@ -15,29 +15,163 @@ namespace TPFinalIntegrador
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["usuario"] == null)
+            {
+                Response.Redirect("Login.aspx", false);
+                return;
+            }
+            CargarPeriodos();
             if (!IsPostBack)
             {
-                if (Session["usuario"] == null)
-                {
-                    Response.Redirect("Login.aspx", false);
-                    return;
-                }
                 CargarMovimientos();
             }
         }
+        protected void CargarPeriodos()
+        {
+            var periodos = new List<object>();
+            for (int i = 0; i < 6; i++)
+            {
+                DateTime fecha = DateTime.Now.AddMonths(-i);
+                string texto = fecha.ToString("MMMM yyyy", new CultureInfo("es-AR"));
+                texto = char.ToUpper(texto[0]) + texto.Substring(1);
+                periodos.Add(new { Texto = texto, Valor = fecha.Month + "-" + fecha.Year });
+            }
+            rptPeriodos.DataSource = periodos;
+            rptPeriodos.DataBind();
+        }
+        protected void CargarCategorias(List<Movimiento> movimientos)
+        {
+            var categorias = movimientos
+                .Select(m => m.Categoria)
+                .Distinct()
+                .OrderBy(c => c)
+                .Select(c => new { Nombre = c })
+                .ToList();
+
+            rptCategorias.DataSource = categorias;
+            rptCategorias.DataBind();
+        }
+        protected void CargarMediosPago(List<Movimiento> movimientos)
+        {
+            var medios = movimientos
+                .Where(m => !string.IsNullOrEmpty(m.MedioPago))
+                .Select(m => m.MedioPago)
+                .Distinct()
+                .OrderBy(m => m)
+                .Select(m => new { Nombre = m })
+                .ToList();
+
+            rptMediosPago.DataSource = medios;
+            rptMediosPago.DataBind();
+        }
+        protected void FiltroMedioPago_Command(object sender, CommandEventArgs e)
+        {
+            ViewState["FiltroMedioPago"] = e.CommandArgument.ToString();
+            FechaGrupoAnterior = DateTime.MinValue;
+            CargarMovimientos();
+        }
+        protected void FiltroPeriodo_Command(object sender, CommandEventArgs e)
+        {
+            ViewState["FiltroPeriodo"] = e.CommandArgument.ToString();
+            FechaGrupoAnterior = DateTime.MinValue;
+            CargarMovimientos();
+        }
+        private List<Movimiento> AplicarFiltros(List<Movimiento> lista)
+        {
+            string filtroTipo = ViewState["FiltroTipo"]?.ToString() ?? "Todos";
+            if (filtroTipo == "Gasto")
+                lista = lista.Where(m => m.Tipo == "Gasto").ToList();
+            else if (filtroTipo == "Ingreso")
+                lista = lista.Where(m => m.Tipo == "Ingreso").ToList();
+
+            string filtroCategoria = ViewState["FiltroCategoria"]?.ToString();
+            if (!string.IsNullOrEmpty(filtroCategoria))
+                lista = lista.Where(m => m.Categoria == filtroCategoria).ToList();
+
+            string filtroMedioPago = ViewState["FiltroMedioPago"]?.ToString();
+            if (!string.IsNullOrEmpty(filtroMedioPago))
+                lista = lista.Where(m => m.MedioPago == filtroMedioPago).ToList();
+
+            return lista;
+        }
+        private void ActualizarLabels(int mes, int anio)
+        {
+            string filtroTipo = ViewState["FiltroTipo"]?.ToString() ?? "Todos";
+            lblFiltroTipo.Text = filtroTipo == "Todos" ? "Tipo de Operación"
+                               : filtroTipo == "Gasto" ? "Gastos" : "Ingresos";
+
+            string filtroPeriodo = ViewState["FiltroPeriodo"]?.ToString();
+            string nombreMes = new DateTime(anio, mes, 1).ToString("MMMM yyyy", new CultureInfo("es-AR"));
+            lblFiltroPeriodo.Text = string.IsNullOrEmpty(filtroPeriodo)
+                ? "Período"
+                : char.ToUpper(nombreMes[0]) + nombreMes.Substring(1);
+
+            string filtroCategoria = ViewState["FiltroCategoria"]?.ToString();
+            lblFiltroCategoria.Text = string.IsNullOrEmpty(filtroCategoria) ? "Categoría" : filtroCategoria;
+
+            string filtroMedioPago = ViewState["FiltroMedioPago"]?.ToString();
+            lblFiltroMedioPago.Text = string.IsNullOrEmpty(filtroMedioPago) ? "Medio de pago" : filtroMedioPago;
+        }
+
 
         protected void CargarMovimientos()
         {
-
-
             Usuario usuarioLogueado = (Usuario)Session["usuario"];
             MovimientoNegocio negocio = new MovimientoNegocio();
-            List<Movimiento> lista = negocio.ListarMovimientosDelMes(false, usuarioLogueado.IdUsuario);
+
+            bool esModoHogar = Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar";
+            int idReferencia = esModoHogar && Session["IdHogarActual"] != null
+                ? (int)Session["IdHogarActual"]
+                : usuarioLogueado.IdUsuario;
+
+            string filtroPeriodo = ViewState["FiltroPeriodo"]?.ToString();
+            int mes, anio;
+            if (!string.IsNullOrEmpty(filtroPeriodo))
+            {
+                var partes = filtroPeriodo.Split('-');
+                mes = int.Parse(partes[0]);
+                anio = int.Parse(partes[1]);
+            }
+            else
+            {
+                mes = DateTime.Now.Month;
+                anio = DateTime.Now.Year;
+            }
+
+            List<Movimiento> listaCompleta = negocio.ListarMovimientos(esModoHogar, idReferencia, mes, anio);
+
+            CargarCategorias(listaCompleta);
+            CargarMediosPago(listaCompleta);
+
+            List<Movimiento> lista = AplicarFiltros(listaCompleta);
+
+            ActualizarLabels(mes, anio);
 
             rptMovimientos.DataSource = lista;
             rptMovimientos.DataBind();
+        }
 
-            //lblMesActual.Text = new DateTime(AnioSeleccionado, MesSeleccionado, 1).ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-AR"));
+        protected void FiltroTipo_Command(object sender, CommandEventArgs e)
+        {
+            ViewState["FiltroTipo"] = e.CommandArgument.ToString();
+            FechaGrupoAnterior = DateTime.MinValue;
+            CargarMovimientos();
+        }
+        protected void FiltroCategoria_Command(object sender, CommandEventArgs e)
+        {
+            ViewState["FiltroCategoria"] = e.CommandArgument.ToString();
+            FechaGrupoAnterior = DateTime.MinValue;
+            CargarMovimientos();
+        }
+
+        protected void btnBorrarFiltros_Click(object sender, EventArgs e)
+        {
+            ViewState["FiltroTipo"] = "Todos";
+            ViewState["FiltroPeriodo"] = null;
+            ViewState["FiltroCategoria"] = null;
+            ViewState["FiltroMedioPago"] = null;
+            FechaGrupoAnterior = DateTime.MinValue;
+            CargarMovimientos();
         }
 
         protected DateTime FechaGrupoAnterior = DateTime.MinValue;

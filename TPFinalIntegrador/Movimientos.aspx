@@ -221,25 +221,95 @@
                         </div>
                     </div>
                     <!-- Filter Bar -->
-                    <div class="filter-card">
-                        <div class="d-flex flex-wrap align-items-center gap-2 no-scrollbar overflow-x-auto">
-                            <button class="btn-filter d-inline-flex align-items-center gap-2">
-                                Período <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
-                            </button>
-                            <button class="btn-filter d-inline-flex align-items-center gap-2">
-                                Tipo de Operación <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
-                            </button>
-                            <button class="btn-filter d-inline-flex align-items-center gap-2">
-                                Categoría <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
-                            </button>
-                            <button class="btn-filter d-inline-flex align-items-center gap-2">
-                                Medios de pago <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
-                            </button>
-                            <button class="btn btn-link text-primary small fw-bold text-decoration-none ms-md-auto border-0">
-                                <small>Borrar filtros</small>
-                            </button>
-                        </div>
-                    </div>
+                    <!-- Filter Bar -->
+  <div class="filter-card">
+      <div class="d-flex flex-wrap align-items-center gap-2">
+ <%-- FILTRO PERÍODO --%>
+  <div class="dropdown">
+      <button class="btn-filter d-inline-flex align-items-center gap-2"
+              type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <asp:Label ID="lblFiltroPeriodo" runat="server" Text="Período"></asp:Label>
+          <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
+      </button>
+      <ul class="dropdown-menu shadow-sm border-0">
+          <asp:Repeater ID="rptPeriodos" runat="server">
+              <ItemTemplate>
+                  <li>
+                      <asp:LinkButton ID="btnPeriodo" runat="server" CssClass="dropdown-item"
+                          OnCommand="FiltroPeriodo_Command"
+                          CommandArgument='<%# Eval("Valor") %>'><%# Eval("Texto") %></asp:LinkButton>
+                  </li>
+              </ItemTemplate>
+          </asp:Repeater>
+      </ul>
+  </div>
+
+          <%-- FILTRO TIPO DE OPERACIÓN --%>
+          <div class="dropdown">
+              <button class="btn-filter d-inline-flex align-items-center gap-2"
+                      type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <asp:Label ID="lblFiltroTipo" runat="server" Text="Tipo de Operación"></asp:Label>
+                  <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
+              </button>
+              <ul class="dropdown-menu shadow-sm border-0">
+                  <li>
+                      <asp:LinkButton ID="btnFiltroTodos" runat="server" CssClass="dropdown-item"
+                          OnCommand="FiltroTipo_Command" CommandArgument="Todos">Todos</asp:LinkButton>
+                  </li>
+                  <li>
+                      <asp:LinkButton ID="btnFiltroGastos" runat="server" CssClass="dropdown-item"
+                          OnCommand="FiltroTipo_Command" CommandArgument="Gasto">Gastos</asp:LinkButton>
+                  </li>
+                  <li>
+                      <asp:LinkButton ID="btnFiltroIngresos" runat="server" CssClass="dropdown-item"
+                          OnCommand="FiltroTipo_Command" CommandArgument="Ingreso">Ingresos</asp:LinkButton>
+                  </li>
+              </ul>
+          </div>
+
+          <%-- FILTRO CATEGORÍA --%>
+  <div class="dropdown">
+      <button class="btn-filter d-inline-flex align-items-center gap-2"
+              type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <asp:Label ID="lblFiltroCategoria" runat="server" Text="Categoría"></asp:Label>
+          <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
+      </button>
+      <ul class="dropdown-menu shadow-sm border-0">
+          <asp:Repeater ID="rptCategorias" runat="server">
+              <ItemTemplate>
+                  <li>
+                      <asp:LinkButton ID="btnCategoria" runat="server" CssClass="dropdown-item"
+                          OnCommand="FiltroCategoria_Command"
+                          CommandArgument='<%# Eval("Nombre") %>'><%# Eval("Nombre") %></asp:LinkButton>
+                  </li>
+              </ItemTemplate>
+          </asp:Repeater>
+      </ul>
+  </div>
+          <%-- FILTRO MEDIO DE PAGO --%>
+  <div class="dropdown">
+      <button class="btn-filter d-inline-flex align-items-center gap-2"
+              type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <asp:Label ID="lblFiltroMedioPago" runat="server" Text="Medio de pago"></asp:Label>
+          <span class="material-symbols-outlined fs-6">keyboard_arrow_down</span>
+      </button>
+      <ul class="dropdown-menu shadow-sm border-0">
+          <asp:Repeater ID="rptMediosPago" runat="server">
+              <ItemTemplate>
+                  <li>
+                      <asp:LinkButton ID="btnMedioPago" runat="server" CssClass="dropdown-item"
+                          OnCommand="FiltroMedioPago_Command"
+                          CommandArgument='<%# Eval("Nombre") %>'><%# Eval("Nombre") %></asp:LinkButton>
+                  </li>
+              </ItemTemplate>
+          </asp:Repeater>
+      </ul>
+  </div>
+          <asp:LinkButton ID="btnBorrarFiltros" runat="server"
+              CssClass="btn btn-link text-primary small fw-bold text-decoration-none ms-md-auto border-0"
+              OnClick="btnBorrarFiltros_Click"><small>Borrar filtros</small></asp:LinkButton>
+      </div>
+  </div>
                     <!-- Movements List -->
                     <div class="movement-card">
                         <!-- Group 1 -->
