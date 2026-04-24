@@ -102,12 +102,18 @@ namespace TPFinalIntegrador
         {
             MesSeleccionado--;
             if (MesSeleccionado < 1) { MesSeleccionado = 12; AnioSeleccionado--; }
+            lblMesActual.Text = new DateTime(AnioSeleccionado, MesSeleccionado, 1)
+                .ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-AR"));
+            CargarGastos();
         }
 
         protected void btnMesSiguiente_Click(object sender, EventArgs e)
         {
             MesSeleccionado++;
             if (MesSeleccionado > 12) { MesSeleccionado = 1; AnioSeleccionado++; }
+            lblMesActual.Text = new DateTime(AnioSeleccionado, MesSeleccionado, 1)
+                .ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-AR"));
+            CargarGastos();
         }
     }
 }
