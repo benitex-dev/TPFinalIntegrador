@@ -87,19 +87,31 @@ namespace TPFinalIntegrador
                         $"Swal.fire({{icon:'error',title:'Error',text:'{ex.Message.Replace("'", "\\'")}'}});", true);
                 }
             }
-            else if (e.CommandName == "Editar")
-            {
-                Deuda deuda = new DeudaNegocio().ObtenerPorId(idDeuda);
-                hfIdDeudaEditar.Value = idDeuda.ToString();
-                txtNombreEditar.Text = deuda.NombreDeudor;
-                txtEmailEditar.Text = deuda.EmailDeudor;
-                txtDescripcionEditar.Text = deuda.Descripcion;
+            //else if (e.CommandName == "Editar")
+            //{
+            //    Deuda deuda = new DeudaNegocio().ObtenerPorId(idDeuda);
+            //    hfIdDeudaEditar.Value = idDeuda.ToString();
+            //    txtNombreEditar.Text = deuda.NombreDeudor;
+            //    txtEmailEditar.Text = deuda.EmailDeudor;
+            //    txtDescripcionEditar.Text = deuda.Descripcion;
 
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "abrirEditar",
-                    "new bootstrap.Modal(document.getElementById('modalEditarDeuda')).show();", true);
-            }
+            //    ScriptManager.RegisterStartupScript(this, this.GetType(), "abrirEditar",
+            //        "new bootstrap.Modal(document.getElementById('modalEditarDeuda')).show();", true);
+            //}
         }
+        //protected void btnEditarOculto_Click(object sender, EventArgs e)
+        //{
+        //    int idDeuda = int.Parse(hfAccionEditar.Value);
+        //    Deuda deuda = new DeudaNegocio().ObtenerPorId(idDeuda);
 
+        //    hfIdDeudaEditar.Value = idDeuda.ToString();
+        //    txtNombreEditar.Text = deuda.NombreDeudor;
+        //    txtEmailEditar.Text = deuda.EmailDeudor;
+        //    txtDescripcionEditar.Text = deuda.Descripcion;
+
+        //    ScriptManager.RegisterStartupScript(this, this.GetType(), "abrirEditar",
+        //        "new bootstrap.Modal(document.getElementById('modalEditarDeuda')).show();", true);
+        //}
         protected void btnGuardarEdicion_Click(object sender, EventArgs e)
         {
             try

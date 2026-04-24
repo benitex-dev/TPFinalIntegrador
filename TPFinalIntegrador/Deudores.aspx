@@ -191,11 +191,14 @@
                                               </a>
                                           </li>
                                           <li>
-                                              <asp:LinkButton runat="server" CssClass="dropdown-item small"
-                                                  CommandName="Editar" CommandArgument='<%# Eval("IdDeuda") %>'>
-                                                  <span class="material-symbols-outlined"
-  style="font-size:15px;vertical-align:middle;">edit</span> Editar
-                                              </asp:LinkButton>
+                                              <button type="button" class="dropdown-item small"
+                                                  data-id='<%# Eval("IdDeuda") %>'
+                                                  data-nombre='<%# Eval("NombreDeudor") %>'
+                                                  data-email='<%# Eval("EmailDeudor") %>'
+                                                  data-descripcion='<%# Eval("Descripcion") %>'
+                                                  onclick="abrirModalEditar(this)">
+                                                  <span class="material-symbols-outlined" style="font-size:15px;vertical-align:middle;">edit</span> Editar
+                                              </button>
                                           </li>
                                           <li>
                                               <asp:LinkButton runat="server" CssClass="dropdown-item small text-danger"
@@ -211,6 +214,7 @@
                               </div>
                           </ItemTemplate>
                       </asp:Repeater>
+                      
                   </div>
               </asp:Panel>
 
@@ -303,5 +307,14 @@
           </div>
       </div>
   </div>
-
+       
+       <script>
+           function abrirModalEditar(btn) {
+               document.getElementById('<%= hfIdDeudaEditar.ClientID %>').value = btn.dataset.id;
+          document.getElementById('<%= txtNombreEditar.ClientID %>').value = btn.dataset.nombre;
+          document.getElementById('<%= txtEmailEditar.ClientID %>').value = btn.dataset.email;
+          document.getElementById('<%= txtDescripcionEditar.ClientID %>').value = btn.dataset.descripcion;
+               new bootstrap.Modal(document.getElementById('modalEditarDeuda')).show();
+           }
+       </script>
   </asp:Content>
