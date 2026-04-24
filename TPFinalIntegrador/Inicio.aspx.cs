@@ -64,7 +64,7 @@ namespace TPFinalIntegrador
                     Hogar hogarSeleccionado = (Hogar)Session["HogarSeleccionado"];
                     // Lógica de Hogar...
 
-                    lblTituloDashboard.Text = "Hogar: " + hogarSeleccionado.Nombre;
+                    //lblTituloDashboard.Text = "Hogar: " + hogarSeleccionado.Nombre;
                     lblSubtituloDashboard.Text = "Estás viendo los movimientos del hogar.";
                     pnlLinkGastosIntegrante.Visible = true;
 
@@ -95,6 +95,7 @@ namespace TPFinalIntegrador
                     rptIntegrantes.DataSource = hogarUsuarioNegocio.ListarPorHogar((int)Session["IdHogarActual"]);
                     rptIntegrantes.DataBind();
                     CargarCardsHogar();
+                    ActualizarTituloYEstilos();
 
                 }
                 else
@@ -113,6 +114,7 @@ namespace TPFinalIntegrador
                         GastoResumenNegocio negocio = new GastoResumenNegocio();
                         List<GastoResumen> gastos = negocio.ObtenerGastosDelMes(usuarioLogueado.IdUsuario);
                         CargarGraficoDeTorta(gastos);
+                        ActualizarTituloYEstilos();
                     }
                     else
                     {
@@ -126,7 +128,7 @@ namespace TPFinalIntegrador
                 CargarCategoriasGasto();
                 CargarMediosPago();            
                 CargarMovimientosDelMesRecientes();
-
+                CargarHogaresDelUsuario();
                 cargarMetasAhorro();
                 CargarResumenPresupuesto();
                 cargarDashboardInfo();
@@ -1479,10 +1481,121 @@ namespace TPFinalIntegrador
             }
             catch (Exception ex)
             {
-                // Buena práctica: Si algo falla (ej: se cayó la BD), atajamos el error
-                // Podés usar un ScriptManager acá para tirar un alert de JavaScript
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "Error",
                     $"alert('Ocurrió un error al procesar el movimiento: {ex.Message}');", true);
+            }
+        }
+
+
+
+        // Cuando selecciona "Billetera Personal"
+        protected void btnVistaPersonal_Click(object sender, EventArgs e)
+        {
+            //if (Session["ModoVista"] == null || Session["ModoVista"].ToString() == "Personal")
+            //{
+            //    btnVistaPersonal.CssClass = "dropdown-item rounded-2 py-2 d-flex align-items-center gap-3 active bg-primary-subtle text-primary fw-bold";
+            //}
+            Session["ModoVista"] = "Personal";
+            Session["IdHogarActual"] = null;
+            Session["HogarSeleccionado"] = null;
+
+            Response.Redirect("Inicio.aspx");
+        }
+
+        protected void rptHogares_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            if (e.CommandName == "SeleccionarHogar")
+            {
+                // Desarmamos el ID y el Nombre del CommandArgument
+                string[] argumentos = e.CommandArgument.ToString().Split('|');
+                int idHogarSeleccionado = Convert.ToInt32(argumentos[0]);
+
+                HogarNegocio negocio = new HogarNegocio();
+                Session["HogarSeleccionado"] = negocio.listarUno(idHogarSeleccionado);
+                Session["ModoVista"] = "Hogar";
+                Session["IdHogarActual"] = idHogarSeleccionado;
+
+                litTituloDashboard.Text = "Hogar: " + ((Hogar)Session["HogarSeleccionado"]).Nombre;
+                Response.Redirect("Inicio.aspx");
+            }
+        }
+
+        protected void rptHogares_ItemDataBound(object sender, RepeaterItemEventArgs e)
+        {
+            try
+            {
+                if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+                {
+                    LinkButton btnHogarActual = (LinkButton)e.Item.FindControl("btnHogar");
+
+                    string idEnBoton = DataBinder.Eval(e.Item.DataItem, "IdHogar").ToString();
+
+                    if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
+                    {
+                        if (idEnBoton == Session["IdHogarActual"].ToString())
+                        {
+                            btnHogarActual.CssClass = "dropdown-item rounded-3 py-3 d-flex align-items-center gap-3 bg-primary-subtle text-primary fw-bold";
+                        }
+                        else
+                        { 
+                            btnHogarActual.CssClass = "dropdown-item rounded-3 py-3 d-flex align-items-center gap-3 text-dark";
+                        }
+                    }
+                    else
+                    {
+                        btnHogarActual.CssClass = "dropdown-item rounded-3 py-3 d-flex align-items-center gap-3 text-dark";
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void CargarHogaresDelUsuario()
+        {
+            Usuario usuarioIniciado = (Usuario)Session["usuario"];
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                string query = @"SELECT h.IdHogar, h.Nombre 
+                         FROM HOGAR h
+                         INNER JOIN HOGAR_USUARIO hu ON h.IdHogar = hu.IdHogar
+                         WHERE hu.IdUsuario = @IdUsuario AND h.Estado = 1";
+
+                datos.setConsulta(query);
+                datos.setParametro("@IdUsuario", usuarioIniciado.IdUsuario);
+
+                datos.ejecutarLectura();
+
+                rptHogares.DataSource = datos.Lector;
+                rptHogares.DataBind();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        private void ActualizarTituloYEstilos()
+        {
+            if (Session["ModoVista"] != null && Session["ModoVista"].ToString() == "Hogar" && Session["IdHogarActual"] != null)
+            {
+                litTituloDashboard.Text = "Hogar: " + ((Hogar)Session["HogarSeleccionado"]).Nombre;
+
+                btnVistaPersonal.CssClass = "dropdown-item rounded-3 py-3 d-flex align-items-center gap-3 text-dark";
+            }
+            else
+            {
+                litTituloDashboard.Text = "Tu Resumen Personal";
+
+                btnVistaPersonal.CssClass = "dropdown-item rounded-3 py-3 d-flex align-items-center gap-3 bg-primary-subtle text-primary fw-bold";
             }
         }
     }

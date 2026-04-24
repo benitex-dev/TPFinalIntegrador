@@ -24,24 +24,6 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divMenuPrincipal;
 
         /// <summary>
-        /// btnVistaPersonal control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnVistaPersonal;
-
-        /// <summary>
-        /// rptHogares control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptHogares;
-
-        /// <summary>
         /// lnkAgregarCategoria control.
         /// </summary>
         /// <remarks>
@@ -87,16 +69,16 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Image imgNavbar;
 
         /// <summary>
-        /// Control lblNombreNavbar.
+        /// lblNombreNavbar control.
         /// </summary>
         /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblNombreNavbar;
 
         /// <summary>
-        /// Control btnPerfil.
+        /// btnPerfil control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.

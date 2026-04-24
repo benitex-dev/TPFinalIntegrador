@@ -47,6 +47,14 @@
             border-top: 1px solid #dee2e6;
             z-index: 1030;
         }
+
+        .icono-dropdown {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        button[aria-expanded="true"] .icono-dropdown {
+            transform: rotate(90deg);
+        }
         
         .nav-link-custom {
             display: flex;
@@ -150,7 +158,52 @@
             <!-- Hero Section -->
             <section class="row align-items-center mb-4 g-3">
                 <div class="col-lg-7">
-                    <h1 class="display-6 mb-1"><asp:Label ID="lblTituloDashboard" runat="server" Text="Tu Resumen Personal" /></h1>
+                    <%--<h1 class="display-6 mb-1"><asp:Label ID="lblTituloDashboard" runat="server" Text="Tu Resumen Personal" /></h1>--%>
+                    <div class="dropdown mb-4">
+                        <button class="btn btn-link text-dark text-decoration-none p-0 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="outline: none; box-shadow: none;">
+                            <h2 class="mb-0 fw-bold" style="letter-spacing: -0.5px;">
+                                <asp:Literal ID="litTituloDashboard" runat="server" Text="Tu Resumen Personal"></asp:Literal>
+                            </h2>
+                            <span class="material-symbols-outlined text-muted fs-2 icono-dropdown">chevron_right</span>
+                        </button>
+
+                        <ul class="dropdown-menu shadow-lg border-0 mt-2 p-3 rounded-4" style="min-width: 280px;">
+
+                            <li>
+                                <h6 class="dropdown-header text-muted fw-bold text-uppercase mb-2" style="font-size: 0.8rem; letter-spacing: 0.05em;">Cambiar de vista</h6>
+                            </li>
+
+                            <li>
+                                <asp:LinkButton ID="btnVistaPersonal" runat="server" CssClass="dropdown-item rounded-3 py-3 d-flex align-items-center gap-3 fs-6" OnClick="btnVistaPersonal_Click">
+                <span class="material-symbols-outlined text-secondary fs-4">account_balance_wallet</span> 
+                <span class="fw-semibold">Billetera Personal</span>
+            </asp:LinkButton>
+                            </li>
+
+                            <asp:Repeater ID="rptHogares" runat="server" OnItemCommand="rptHogares_ItemCommand" OnItemDataBound="rptHogares_ItemDataBound">
+                                <ItemTemplate>
+                                    <li>
+                                        <asp:LinkButton ID="btnHogar" runat="server" CssClass="dropdown-item rounded-3 py-3 d-flex align-items-center gap-3 fs-6"
+                                            CommandName="SeleccionarHogar"
+                                            CommandArgument='<%# Eval("IdHogar") + "|" + Eval("Nombre") %>'>
+                        <span class="material-symbols-outlined text-secondary fs-4">home</span> 
+                        <span class="fw-semibold"><%# Eval("Nombre") %></span>
+                    </asp:LinkButton>
+                                    </li>
+                                </ItemTemplate>
+                            </asp:Repeater>
+
+                            <li>
+                                <hr class="dropdown-divider my-3">
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item rounded-3 py-3 d-flex align-items-center gap-3 text-primary fw-bold bg-opacity-10 fs-6" href="CrearHogar.aspx">
+                                    <span class="material-symbols-outlined fs-4">add_circle</span> Crear Hogar
+            </a>
+                            </li>
+                        </ul>
+                    </div>
   <p class="text-secondary fw-medium"><asp:Label ID="lblSubtituloDashboard" runat="server" Text="Gestiona tu patrimonio
   con precisión editorial." /></p>
                 </div>

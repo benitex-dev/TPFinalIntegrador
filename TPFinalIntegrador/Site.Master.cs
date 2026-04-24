@@ -17,14 +17,6 @@ namespace TPFinalIntegrador
 
             string modoActual = Session["ModoVista"] != null ? Session["ModoVista"].ToString() : "Personal";
 
-            if (modoActual == "Personal")
-            {
-                btnVistaPersonal.CssClass = "dropdown-item text-primary fw-bold";
-            }
-            else
-            {
-                btnVistaPersonal.CssClass = "dropdown-item text-dark";
-            }
 
             if (Session["usuario"] != null)
             {
@@ -48,10 +40,6 @@ namespace TPFinalIntegrador
 
             if (!IsPostBack)
             {
-                if (Session["usuario"] != null)
-                {
-                    CargarHogaresDelUsuario();
-                }
             }
             // Llamar siempre para que la visibilidad de los links se ajuste según la página actual
             SetNavButtonsVisibility();
@@ -80,35 +68,35 @@ namespace TPFinalIntegrador
             Response.Redirect("/Login");
         }
 
-        private void CargarHogaresDelUsuario()
-        {
-            Usuario usuarioIniciado = (Usuario)Session["usuario"];
-            AccesoDatos datos = new AccesoDatos();
+        //private void CargarHogaresDelUsuario()
+        //{
+        //    Usuario usuarioIniciado = (Usuario)Session["usuario"];
+        //    AccesoDatos datos = new AccesoDatos();
 
-            try
-            {
-                string query = @"SELECT h.IdHogar, h.Nombre 
-                         FROM HOGAR h
-                         INNER JOIN HOGAR_USUARIO hu ON h.IdHogar = hu.IdHogar
-                         WHERE hu.IdUsuario = @IdUsuario AND h.Estado = 1";
+        //    try
+        //    {
+        //        string query = @"SELECT h.IdHogar, h.Nombre 
+        //                 FROM HOGAR h
+        //                 INNER JOIN HOGAR_USUARIO hu ON h.IdHogar = hu.IdHogar
+        //                 WHERE hu.IdUsuario = @IdUsuario AND h.Estado = 1";
 
-                datos.setConsulta(query);
-                datos.setParametro("@IdUsuario", usuarioIniciado.IdUsuario);
+        //        datos.setConsulta(query);
+        //        datos.setParametro("@IdUsuario", usuarioIniciado.IdUsuario);
 
-                datos.ejecutarLectura();
+        //        datos.ejecutarLectura();
 
-                rptHogares.DataSource = datos.Lector;
-                rptHogares.DataBind();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                datos.cerrarConexion();
-            }
-        }
+        //        rptHogares.DataSource = datos.Lector;
+        //        rptHogares.DataBind();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //    finally
+        //    {
+        //        datos.cerrarConexion();
+        //    }
+        //}
 
         // Evento: Cuando el usuario hace clic en "Vista Personal"
         protected void btnVistaPersonal_Click(object sender, EventArgs e)
