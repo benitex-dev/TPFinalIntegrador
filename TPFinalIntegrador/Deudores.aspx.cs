@@ -11,8 +11,9 @@ namespace TPFinalIntegrador
 {
     public partial class Deudores : System.Web.UI.Page
     {
-        Dictionary<string, int> estadosDeuda = new Dictionary<string, int>();
-        
+       // Dictionary<string, int> estadosDeuda = new Dictionary<string, int>();
+
+
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -22,152 +23,126 @@ namespace TPFinalIntegrador
                 return;
             }
             if (!IsPostBack)
-            {
-                CargarFiltros();
                 CargarDeudas();
-            }
-               
         }
+
         private void CargarDeudas()
         {
             Usuario usuario = (Usuario)Session["usuario"];
             DeudaNegocio negocio = new DeudaNegocio();
-          
-            int idUsuario = usuario.IdUsuario;
-            gvDeudas.DataSource = negocio.ListarPorUsuario(idUsuario);
-            gvDeudas.DataBind();
-        }
-        private void CargarFiltros()
-        {
-            estadosDeuda.Add("Pendiente", 1);
-            estadosDeuda.Add("Pago", 0);
-            estadosDeuda.Add("Eliminado", 2);
-            ddlFiltroEstadoDeuda.DataSource = estadosDeuda;
-            ddlFiltroEstadoDeuda.DataTextField = "Key";
-            ddlFiltroEstadoDeuda.DataValueField = "Value";
 
-            ddlFiltroEstadoDeuda.DataBind();
-            ddlFiltroEstadoDeuda.Items.Insert(0, new ListItem("Todos los estados", "-1"));
-        }
-       
+            int filtro = ViewState["FiltroEstado"] != null ? (int)ViewState["FiltroEstado"] : -1;
 
-        protected void gvDeudas_RowEditing(object sender, GridViewEditEventArgs e)
+            // Lista filtrada para mostrar (sin eliminados)
+            List<Deuda> listaFiltrada = negocio.ListarPorUsuario(usuario.IdUsuario, filtro)
+                .Where(d => d.Estado != EstadoDeuda.Eliminado).ToList();
+
+            pnlSinDeudas.Visible = listaFiltrada.Count == 0;
+            pnlDeudas.Visible = listaFiltrada.Count > 0;
+
+            rptDeudas.DataSource = listaFiltrada;
+            rptDeudas.DataBind();
+
+            // Summary siempre sobre todas las deudas activas (sin filtro de estado)
+            List<Deuda> todasActivas = negocio.ListarPorUsuario(usuario.IdUsuario, -1)
+                .Where(d => d.Estado != EstadoDeuda.Eliminado).ToList();
+
+            lblTotalPrestado.Text = "$" + todasActivas.Sum(d => d.MontoTotal).ToString("N0");
+            lblTotalPendiente.Text = "$" + todasActivas.Sum(d => d.MontoPendiente).ToString("N0");
+            lblTotalDeudores.Text = todasActivas.Count.ToString();
+
+            if (filtro == 0) lblFiltroEstado.Text = "Cobrado";
+            else if (filtro == 1) lblFiltroEstado.Text = "Pendiente";
+            else lblFiltroEstado.Text = "Estado";
+        }
+
+        protected void FiltroEstado_Command(object sender, CommandEventArgs e)
         {
-            gvDeudas.EditIndex = e.NewEditIndex;
+            ViewState["FiltroEstado"] = int.Parse(e.CommandArgument.ToString());
             CargarDeudas();
-
         }
 
-        protected void gvDeudas_RowUpdating(object sender, GridViewUpdateEventArgs e)
+        protected void btnBorrarFiltros_Click(object sender, EventArgs e)
+        {
+            ViewState["FiltroEstado"] = null;
+            CargarDeudas();
+        }
+
+        protected void rptDeudas_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            int idDeuda = int.Parse(e.CommandArgument.ToString());
+
+            if (e.CommandName == "Eliminar")
+            {
+                try
+                {
+                    new DeudaNegocio().EliminarLogico(idDeuda);
+                    CargarDeudas();
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
+                        "Swal.fire({icon:'success',title:'¡Éxito!',text:'Deuda eliminada correctamente.'});", true);
+                }
+                catch (Exception ex)
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
+                        $"Swal.fire({{icon:'error',title:'Error',text:'{ex.Message.Replace("'", "\\'")}'}});", true);
+                }
+            }
+            else if (e.CommandName == "Editar")
+            {
+                Deuda deuda = new DeudaNegocio().ObtenerPorId(idDeuda);
+                hfIdDeudaEditar.Value = idDeuda.ToString();
+                txtNombreEditar.Text = deuda.NombreDeudor;
+                txtEmailEditar.Text = deuda.EmailDeudor;
+                txtDescripcionEditar.Text = deuda.Descripcion;
+
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "abrirEditar",
+                    "new bootstrap.Modal(document.getElementById('modalEditarDeuda')).show();", true);
+            }
+        }
+
+        protected void btnGuardarEdicion_Click(object sender, EventArgs e)
         {
             try
             {
-
-                int idDeuda = (int)gvDeudas.DataKeys[e.RowIndex]["IdDeuda"];
-                string nombre = ((TextBox)gvDeudas.Rows[e.RowIndex].FindControl("txtNombre")).Text;
-                string email = ((TextBox)gvDeudas.Rows[e.RowIndex].FindControl("txtEmail")).Text;
-                string descripcion = ((TextBox)gvDeudas.Rows[e.RowIndex].FindControl("txtDescripcion")).Text;
-
+                int idDeuda = int.Parse(hfIdDeudaEditar.Value);
                 Usuario usuario = (Usuario)Session["usuario"];
-
-                // Traemos la deuda original para no perder monto, cuotas y fecha
                 DeudaNegocio negocio = new DeudaNegocio();
                 Deuda deuda = negocio.ObtenerPorId(idDeuda);
 
-                deuda.NombreDeudor = nombre;
-                if (email != deuda.EmailDeudor)
-                {
-                    deuda.EmailDeudor = email;
-
-                    /*--------------ENVIO DE MAIL AL DEUDOR----------------------*/
-                    string rutaPlantillas = Server.MapPath("~/Template");
-                    var reemplazosDeudor = new Dictionary<string, string>()
-                {
-                    { "NOMBRE_DEUDOR", deuda.NombreDeudor },
-                    { "NOMBRE_USUARIO", usuario.Nombre},
-                    { "DESCRIPCION", descripcion },
-                    { "MONTO_TOTAL", deuda.MontoTotal.ToString("N2") },
-                    { "CUOTAS", deuda.Cuotas.ToString() },
-                    { "MONTO_CUOTA", (deuda.MontoTotal / deuda.Cuotas).Value.ToString("N2") },
-                    { "FECHA", deuda.FechaInicio.ToString("dd/MM/yyyy") }
-                };
-
-                    EmailService servicioDeudor = new EmailService();
-
-                    servicioDeudor.armarCorreo(
-                        deuda.EmailDeudor,
-                        "Aviso de adquisición de deuda",
-                        reemplazosDeudor,
-                        TipoCorreo.RegistroDeudaDeudor,
-                        rutaPlantillas
-                    );
-
-                    servicioDeudor.enviarCorreo();
-                    /*---------------------------------------------------------------*/
-                    /*--------------ENVIO DE MAIL AL ACREEDOR----------------------*/
-                    var reemplazosUsuario = new Dictionary<string, string>()
-                {
-                    { "NOMBRE_DEUDOR", deuda.NombreDeudor },
-                    { "NOMBRE_USUARIO", usuario.Nombre },
-                    { "DESCRIPCION", descripcion },
-                    { "MONTO_TOTAL", deuda.MontoTotal.ToString("N2") },
-                    { "CUOTAS", deuda.Cuotas.ToString() },
-                    { "MONTO_CUOTA", (deuda.MontoTotal / deuda.Cuotas).Value.ToString("N2") },
-                    { "FECHA", deuda.FechaInicio.ToString("dd/MM/yyyy") }
-                };
-                    EmailService servicioUsuario = new EmailService();
-
-                    servicioUsuario.armarCorreo(
-                        usuario.Email,
-                        "Registro de deuda realizado correctamente",
-                        reemplazosUsuario,
-                        TipoCorreo.RegistroDeudaAcreedor,
-                        rutaPlantillas
-                    );
-
-                    servicioUsuario.enviarCorreo();
-                    /*---------------------------------------------------------------*/
-                }
-                deuda.Descripcion = descripcion;
+                string emailAnterior = deuda.EmailDeudor;
+                deuda.NombreDeudor = txtNombreEditar.Text.Trim();
+                deuda.EmailDeudor = txtEmailEditar.Text.Trim();
+                deuda.Descripcion = txtDescripcionEditar.Text.Trim();
 
                 negocio.ModificarDeuda(deuda);
 
-                gvDeudas.EditIndex = -1;
+                if (deuda.EmailDeudor != emailAnterior)
+                {
+                    string rutaPlantillas = Server.MapPath("~/Template");
+                    var reemplazos = new Dictionary<string, string>()
+                      {
+                          { "NOMBRE_DEUDOR", deuda.NombreDeudor },
+                          { "NOMBRE_USUARIO", usuario.Nombre },
+                          { "DESCRIPCION", deuda.Descripcion },
+                          { "MONTO_TOTAL", deuda.MontoTotal.ToString("N2") },
+                          { "CUOTAS", deuda.Cuotas.ToString() },
+                          { "MONTO_CUOTA", (deuda.MontoTotal / deuda.Cuotas).Value.ToString("N2") },
+                          { "FECHA", deuda.FechaInicio.ToString("dd/MM/yyyy") }
+                      };
+                    EmailService servicio = new EmailService();
+                    servicio.armarCorreo(deuda.EmailDeudor, "Aviso de adquisición de deuda", reemplazos,
+TipoCorreo.RegistroDeudaDeudor, rutaPlantillas);
+                    servicio.enviarCorreo();
+                }
+
                 CargarDeudas();
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
-                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Deuda modificada correctamente.'});", true);
+                    "Swal.fire({icon:'success',title:'¡Éxito!',text:'Deuda modificada correctamente.'});", true);
             }
             catch (Exception ex)
             {
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
-                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
-            }
-        }
-
-        protected void gvDeudas_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
-        {
-            gvDeudas.EditIndex = -1;
-            CargarDeudas();
-        }
-
-        protected void gvDeudas_RowDeleting(object sender, GridViewDeleteEventArgs e)
-        {
-            try
-            {
-                Usuario usuario = (Usuario)Session["usuario"];
-                int idDeuda = (int)gvDeudas.DataKeys[e.RowIndex].Value;
-
-                DeudaNegocio negocio = new DeudaNegocio();
-                negocio.EliminarLogico(idDeuda);
-
-                CargarDeudas();
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
-                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Deuda eliminada correctamente.'});", true);
-            }
-            catch (Exception ex)
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
-                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+                    $"Swal.fire({{icon:'error',title:'Error',text:'{ex.Message.Replace("'", "\\'")}'}});", true);
             }
         }
 
@@ -175,14 +150,12 @@ namespace TPFinalIntegrador
         {
             try
             {
-
                 Usuario usuario = (Usuario)Session["usuario"];
-
                 Deuda nueva = new Deuda();
                 nueva.Usuario = usuario;
-                nueva.NombreDeudor = txtNombre.Text;
-                nueva.EmailDeudor = txtEmail.Text;
-                nueva.Descripcion = txtDescripcion.Text;
+                nueva.NombreDeudor = txtNombre.Text.Trim();
+                nueva.EmailDeudor = txtEmail.Text.Trim();
+                nueva.Descripcion = txtDescripcion.Text.Trim();
                 nueva.MontoTotal = ParseDecimal(txtMonto.Text);
                 nueva.Cuotas = int.Parse(txtCuotas.Text);
                 nueva.FechaInicio = DateTime.Parse(txtFecha.Text);
@@ -192,129 +165,117 @@ namespace TPFinalIntegrador
                 negocio.AgregarDeuda(nueva);
                 GenerarCuotas(nueva);
 
-                /*--------------ENVIO DE MAIL AL DEUDOR----------------------*/
                 string rutaPlantillas = Server.MapPath("~/Template");
                 var reemplazosDeudor = new Dictionary<string, string>()
-                {
-                    { "NOMBRE_DEUDOR", nueva.NombreDeudor },
-                    { "NOMBRE_USUARIO", usuario.Nombre},
-                    { "DESCRIPCION", nueva.Descripcion },
-                    { "MONTO_TOTAL", nueva.MontoTotal.ToString("N2") },
-                    { "CUOTAS", nueva.Cuotas.ToString() },
-                    { "MONTO_CUOTA", (nueva.MontoTotal / nueva.Cuotas).Value.ToString("N2") },
-                    { "FECHA", nueva.FechaInicio.ToString("dd/MM/yyyy") }
-                };
-
+                  {
+                      { "NOMBRE_DEUDOR", nueva.NombreDeudor },
+                      { "NOMBRE_USUARIO", usuario.Nombre },
+                      { "DESCRIPCION", nueva.Descripcion },
+                      { "MONTO_TOTAL", nueva.MontoTotal.ToString("N2") },
+                      { "CUOTAS", nueva.Cuotas.ToString() },
+                      { "MONTO_CUOTA", (nueva.MontoTotal / nueva.Cuotas).Value.ToString("N2") },
+                      { "FECHA", nueva.FechaInicio.ToString("dd/MM/yyyy") }
+                  };
                 EmailService servicioDeudor = new EmailService();
-
-                servicioDeudor.armarCorreo(
-                    nueva.EmailDeudor,
-                    "Aviso de adquisición de deuda",
-                    reemplazosDeudor,
-                    TipoCorreo.RegistroDeudaDeudor,
-                    rutaPlantillas
-                );
-
+                servicioDeudor.armarCorreo(nueva.EmailDeudor, "Aviso de adquisición de deuda", reemplazosDeudor,
+TipoCorreo.RegistroDeudaDeudor, rutaPlantillas);
                 servicioDeudor.enviarCorreo();
-                /*---------------------------------------------------------------*/
-                /*--------------ENVIO DE MAIL AL ACREEDOR----------------------*/
+
                 var reemplazosUsuario = new Dictionary<string, string>()
-                {
-                    { "NOMBRE_DEUDOR", nueva.NombreDeudor },
-                    { "NOMBRE_USUARIO", usuario.Nombre },
-                    { "DESCRIPCION", nueva.Descripcion },
-                    { "MONTO_TOTAL", nueva.MontoTotal.ToString("N2") },
-                    { "CUOTAS", nueva.Cuotas.ToString() },
-                    { "MONTO_CUOTA", (nueva.MontoTotal / nueva.Cuotas).Value.ToString("N2") },
-                    { "FECHA", nueva.FechaInicio.ToString("dd/MM/yyyy") }
-                };
+                  {
+                      { "NOMBRE_DEUDOR", nueva.NombreDeudor },
+                      { "NOMBRE_USUARIO", usuario.Nombre },
+                      { "DESCRIPCION", nueva.Descripcion },
+                      { "MONTO_TOTAL", nueva.MontoTotal.ToString("N2") },
+                      { "CUOTAS", nueva.Cuotas.ToString() },
+                      { "MONTO_CUOTA", (nueva.MontoTotal / nueva.Cuotas).Value.ToString("N2") },
+                      { "FECHA", nueva.FechaInicio.ToString("dd/MM/yyyy") }
+                  };
                 EmailService servicioUsuario = new EmailService();
-
-                servicioUsuario.armarCorreo(
-                    usuario.Email,
-                    "Registro de deuda realizado correctamente",
-                    reemplazosUsuario,
-                    TipoCorreo.RegistroDeudaAcreedor,
-                    rutaPlantillas
-                );
-
+                servicioUsuario.armarCorreo(usuario.Email, "Registro de deuda realizado correctamente",
+reemplazosUsuario, TipoCorreo.RegistroDeudaAcreedor, rutaPlantillas);
                 servicioUsuario.enviarCorreo();
-                /*---------------------------------------------------------------*/
 
-                txtNombre.Text = "";
-                txtEmail.Text = "";
-                txtDescripcion.Text = "";
-                txtMonto.Text = "";
-                txtCuotas.Text = "";
-                txtFecha.Text = "";
+                txtNombre.Text = txtEmail.Text = txtDescripcion.Text = txtMonto.Text = txtCuotas.Text = txtFecha.Text
+= "";
 
-               
                 CargarDeudas();
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "ok",
-                    "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Deuda agregada correctamente.'});", true);
+                    "Swal.fire({icon:'success',title:'¡Éxito!',text:'Deuda agregada correctamente.'});", true);
             }
             catch (Exception ex)
             {
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "error",
-                    $"Swal.fire({{icon: 'error', title: 'Error', text: '{ex.Message.Replace("'", "\\'")}'}});", true);
+                    $"Swal.fire({{icon:'error',title:'Error',text:'{ex.Message.Replace("'", "\\'")}'}});", true);
             }
+        }
 
+        // ── Helpers ──────────────────────────────────────────────
+
+        protected string GetIniciales(string nombre)
+        {
+            if (string.IsNullOrWhiteSpace(nombre)) return "?";
+            string[] p = nombre.Trim().Split(' ');
+            return (p.Length >= 2 ? p[0][0].ToString() + p[1][0].ToString() : nombre.Substring(0, Math.Min(2,
+nombre.Length))).ToUpper();
+        }
+
+        private static readonly string[] _avatarColors = {
+              "rgba(13,110,253,0.12);color:#0057cd",
+              "rgba(111,66,193,0.12);color:#6f42c1",
+              "rgba(253,126,20,0.12);color:#fd7e14",
+              "rgba(32,201,151,0.12);color:#13795b",
+              "rgba(220,53,69,0.12);color:#b02a37"
+          };
+
+        protected string GetAvatarStyle(string nombre)
+        {
+            int idx = string.IsNullOrEmpty(nombre) ? 0 : Math.Abs(nombre.GetHashCode()) % _avatarColors.Length;
+            return $"background:{_avatarColors[idx]};";
         }
 
         protected string GetBadgeEstado(int estado)
         {
             switch (estado)
             {
-                case 0: return "<span class='badge bg-success rounded-pill'>Pago</span>";
-                case 1: return "<span class='badge bg-warning text-dark rounded-pill'>Pendiente</span>";
-                case 2: return "<span class='badge bg-secondary rounded-pill'>Eliminado</span>";
-                default: return estado.ToString();
+                case 0: return "<span class='badge-estado ms-2'style='background:rgba(25,135,84,0.12);color:#198754;'>Cobrado</span>";
+                case 1: return "<span class='badge-estado ms-2'style='background:rgba(255,193,7,0.15);color:#856404;'>Pendiente</span>";
+                default: return "";
             }
         }
 
-        protected void gvDeudas_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        protected string FormatMonto(decimal monto, int estado)
         {
-            gvDeudas.PageIndex = e.NewPageIndex;
-            CargarDeudas();
+            return estado == 0 ? "$" + monto.ToString("N0") : "- $" + monto.ToString("N0");
         }
 
-        protected void ddlFiltroEstadoDeuda_SelectedIndexChanged(object sender, EventArgs e)
+        protected string GetCuotasTexto(object cuotas)
         {
-            AplicarFiltros();
+            if (cuotas == null || cuotas == DBNull.Value) return "Pago único";
+            int c = Convert.ToInt32(cuotas);
+            return c <= 1 ? "Pago único" : c + " cuotas";
         }
 
-        private void AplicarFiltros()
+        protected string GetColorBarra(int estado)
         {
-           DeudaNegocio negocio = new DeudaNegocio();
-           Usuario usuario = (Usuario)Session["usuario"];
-            int idUsuario = usuario.IdUsuario;  
-            int estadoDeuda = 0;
-
-             List<Deuda> deudasFiltradas = new List<Deuda>();
-            
-            if (!(string.IsNullOrEmpty(ddlFiltroEstadoDeuda.SelectedValue)))
-            {
-                estadoDeuda = int.Parse(ddlFiltroEstadoDeuda.SelectedValue);
-            }
-
-            if (estadoDeuda>= 0 && estadoDeuda <=3)
-            {
-                deudasFiltradas = negocio.ListarPorUsuario(idUsuario, estadoDeuda);
-            }
-            else if(estadoDeuda == -1)
-            {
-                deudasFiltradas = negocio.ListarPorUsuario(idUsuario, estadoDeuda);
-            }
-
-            if(deudasFiltradas.Count == 0)
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "info",
-                    "Swal.fire({icon: 'info', title: 'Sin resultados', text: 'No se encontraron deudas con el estado seleccionado.'});", true);
-            }
-
-            gvDeudas.DataSource = deudasFiltradas;
-            gvDeudas.DataBind();
+            return estado == 0 ? "bg-success" : "bg-warning";
         }
+
+        protected string GetAnchoBarra(decimal montoTotal, decimal montoPendiente)
+        {
+            if (montoTotal <= 0) return "width:0%";
+            int pct = (int)Math.Min(((montoTotal - montoPendiente) / montoTotal) * 100, 100);
+            return $"width:{pct}%";
+        }
+
+        protected string GetProgresoTexto(decimal montoTotal, decimal montoPendiente)
+        {
+            if (montoPendiente <= 0) return "Cobrado en su totalidad";
+            if (montoPendiente >= montoTotal) return "Sin cuotas cobradas aún";
+            decimal cobrado = montoTotal - montoPendiente;
+            return "$" + cobrado.ToString("N0") + " cobrados de $" + montoTotal.ToString("N0");
+        }
+
         private void GenerarCuotas(Deuda deuda)
         {
             CuotaDeudaNegocio cuotaNegocio = new CuotaDeudaNegocio();
@@ -327,13 +288,14 @@ namespace TPFinalIntegrador
                 cuota.FechaVencimiento = deuda.FechaInicio.AddMonths(i);
                 cuota.FechaPago = null;
                 cuota.Estado = EstadoCuota.Pendiente;
-
                 cuotaNegocio.AgregarCuota(cuota);
             }
         }
+
         private decimal ParseDecimal(string texto)
         {
             return decimal.Parse(texto.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
         }
+
     }
 }
