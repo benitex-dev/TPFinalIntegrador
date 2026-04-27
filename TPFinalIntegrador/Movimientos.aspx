@@ -204,14 +204,14 @@
                                 <input class="search-input" placeholder="Buscar por comercio o categoría..." type="text" />
                             </div>--%>
 
-                            <div class="d-flex align-items-center bg-white border rounded-pill shadow-sm px-3 py-1 w-100" style="transition: all 0.2s ease-in-out;">
+                            <%--<div class="d-flex align-items-center bg-white border rounded-pill shadow-sm px-3 py-1 w-100" style="transition: all 0.2s ease-in-out;">
                                 <span class="material-symbols-outlined text-muted fs-5">search</span>
 
                                 <input class="form-control border-0 shadow-none bg-transparent w-100 ms-2"
                                     placeholder="Buscar por comercio o categoría..."
                                     type="text"
                                     style="outline: none;" />
-                            </div>
+                            </div>--%>
                         </div>
                         <div class="col-md-6 text-md-end mt-4 mt-md-0">
                             <button class="btn btn-link text-primary fw-bold text-decoration-none d-inline-flex align-items-center gap-2">

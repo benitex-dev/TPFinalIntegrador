@@ -100,11 +100,13 @@
                 color: #495057 !important;
             }
 
-            .btn-glow-primary:hover {
-                transform: translateY(-2px);
-                box-shadow: 0px 12px 28px rgba(13, 110, 253, 0.4);
-                color: #ffffff;
-            }
+        .btn-glow-primary:hover {
+            background-color: #0a58ca !important;
+            border-color: #0a58ca !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 10px rgba(13, 110, 253, 0.4);
+            transform: translateY(-2px);
+        }
 
         
         .btn-outline-subtle {

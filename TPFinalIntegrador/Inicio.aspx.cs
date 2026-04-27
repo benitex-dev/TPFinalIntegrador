@@ -805,6 +805,7 @@ namespace TPFinalIntegrador
                 cargarDashboardInfo();
                 CargarMovimientosDelMesRecientes();
                 CargarCardsHogar();
+                Response.Redirect("Inicio.aspx");
 
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "okGasto",
                     "Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Gasto guardado correctamente.'});", true);
