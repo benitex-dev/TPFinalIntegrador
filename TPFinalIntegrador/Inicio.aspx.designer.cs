@@ -150,6 +150,42 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl h2AporteUsuario;
 
         /// <summary>
+        /// divCardIntegrantes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divCardIntegrantes;
+
+        /// <summary>
+        /// pnlLinkGastosIntegrante control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlLinkGastosIntegrante;
+
+        /// <summary>
+        /// rptIntegrantes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptIntegrantes;
+
+        /// <summary>
+        /// lblMasIntegrantes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMasIntegrantes;
+
+        /// <summary>
         /// rptMovimientos control.
         /// </summary>
         /// <remarks>
@@ -157,6 +193,15 @@ namespace TPFinalIntegrador
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Repeater rptMovimientos;
+
+        /// <summary>
+        /// pnlTorta control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlTorta;
 
         /// <summary>
         /// upGraficoTorta control.
@@ -195,6 +240,15 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Repeater rptLeyendaGrafico;
 
         /// <summary>
+        /// pnlMetas control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlMetas;
+
+        /// <summary>
         /// pnlMetasVacias control.
         /// </summary>
         /// <remarks>
@@ -231,22 +285,13 @@ namespace TPFinalIntegrador
         protected global::System.Web.UI.WebControls.Repeater rptMetasDashboard;
 
         /// <summary>
-        /// pnlLinkGastosIntegrante control.
+        /// pnlPrespuesto control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlLinkGastosIntegrante;
-
-        /// <summary>
-        /// rptIntegrantes control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptIntegrantes;
+        protected global::System.Web.UI.WebControls.Panel pnlPrespuesto;
 
         /// <summary>
         /// txtMailIntegrante control.

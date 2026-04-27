@@ -36,7 +36,6 @@
         
         .progress { height: 8px; border-radius: 4px; }
         
-        /* Custom Bottom Nav for Mobile */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -79,10 +78,9 @@
         }
 
         .btn-glow-primary {
-            background-color: #0d6efd; /* Si usás otro azul en tu paleta, cambialo acá */
+            background-color: #0d6efd;
             color: #ffffff;
             border: none;
-            /* Eje X, Eje Y, Difuminado, Color azul con 30% de opacidad */
             box-shadow: 0px 8px 24px rgba(13, 110, 253, 0.3);
             transition: all 0.3s ease;
         }
@@ -129,38 +127,10 @@
     </style>
 
     <div class="bg-light">
-        
-        <!-- Top Navigation (Desktop) -->
-        <%--<nav class="navbar navbar-expand-md navbar-light bg-white sticky-top shadow-sm d-none d-md-block">
-            <div class="container py-2">
-                <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-                    <span class="material-symbols-outlined text-primary">account_balance</span>
-                    <span class="fw-bold">The Private Banker</span>
-                </a>
-                <div class="ms-auto d-flex align-items-center gap-4">
-                    <a class="nav-link active text-primary fw-semibold" href="#">Inicio</a>
-                    <a class="nav-link text-secondary" href="#">Ahorros</a>
-                    <a class="nav-link text-secondary" href="#">Deudores</a>
-                    <a class="nav-link text-secondary" href="#">Perfil</a>
-                    <button class="btn btn-primary btn-rounded px-4 ms-2">Inicio</button>
-                </div>
-            </div>
-        </nav>
-        <!-- Mobile Header -->
-        <div class="d-md-none bg-white p-3 shadow-sm sticky-top">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-2">
-                    <span class="material-symbols-outlined text-primary">account_balance</span>
-                    <span class="fw-bold h5 mb-0">The Private Banker</span>
-                </div>
-                <button class="btn btn-primary btn-sm btn-rounded px-3">Inicio</button>
-            </div>
-        </div>--%>
         <main class="py-4 mb-5 pb-5">
             <!-- Hero Section -->
             <section class="row align-items-center mb-4 g-3">
                 <div class="col-lg-7">
-                    <%--<h1 class="display-6 mb-1"><asp:Label ID="lblTituloDashboard" runat="server" Text="Tu Resumen Personal" /></h1>--%>
                     <div class="dropdown mb-4">
                         <button class="btn btn-link text-dark text-decoration-none p-0 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="outline: none; box-shadow: none;">
                             <h2 class="mb-0 fw-bold" style="letter-spacing: -0.5px;">
@@ -179,7 +149,7 @@
                                 <asp:LinkButton ID="btnVistaPersonal" runat="server" CssClass="dropdown-item rounded-3 py-3 d-flex align-items-center gap-3 fs-6" OnClick="btnVistaPersonal_Click">
                 <span class="material-symbols-outlined text-secondary fs-4">account_balance_wallet</span> 
                 <span class="fw-semibold">Billetera Personal</span>
-            </asp:LinkButton>
+                                </asp:LinkButton>
                             </li>
 
                             <asp:Repeater ID="rptHogares" runat="server" OnItemCommand="rptHogares_ItemCommand" OnItemDataBound="rptHogares_ItemDataBound">
@@ -190,7 +160,7 @@
                                             CommandArgument='<%# Eval("IdHogar") + "|" + Eval("Nombre") %>'>
                         <span class="material-symbols-outlined text-secondary fs-4">home</span> 
                         <span class="fw-semibold"><%# Eval("Nombre") %></span>
-                    </asp:LinkButton>
+                                        </asp:LinkButton>
                                     </li>
                                 </ItemTemplate>
                             </asp:Repeater>
@@ -202,12 +172,14 @@
                             <li>
                                 <a class="dropdown-item rounded-3 py-3 d-flex align-items-center gap-3 text-primary fw-bold bg-opacity-10 fs-6" href="CrearHogar.aspx">
                                     <span class="material-symbols-outlined fs-4">add_circle</span> Crear Hogar
-            </a>
+                                </a>
                             </li>
                         </ul>
                     </div>
-  <p class="text-secondary fw-medium"><asp:Label ID="lblSubtituloDashboard" runat="server" Text="Gestiona tu patrimonio
-  con precisión editorial." /></p>
+                    <p class="text-secondary fw-medium">
+                        <asp:Label ID="lblSubtituloDashboard" runat="server" Text="Gestiona tu patrimonio
+  con precisión editorial." />
+                    </p>
                 </div>
                 <div class="col-lg-5 d-flex gap-2 justify-content-lg-end">
                     <button type="button" class="btn btn-glow-primary rounded-pill d-flex align-items-center gap-2 px-4 py-2 fw-bold" data-bs-toggle="modal" data-bs-target="#modalGasto" onclick="limpiarModalGasto()">
@@ -217,8 +189,9 @@
                     </button>
 
                     <button id="btnCargarIngreso" runat="server" type="button" class="btn btn-outline-subtle rounded-pill d-flex
-  align-items-center gap-2 px-4 py-2 fw-bold" data-bs-toggle="modal" data-bs-target="#modalIngreso"
-  onclick="limpiarModalIngreso()">
+  align-items-center gap-2 px-4 py-2 fw-bold"
+                        data-bs-toggle="modal" data-bs-target="#modalIngreso"
+                        onclick="limpiarModalIngreso()">
                         <span class="material-symbols-outlined fs-5">payments</span>
                         Cargar ingreso
    
@@ -243,7 +216,7 @@
                     </div>
                 </div>
                 <!-- Ingresos -->
-                <div class="col-md-4"  id="divCardIngresos" runat="server">
+                <div class="col-md-4" id="divCardIngresos" runat="server">
                     <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
                         <div class="d-flex justify-content-between align-items-start mb-4">
                             <span class="text-uppercase small fw-bold text-secondary tracking-wider">Ingresos del mes</span>
@@ -261,7 +234,7 @@
                     </div>
                 </div>
                 <!-- Gastos -->
-                <div class="col-md-4"  id="divCardGastos" runat="server">
+                <div class="col-md-4" id="divCardGastos" runat="server">
                     <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
                         <div class="d-flex justify-content-between align-items-start mb-4">
                             <span class="text-uppercase small fw-bold text-secondary tracking-wider">Gastos del mes</span>
@@ -278,36 +251,76 @@
                         </div>
                     </div>
                 </div>
-                 <%-- Card Gasto Total Hogar --%>
-  <div class="col-md-4" id="divCardGastoHogar" runat="server" visible="false">
-      <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
-          <div class="d-flex justify-content-between align-items-start mb-4">
-              <span class="text-uppercase small fw-bold text-secondary tracking-wider">Gasto Total del Hogar</span>
-              <div class="icon-box bg-danger-light">
-                  <span class="material-symbols-outlined">trending_down</span>
-              </div>
-          </div>
-          <div>
-              <h2 class="balance-text text-danger mb-1" runat="server" id="h2GastoHogar">$ --</h2>
-              <span class="text-secondary small fw-medium">Total consumido por todos</span>
-          </div>
-      </div>
-  </div>
-  <%-- Card Tu Aporte --%>
-  <div class="col-md-4" id="divCardAporte" runat="server" visible="false">
-      <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
-          <div class="d-flex justify-content-between align-items-start mb-4">
-              <span class="text-uppercase small fw-bold text-secondary tracking-wider">Tu Aporte</span>
-              <div class="icon-box bg-success-light">
-                  <span class="material-symbols-outlined">payments</span>
-              </div>
-          </div>
-          <div>
-              <h2 class="balance-text text-success mb-1" runat="server" id="h2AporteUsuario">$ --</h2>
-              <span class="text-secondary small fw-medium">Aportado a la fecha</span>
-          </div>
-      </div>
-  </div>
+                <%-- Card Gasto Total Hogar --%>
+                <div class="col-md-4" id="divCardGastoHogar" runat="server" visible="false">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <span class="text-uppercase small fw-bold text-secondary tracking-wider">Gasto Total del Hogar</span>
+                            <div class="icon-box bg-danger-light">
+                                <span class="material-symbols-outlined">trending_down</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="balance-text text-danger mb-1" runat="server" id="h2GastoHogar">$ --</h2>
+                            <span class="text-secondary small fw-medium">Total consumido por todos</span>
+                        </div>
+                    </div>
+                </div>
+                <%-- Card Tu Aporte --%>
+                <div class="col-md-4" id="divCardAporte" runat="server" visible="false">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <span class="text-uppercase small fw-bold text-secondary tracking-wider">Tu Aporte</span>
+                            <div class="icon-box bg-success-light">
+                                <span class="material-symbols-outlined">payments</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="balance-text text-success mb-1" runat="server" id="h2AporteUsuario">$ --</h2>
+                            <span class="text-secondary small fw-medium">Aportado a la fecha</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4" id="divCardIntegrantes" runat="server">
+    <asp:Panel ID="pnlLinkGastosIntegrante" runat="server" CssClass="h-100">
+        <div class="card h-100 border-0 shadow-sm rounded-4 p-4 d-flex flex-column justify-content-between">
+            
+            <%-- 1. Cabecera idéntica a las otras dos tarjetas --%>
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <span class="text-uppercase small fw-bold text-secondary tracking-wider">Integrantes</span>
+                <div class="icon-box bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                    <span class="material-symbols-outlined">group</span>
+                </div>
+            </div>
+
+            <%-- 2. Lista ultra compacta (sin párrafo explicativo) --%>
+            <div class="flex-grow-1 overflow-hidden">
+                        <asp:Repeater ID="rptIntegrantes" runat="server">
+                            <ItemTemplate>
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="material-symbols-outlined text-muted" style="font-size: 16px;">person</span>
+                                    <span class="small fw-semibold text-dark"><%# Eval("Usuario.Nombre") %> <%# Eval("Usuario.Apellido") %></span>
+                                </div>
+                            </ItemTemplate>
+                        </asp:Repeater>
+
+                        <asp:Label ID="lblMasIntegrantes" runat="server" CssClass="small text-muted fw-medium ms-4 mt-1 d-block" Visible="false"></asp:Label>
+                    </div>
+
+            <%-- 3. Botones minimalistas para no hacer bulto --%>
+            <div class="d-flex gap-2 mt-2 pt-3 border-top">
+                <a href="GastoIntegranteHogar.aspx" class="btn btn-sm btn-light w-50 fw-bold text-primary" style="font-size: 0.75rem;">Ver gastos</a>
+                <button type="button" class="btn btn-sm btn-light w-50 fw-bold text-secondary" 
+                    data-bs-toggle="modal" data-bs-target="#modalIntegrante" 
+                    onclick="limpiarModalAgregarIntegrante()" style="font-size: 0.75rem;">
+                    + Agregar
+                </button>
+            </div>
+
+        </div>
+    </asp:Panel>
+</div>
+
             </section>
             <div class="row g-4">
                 <!-- Left Column: Transactions -->
@@ -319,14 +332,15 @@
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive-xl">
-                                <table class="table table-borderless table-hover align-middle mb-0 ocultar-pagado-por" id="tablaMovimientos"  >
+                                <table class="table table-borderless table-hover align-middle mb-0 ocultar-pagado-por" id="tablaMovimientos">
                                     <thead class="bg-light">
                                         <tr>
                                             <th class="ps-4 py-3 text-uppercase small text-secondary fw-bold">Concepto</th>
-  <th class="py-3 text-uppercase small text-secondary fw-bold">Fecha</th>
-  <th class="py-3 text-uppercase small text-secondary fw-bold">Categoría</th>
-   <th class="py-3 text-uppercase small text-secondary fw-bold">Pagado Por</th>
-  <th class="py-3 text-uppercase small text-secondary fw-bold text-end pe-4">Monto</th>                                            <th class="pe-1 py-3 text-uppercase small text-secondary fw-bold text-end"></th>
+                                            <th class="py-3 text-uppercase small text-secondary fw-bold">Fecha</th>
+                                            <th class="py-3 text-uppercase small text-secondary fw-bold">Categoría</th>
+                                            <th class="py-3 text-uppercase small text-secondary fw-bold">Pagado Por</th>
+                                            <th class="py-3 text-uppercase small text-secondary fw-bold text-end pe-4">Monto</th>
+                                            <th class="pe-1 py-3 text-uppercase small text-secondary fw-bold text-end"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -356,12 +370,12 @@
                                                         </span>
                                                     </td>
                                                     <td class="text-secondary small">
-      <%# Eval("NombreUsuario") %>
-  </td>
+                                                        <%# Eval("NombreUsuario") %>
+                                                    </td>
 
                                                     <td class='<%# Eval("Tipo").ToString() == "Gasto" ? "pe-4 text-end fw-bold text-danger" : "pe-4 text-end fw-bold text-success" %>' style="white-space: nowrap;">
-      <%# Eval("MontoMostrado") %>
-  </td>
+                                                        <%# Eval("MontoMostrado") %>
+                                                    </td>
                                                     <td class="pe-4 align-middle text-end" style="width: 50px;">
                                                         <div class="dropdown">
                                                             <button class="btn btn-link p-0 text-decoration-none btn-kebab"
@@ -400,6 +414,7 @@
                 <!-- COLUMNA DERECHA: Insights -->
                 <div class="col-lg-4 d-flex flex-column gap-4">
                     <!-- Category Analysis -->
+                    <asp:Panel ID="pnlTorta" runat="server">
                     <asp:UpdatePanel ID="upGraficoTorta" runat="server" UpdateMode="Conditional">
                         <ContentTemplate>
                             <div class="card border-0 shadow-sm rounded-4 p-4">
@@ -447,62 +462,66 @@
                             </div>
                         </ContentTemplate>
                     </asp:UpdatePanel>
-                    <!-- Metas de ahorro -->
-                    <div class="card border-0 shadow-sm rounded-4 p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="h5 mb-0 fw-bold">Metas de Ahorro</h4>
-                            <a href="#" class="text-decoration-none small text-primary fw-semibold">Ver detalles</a>
-                        </div>
-
-                        <asp:Panel ID="pnlMetasVacias" runat="server" Visible="false">
-                            <div class="text-center p-4 border rounded-3 bg-light" style="border-style: dashed !important;">
-                                <span class="material-symbols-outlined text-secondary mb-2" style="font-size: 32px;">savings</span>
-                                <p class="text-muted small mb-3">Aún no tenés metas definidas. ¡Ponete un objetivo!</p>
-                                <asp:Button ID="btnCrearMeta" runat="server" Text="+ Crear meta" CssClass="btn btn-sm btn-outline-primary rounded-pill" OnClientClick="abrirModalMeta(); return false;" />
-                            </div>
                         </asp:Panel>
 
-                        <asp:Panel ID="pnlMetasActivas" runat="server">
-                            <div class="d-flex flex-column gap-4">
+                    <!-- Metas de ahorro -->
+                    <asp:Panel ID="pnlMetas" runat="server">
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="h5 mb-0 fw-bold">Metas de Ahorro</h4>
+                                <a href="#" class="text-decoration-none small text-primary fw-semibold">Ver detalles</a>
+                            </div>
 
-                                <asp:Repeater ID="rptMetasDashboard" runat="server">
-                                    <ItemTemplate>
-                                        <div>
-                                            <div class="d-flex justify-content-between mb-2">
-                                                <span class="fw-semibold text-secondary small"><%# Eval("Nombre") %></span>
-                                                <span class="fw-bold text-primary small"><%# Eval("Porcentaje") %>%</span>
-                                            </div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-primary"
-                                                    style='<%# "width: " + Eval("Porcentaje") + "%" %>'
-                                                    aria-valuenow='<%# Eval("Porcentaje") %>'
-                                                    aria-valuemin="0"
-                                                    aria-valuemax="100">
+                            <asp:Panel ID="pnlMetasVacias" runat="server" Visible="false">
+                                <div class="text-center p-4 border rounded-3 bg-light" style="border-style: dashed !important;">
+                                    <span class="material-symbols-outlined text-secondary mb-2" style="font-size: 32px;">savings</span>
+                                    <p class="text-muted small mb-3">Aún no tenés metas definidas. ¡Ponete un objetivo!</p>
+                                    <asp:Button ID="btnCrearMeta" runat="server" Text="+ Crear meta" CssClass="btn btn-sm btn-outline-primary rounded-pill" OnClientClick="abrirModalMeta(); return false;" />
+                                </div>
+                            </asp:Panel>
+
+                            <asp:Panel ID="pnlMetasActivas" runat="server">
+                                <div class="d-flex flex-column gap-4">
+
+                                    <asp:Repeater ID="rptMetasDashboard" runat="server">
+                                        <ItemTemplate>
+                                            <div>
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <span class="fw-semibold text-secondary small"><%# Eval("Nombre") %></span>
+                                                    <span class="fw-bold text-primary small"><%# Eval("Porcentaje") %>%</span>
+                                                </div>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-primary"
+                                                        style='<%# "width: " + Eval("Porcentaje") + "%" %>'
+                                                        aria-valuenow='<%# Eval("Porcentaje") %>'
+                                                        aria-valuemin="0"
+                                                        aria-valuemax="100">
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </ItemTemplate>
-                                </asp:Repeater>
+                                        </ItemTemplate>
+                                    </asp:Repeater>
 
+                                </div>
+                            </asp:Panel>
+                        </div>
+                    </asp:Panel>
+                    <!-- Presupuesto -->
+                    <asp:Panel ID="pnlPrespuesto" runat="server">
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <span class="text-uppercase small fw-bold text-secondary" style="font-size: 10px;">Mensual</span>
+                                    <h4 class="h5 mt-1 fw-bold mb-0">Presupuesto</h4>
+                                </div>
+                                <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
                             </div>
-                        </asp:Panel>
-                    </div>
-                      <!-- Presupuesto -->
-                      <div class="card border-0 shadow-sm rounded-4 p-4">
-                          <div class="d-flex justify-content-between align-items-center mb-2">
-                              <div>
-                                  <span class="text-uppercase small fw-bold text-secondary" style="font-size:
-  10px;">Mensual</span>
-                                  <h4 class="h5 mt-1 fw-bold mb-0">Presupuesto</h4>
-                              </div>
-                              <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
-                          </div>
-                          <p class="text-muted small mb-3">Controlá cuánto querés gastar por categoría cada mes.</p>
-                          <a href="Presupuesto.aspx" class="btn btn-sm btn-outline-primary rounded-pill w-100">Ver
-  presupuesto</a>
-                      </div>
+                            <p class="text-muted small mb-3">Controlá cuánto querés gastar por categoría cada mes.</p>
+                            <a href="Presupuesto.aspx" class="btn btn-sm btn-outline-primary rounded-pill w-100">Ver presupuesto</a>
+                        </div>
+                    </asp:Panel>
                     <%--GASTOS POR INTEGRANTE DEL HOGAR--%>
-                    <asp:Panel ID="pnlLinkGastosIntegrante" runat="server" Visible="false">
+                    <%--<asp:Panel ID="pnlLinkGastosIntegrante2" runat="server" Visible="false">
                         <div class="card border-0 shadow-sm rounded-4 p-4">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <div>
@@ -523,17 +542,15 @@
                             </asp:Repeater>
 
                             <div class="d-flex gap-2 mt-3">
-      <a href="GastoIntegranteHogar.aspx" class="btn btn-sm btn-outline-primary rounded-pill w-50">Ver gastos</a>
-      <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill w-50"
-              data-bs-toggle="modal" data-bs-target="#modalIntegrante"
-              onclick="limpiarModalAgregarIntegrante()">
-          + Agregar integrante
-      </button>
-  </div>
+                                <a href="GastoIntegranteHogar.aspx" class="btn btn-sm btn-outline-primary rounded-pill w-50">Ver gastos</a>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill w-50"
+                                    data-bs-toggle="modal" data-bs-target="#modalIntegrante"
+                                    onclick="limpiarModalAgregarIntegrante()">
+                                    + Agregar integrante
+                                </button>
+                            </div>
                         </div>
-
-                    </asp:Panel>
-                     
+                    </asp:Panel>--%>
                 </div>
             </div>
         </main>

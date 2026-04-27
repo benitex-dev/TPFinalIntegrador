@@ -528,35 +528,61 @@ namespace negocio
 
             try
             {
-                datos.setConsulta(@" SELECT G.IdGasto, G.Fecha, G.MontoPesos, G.Moneda, G.IdCategoria, G.Descripcion,
-      G.IdMedioPago, G.IdUsuario, G.IdHogar, G.MontoUSD, G.Cotizacion, G.Estado,
-      C.Nombre AS NombreCategoria, MP.Descripcion AS NombreMedioPago,
-      U.Nombre AS NombreUsuario, U.Apellido AS ApellidoUsuario
-  FROM GASTO G
-  INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria
-  INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago
-  INNER JOIN USUARIO U ON G.IdUsuario = U.IdUsuario
-  WHERE G.IdHogar = @idHogar
-  AND G.Estado = 1
-  AND MONTH(G.Fecha) = MONTH(GETDATE())
-  AND YEAR(G.Fecha) = YEAR(GETDATE())");
+                // 1. La consulta SQL fusionada (con cuotas y datos del usuario)
+                datos.setConsulta(@"SELECT TOP 8 
+            G.IdGasto, 
+            ISNULL(CU.Vencimiento, G.Fecha) AS FechaMovimiento, 
+            ISNULL(CU.Monto, G.MontoPesos) AS MontoDelMes, 
+            G.IdCategoria, 
+            G.Descripcion,
+            G.IdMedioPago, 
+            G.IdUsuario, 
+            G.IdHogar, 
+            G.MontoUSD, 
+            G.Cotizacion, 
+            G.Estado,
+            C.Nombre AS NombreCategoria, 
+            MP.Descripcion AS NombreMedioPago,
+            U.Nombre AS NombreUsuario, 
+            U.Apellido AS ApellidoUsuario,
+            CU.NumeroCuota, 
+            CU.TotalCuotas
+        FROM GASTO G
+        INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria
+        INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago
+        INNER JOIN USUARIO U ON G.IdUsuario = U.IdUsuario
+        LEFT JOIN CUOTA CU ON CU.IdGasto = G.IdGasto
+        WHERE G.IdHogar = @idHogar
+            AND G.Estado = 1
+            AND (
+                (CU.IdGasto IS NULL 
+                 AND MONTH(G.Fecha) = MONTH(GETDATE()) 
+                 AND YEAR(G.Fecha) = YEAR(GETDATE()))
+                OR
+                (CU.IdGasto IS NOT NULL 
+                 AND MONTH(CU.Vencimiento) = MONTH(GETDATE()) 
+                 AND YEAR(CU.Vencimiento) = YEAR(GETDATE()))
+            )
+        ORDER BY FechaMovimiento DESC");
 
                 datos.setParametro("@idHogar", idHogar);
                 datos.ejecutarLectura();
 
+                // 2. Mapeo del DataReader a los objetos
                 while (datos.Lector.Read())
                 {
                     Gasto gasto = new Gasto();
 
+                    // Datos base con los nuevos alias de la consulta
                     gasto.IdGasto = (int)datos.Lector["IdGasto"];
-                    gasto.Fecha = (DateTime)datos.Lector["Fecha"];
-                    gasto.MontoPesos = (decimal)datos.Lector["MontoPesos"];
-                    gasto.Moneda = (Moneda)(int)datos.Lector["Moneda"];
+                    gasto.Fecha = (DateTime)datos.Lector["FechaMovimiento"];
+                    gasto.MontoPesos = (decimal)datos.Lector["MontoDelMes"];
                     gasto.Descripcion = (string)datos.Lector["Descripcion"];
                     gasto.Estado = (bool)datos.Lector["Estado"];
 
+                    // Relaciones
                     gasto.Hogar = new Hogar();
-                    gasto.Hogar.IdHogar = (int)datos.Lector["IdUsuario"];
+                    gasto.Hogar.IdHogar = (int)datos.Lector["IdHogar"];
 
                     gasto.Categoria = new Categoria();
                     gasto.Categoria.IdCategoria = (int)datos.Lector["IdCategoria"];
@@ -565,17 +591,28 @@ namespace negocio
                     gasto.MedioDePago = new MedioPago();
                     gasto.MedioDePago.IdMedioPago = (int)datos.Lector["IdMedioPago"];
                     gasto.MedioDePago.Descripcion = (string)datos.Lector["NombreMedioPago"];
-                   
+
                     gasto.Usuario = new Usuario();
                     gasto.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
                     gasto.Usuario.Nombre = (string)datos.Lector["NombreUsuario"];
                     gasto.Usuario.Apellido = (string)datos.Lector["ApellidoUsuario"];
-                    
+
                     if (datos.Lector["MontoUSD"] != DBNull.Value)
                         gasto.MontoUSD = (decimal)datos.Lector["MontoUSD"];
 
                     if (datos.Lector["Cotizacion"] != DBNull.Value)
                         gasto.Cotizacion = (decimal)datos.Lector["Cotizacion"];
+
+                    if (datos.Lector["NumeroCuota"] != DBNull.Value)
+                    {
+                        gasto.EsEnCuotas = true;
+                        gasto.NumeroCuota = (int)datos.Lector["NumeroCuota"];
+                        gasto.CantidadCuotas = (int)datos.Lector["TotalCuotas"];
+                    }
+                    else
+                    {
+                        gasto.EsEnCuotas = false;
+                    }
 
                     lista.Add(gasto);
                 }
@@ -591,6 +628,115 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+
+        public List<Gasto> ListarPorHogarMesReciente(int idHogar)
+        {
+            List<Gasto> lista = new List<Gasto>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                // 1. La consulta SQL fusionada (con cuotas y datos del usuario)
+                datos.setConsulta(@"SELECT TOP 8 
+            G.IdGasto, 
+            ISNULL(CU.Vencimiento, G.Fecha) AS FechaMovimiento, 
+            ISNULL(CU.Monto, G.MontoPesos) AS MontoDelMes, 
+            G.IdCategoria, 
+            G.Descripcion,
+            G.IdMedioPago, 
+            G.IdUsuario, 
+            G.IdHogar, 
+            G.MontoUSD, 
+            G.Cotizacion, 
+            G.Estado,
+            C.Nombre AS NombreCategoria, 
+            MP.Descripcion AS NombreMedioPago,
+            U.Nombre AS NombreUsuario, 
+            U.Apellido AS ApellidoUsuario,
+            CU.NumeroCuota, 
+            CU.TotalCuotas
+        FROM GASTO G
+        INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria
+        INNER JOIN MEDIOPAGO MP ON G.IdMedioPago = MP.IdMedioPago
+        INNER JOIN USUARIO U ON G.IdUsuario = U.IdUsuario
+        LEFT JOIN CUOTA CU ON CU.IdGasto = G.IdGasto
+        WHERE G.IdHogar = @idHogar
+            AND G.Estado = 1
+            AND (
+                (CU.IdGasto IS NULL 
+                 AND MONTH(G.Fecha) = MONTH(GETDATE()) 
+                 AND YEAR(G.Fecha) = YEAR(GETDATE()))
+                OR
+                (CU.IdGasto IS NOT NULL 
+                 AND MONTH(CU.Vencimiento) = MONTH(GETDATE()) 
+                 AND YEAR(CU.Vencimiento) = YEAR(GETDATE()))
+            )
+        ORDER BY FechaMovimiento DESC");
+
+                datos.setParametro("@idHogar", idHogar);
+                datos.ejecutarLectura();
+
+                // 2. Mapeo del DataReader a los objetos
+                while (datos.Lector.Read())
+                {
+                    Gasto gasto = new Gasto();
+
+                    // Datos base con los nuevos alias de la consulta
+                    gasto.IdGasto = (int)datos.Lector["IdGasto"];
+                    gasto.Fecha = (DateTime)datos.Lector["FechaMovimiento"];
+                    gasto.MontoPesos = (decimal)datos.Lector["MontoDelMes"];
+                    gasto.Descripcion = (string)datos.Lector["Descripcion"];
+                    gasto.Estado = (bool)datos.Lector["Estado"];
+
+                    // Relaciones
+                    gasto.Hogar = new Hogar();
+                    gasto.Hogar.IdHogar = (int)datos.Lector["IdHogar"];
+
+                    gasto.Categoria = new Categoria();
+                    gasto.Categoria.IdCategoria = (int)datos.Lector["IdCategoria"];
+                    gasto.Categoria.Nombre = (string)datos.Lector["NombreCategoria"];
+
+                    gasto.MedioDePago = new MedioPago();
+                    gasto.MedioDePago.IdMedioPago = (int)datos.Lector["IdMedioPago"];
+                    gasto.MedioDePago.Descripcion = (string)datos.Lector["NombreMedioPago"];
+
+                    gasto.Usuario = new Usuario();
+                    gasto.Usuario.IdUsuario = (int)datos.Lector["IdUsuario"];
+                    gasto.Usuario.Nombre = (string)datos.Lector["NombreUsuario"];
+                    gasto.Usuario.Apellido = (string)datos.Lector["ApellidoUsuario"];
+
+                    if (datos.Lector["MontoUSD"] != DBNull.Value)
+                        gasto.MontoUSD = (decimal)datos.Lector["MontoUSD"];
+
+                    if (datos.Lector["Cotizacion"] != DBNull.Value)
+                        gasto.Cotizacion = (decimal)datos.Lector["Cotizacion"];
+
+                    if (datos.Lector["NumeroCuota"] != DBNull.Value)
+                    {
+                        gasto.EsEnCuotas = true;
+                        gasto.NumeroCuota = (int)datos.Lector["NumeroCuota"];
+                        gasto.CantidadCuotas = (int)datos.Lector["TotalCuotas"];
+                    }
+                    else
+                    {
+                        gasto.EsEnCuotas = false;
+                    }
+
+                    lista.Add(gasto);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+        
 
         public List<Gasto> ListarPorHogarYFecha(int idHogar, int mes, int anio)
         {

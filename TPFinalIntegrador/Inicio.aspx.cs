@@ -92,10 +92,30 @@ namespace TPFinalIntegrador
                     h2AporteUsuario.InnerText = "$ " + tuAporte.ToString("N2");
 
                     HogarUsuarioNegocio hogarUsuarioNegocio = new HogarUsuarioNegocio();
-                    rptIntegrantes.DataSource = hogarUsuarioNegocio.ListarPorHogar((int)Session["IdHogarActual"]);
+                    //rptIntegrantes.DataSource = hogarUsuarioNegocio.ListarPorHogar((int)Session["IdHogarActual"]);
+                    var listaIntegrantes = hogarUsuarioNegocio.ListarPorHogar((int)Session["IdHogarActual"]);
+
+                    int limiteVisual = 2; // Mostrar máximo 3 personas para no romper la tarjeta
+
+                    if (listaIntegrantes.Count > limiteVisual)
+                    {
+                        rptIntegrantes.DataSource = listaIntegrantes.Take(limiteVisual).ToList();
+
+                        int extra = listaIntegrantes.Count - limiteVisual;
+                        lblMasIntegrantes.Text = $"+ {extra} más";
+                        lblMasIntegrantes.Visible = true;
+                    }
+                    else
+                    {
+                        rptIntegrantes.DataSource = listaIntegrantes;
+                        lblMasIntegrantes.Visible = false;
+                    }
                     rptIntegrantes.DataBind();
                     CargarCardsHogar();
                     ActualizarTituloYEstilos();
+                    GastoResumenNegocio negocio = new GastoResumenNegocio();
+                    List<GastoResumen> gastos = negocio.ObtenerGastosDelMesHogar((int)Session["IdHogarActual"]);
+                    CargarGraficoDeTorta(gastos);
 
                 }
                 else
@@ -1591,12 +1611,20 @@ namespace TPFinalIntegrador
                 litTituloDashboard.Text = "Hogar: " + ((Hogar)Session["HogarSeleccionado"]).Nombre;
 
                 btnVistaPersonal.CssClass = "dropdown-item rounded-3 py-3 d-flex align-items-center gap-3 text-dark";
+                pnlMetas.Visible = false;
+                pnlPrespuesto.Visible = false;
+                pnlTorta.Visible = true;
+                pnlLinkGastosIntegrante.Visible = true;
             }
             else
             {
                 litTituloDashboard.Text = "Tu Resumen Personal";
 
                 btnVistaPersonal.CssClass = "dropdown-item rounded-3 py-3 d-flex align-items-center gap-3 bg-primary-subtle text-primary fw-bold";
+                pnlMetas.Visible = true;
+                pnlPrespuesto.Visible = true;
+                pnlTorta.Visible = true;
+                pnlLinkGastosIntegrante.Visible = false;
             }
         }
     }

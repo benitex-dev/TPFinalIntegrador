@@ -40,14 +40,14 @@ namespace negocio
                 ingresos = ingresoNegocio.ListarPorHogarMesActual(idReferencia);
                 gastos = gastoNegocio.ListarPorHogarMesActual(idReferencia);
                 // Nota: Asegurate de tener este método creado en tu CuotaNegocio
-                //cuotas = cuotaNegocio.ListarPorHogarMesActual(idReferencia);
+                cuotas = cuotaNegocio.ListarPorHogarPorMes(idReferencia, mes, anio);
             }
             else
             {
                 ingresos = ingresoNegocio.ListarPorUsuarioPorMes(idReferencia, mes, anio);
                 gastos = gastoNegocio.ListarPorUsuarioPorMes(idReferencia, mes, anio);
-            }
                 cuotas = cuotaNegocio.ListarPorUsuarioPorMes(idReferencia, mes, anio);
+            }
             //CAMBIAR
 
             foreach (Ingreso ingreso in ingresos)

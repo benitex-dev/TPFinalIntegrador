@@ -333,7 +333,75 @@ namespace negocio
             }
         }
 
-        
+        public List<Cuota> ListarPorHogarPorMes(int idHogar, int mes, int anio)
+        {
+            List<Cuota> lista = new List<Cuota>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setConsulta(@"
+            SELECT 
+                C.IdCuota,
+                C.IdGasto,
+                C.NumeroCuota,
+                C.TotalCuotas,
+                C.Monto,
+                C.Vencimiento,
+                C.Estado,
+                G.Descripcion,
+                G.IdCategoria,
+                CAT.Nombre AS NombreCategoria
+            FROM CUOTA C
+            INNER JOIN GASTO G ON G.IdGasto = C.IdGasto
+            INNER JOIN CATEGORIA CAT ON CAT.IdCategoria = G.IdCategoria
+            WHERE G.IdHogar = @idHogar
+              AND G.Estado = 1
+              AND MONTH(C.Vencimiento) = @mes
+              AND YEAR(C.Vencimiento) = @anio");
+
+                datos.setParametro("@idHogar", idHogar);
+                datos.setParametro("@mes", mes);
+                datos.setParametro("@anio", anio);
+
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Cuota cuota = new Cuota();
+
+                    cuota.IdCuota = (int)datos.Lector["IdCuota"];
+
+                    cuota.Gasto = new Gasto();
+                    cuota.Gasto.IdGasto = (int)datos.Lector["IdGasto"];
+                    cuota.Gasto.Descripcion = (string)datos.Lector["Descripcion"];
+
+                    cuota.Gasto.Categoria = new Categoria();
+                    cuota.Gasto.Categoria.IdCategoria = (int)datos.Lector["IdCategoria"];
+                    cuota.Gasto.Categoria.Nombre = (string)datos.Lector["NombreCategoria"];
+
+                    cuota.NumeroCuota = (int)datos.Lector["NumeroCuota"];
+                    cuota.TotalCuotas = (int)datos.Lector["TotalCuotas"];
+                    cuota.Monto = (decimal)datos.Lector["Monto"];
+                    cuota.Vencimiento = (DateTime)datos.Lector["Vencimiento"];
+                    cuota.Estado = (EstadoCuota)(int)datos.Lector["Estado"];
+
+                    lista.Add(cuota);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+
 
 
         // MODIFICAR
