@@ -60,24 +60,24 @@ namespace TPFinalIntegrador
                 negocioUsuario.AgregarUsuario(nuevo);
 
                 /*--------------ENVIO DE MAIL----------------------*/
-                string rutaPlantillas = Server.MapPath("~/Template");
-               
-                var reemplazos = new Dictionary<string, string>()
+                try
                 {
-                    { "NOMBRE_USUARIO", nuevo.Nombre },
-                };
-
-                EmailService servicio = new EmailService();
-
-                servicio.armarCorreo(
-                    nuevo.Email,
-                    "Te damos la bienvenida al Sistema de Control de Gatos",
-                    reemplazos,
-                    TipoCorreo.NuevoUsuario,
-                    rutaPlantillas
-                );
-
-                servicio.enviarCorreo();
+                    string rutaPlantillas = Server.MapPath("~/Template");
+                    var reemplazos = new Dictionary<string, string>()
+                    {
+                        { "NOMBRE_USUARIO", nuevo.Nombre },
+                    };
+                    EmailService servicio = new EmailService();
+                    servicio.armarCorreo(
+                        nuevo.Email,
+                        "Te damos la bienvenida al Sistema de Control de Gastos",
+                        reemplazos,
+                        TipoCorreo.NuevoUsuario,
+                        rutaPlantillas
+                    );
+                    servicio.enviarCorreo();
+                }
+                catch { }
                 /*---------------------------------------------------------------*/
                 // Auto-login
                 Usuario creado = negocioUsuario.buscarMail(nuevo.Email);
