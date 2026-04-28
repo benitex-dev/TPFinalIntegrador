@@ -888,19 +888,40 @@ namespace negocio
             try
             {
                 datos.setConsulta(@"
-              SELECT
-                  U.Nombre AS NombreIntegrante,
-                  C.Nombre AS NombreCategoria,
-                  SUM(G.MontoPesos) AS Total
-              FROM GASTO G
-              INNER JOIN USUARIO U ON G.IdUsuario = U.IdUsuario
-              INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria
-              WHERE G.IdHogar = @idHogar
-                  AND G.Estado = 1
-                  AND MONTH(G.Fecha) = @mes
-                  AND YEAR(G.Fecha) = @anio
-              GROUP BY U.Nombre, C.Nombre
-              ORDER BY U.Nombre, C.Nombre");
+               SELECT NombreIntegrante, NombreCategoria, SUM(Total) AS Total
+  FROM (
+      -- Gastos normales (no en cuotas)
+      SELECT
+          U.Nombre AS NombreIntegrante,
+          C.Nombre AS NombreCategoria,
+          G.MontoPesos AS Total
+      FROM GASTO G
+      INNER JOIN USUARIO U ON G.IdUsuario = U.IdUsuario
+      INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria
+      WHERE G.IdHogar = @idHogar
+          AND G.Estado = 1
+          AND (G.EsEnCuotas = 0 OR G.EsEnCuotas IS NULL)
+          AND MONTH(G.Fecha) = @mes
+          AND YEAR(G.Fecha) = @anio
+
+      UNION ALL
+
+      -- Gastos en cuotas (por mes de vencimiento de la cuota)
+      SELECT
+          U.Nombre AS NombreIntegrante,
+          C.Nombre AS NombreCategoria,
+          CU.Monto AS Total
+      FROM CUOTA CU
+      INNER JOIN GASTO G ON CU.IdGasto = G.IdGasto
+      INNER JOIN USUARIO U ON G.IdUsuario = U.IdUsuario
+      INNER JOIN CATEGORIA C ON G.IdCategoria = C.IdCategoria
+      WHERE G.IdHogar = @idHogar
+          AND G.Estado = 1
+          AND MONTH(CU.Vencimiento) = @mes
+          AND YEAR(CU.Vencimiento) = @anio
+  ) AS Combinado
+  GROUP BY NombreIntegrante, NombreCategoria
+  ORDER BY NombreIntegrante, NombreCategoria");
 
                 datos.setParametro("@idHogar", idHogar);
                 datos.setParametro("@mes", mes);
