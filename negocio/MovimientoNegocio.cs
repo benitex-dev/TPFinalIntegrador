@@ -90,7 +90,7 @@ namespace negocio
                 Movimiento mov = new Movimiento();
                 mov.idReferencia = cuota.Gasto.IdGasto;
                 mov.Fecha = cuota.Vencimiento;
-                mov.Descripcion = cuota.Gasto.Descripcion + " (cuota " + cuota.NumeroCuota + "/" + cuota.TotalCuotas + ")";
+                mov.Descripcion = cuota.DescripcionCuota;
                 mov.Categoria = cuota.Gasto.Categoria.Nombre;
                 mov.Tipo = "Gasto";
                 mov.Monto = cuota.Monto;
